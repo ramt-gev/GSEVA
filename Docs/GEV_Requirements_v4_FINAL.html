@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GEV ICMS — Complete Requirements Document v4.0</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+:root {
+  --saffron:#E8721A; --saffron-light:#FFF3E8; --saffron-mid:#F5A855;
+  --green:#2E6B3E; --green-light:#EAF4EE;
+  --blue:#1A5276; --blue-light:#EAF2FB;
+  --purple:#534AB7; --purple-light:#EEEDFE;
+  --red:#A32D2D; --red-light:#FCEBEB;
+  --teal:#0F6E56; --teal-light:#E1F5EE;
+  --amber:#BA7517; --amber-light:#FAEEDA;
+  --dark:#1A1A2E; --text:#2D2D2D; --text-light:#666;
+  --border:#E0D8CC; --bg:#FDFAF6; --white:#FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:13.5px;line-height:1.75;}
+
+/* COVER */
+.cover{background:linear-gradient(135deg,#1A1A2E 0%,#2E3B55 50%,#1A3A2A 100%);color:white;padding:52px 72px;position:relative;overflow:hidden;}
+.cover::before{content:'🕉';position:absolute;right:60px;top:30px;font-size:120px;opacity:0.06;}
+.vtag{background:#E8721A;color:white;padding:3px 14px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;display:inline-block;margin-bottom:10px;}
+.cover h1{font-family:'Crimson Text',serif;font-size:36px;font-weight:600;line-height:1.2;margin-bottom:8px;}
+.cover h2{font-size:16px;font-weight:300;color:rgba(255,255,255,0.7);margin-bottom:26px;}
+.cover-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:700px;}
+.cover-meta-item label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.4);display:block;margin-bottom:2px;}
+.cover-meta-item span{font-size:12px;font-weight:500;color:rgba(255,255,255,0.88);}
+.cover-bar{height:4px;background:linear-gradient(90deg,#E8721A,#F5A855,#f9d57a);margin-top:30px;}
+
+/* TOC */
+.toc{background:white;border:1px solid var(--border);border-radius:12px;padding:30px 36px;margin:36px 0;}
+.toc h2{font-family:'Crimson Text',serif;font-size:22px;color:var(--dark);margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--saffron);}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 40px;}
+.toc-item{display:flex;gap:10px;padding:5px 0;font-size:12.5px;border-bottom:1px dotted #E0D8CC;align-items:baseline;}
+.toc-num{color:var(--saffron);font-weight:700;font-size:11px;min-width:22px;}
+
+/* LAYOUT */
+.container{max-width:980px;margin:0 auto;padding:36px;}
+
+/* SECTIONS */
+.section{margin:48px 0;}
+.sh{display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:12px;border-bottom:2px solid var(--border);}
+.sn{color:white;width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;}
+.sn-o{background:var(--saffron);} .sn-g{background:var(--green);}
+.sn-b{background:var(--blue);}   .sn-p{background:var(--purple);}
+.sn-t{background:var(--teal);}   .sn-a{background:var(--amber);}
+.sn-r{background:var(--red);}
+.sh h2{font-family:'Crimson Text',serif;font-size:26px;color:var(--dark);}
+h3{font-size:14px;font-weight:700;color:var(--dark);margin:26px 0 10px;padding-left:12px;border-left:3px solid var(--saffron);}
+h3.g{border-left-color:var(--green);} h3.b{border-left-color:var(--blue);}
+h3.p{border-left-color:var(--purple);} h3.t{border-left-color:var(--teal);}
+h3.a{border-left-color:var(--amber);} h3.r{border-left-color:var(--red);}
+h4{font-size:12px;font-weight:700;color:var(--teal);margin:16px 0 7px;text-transform:uppercase;letter-spacing:0.5px;}
+p{margin-bottom:11px;font-size:13px;}
+
+/* TABLES */
+.tw{overflow-x:auto;margin:12px 0 20px;border-radius:10px;box-shadow:0 1px 5px rgba(0,0,0,0.05);}
+table{width:100%;border-collapse:collapse;background:white;font-size:12px;}
+thead tr{background:var(--dark);color:white;}
+thead th{padding:11px 13px;text-align:left;font-weight:600;font-size:11px;letter-spacing:0.3px;}
+tbody tr:nth-child(even){background:#F9F6F1;}
+tbody tr:hover{background:var(--saffron-light);}
+tbody td{padding:9px 13px;border-bottom:1px solid #EEE8E0;vertical-align:top;font-size:12px;}
+tbody td:first-child{font-weight:500;}
+.section-row td{background:#2A3B55!important;color:rgba(255,255,255,0.75)!important;font-size:10px!important;text-transform:uppercase;letter-spacing:0.5px;padding:6px 13px!important;}
+
+/* TAGS */
+.tag{font-size:10px;padding:2px 9px;border-radius:12px;font-weight:600;display:inline-block;}
+.tag-o{background:var(--saffron-light);color:var(--saffron);} .tag-g{background:var(--green-light);color:var(--green);}
+.tag-b{background:var(--blue-light);color:var(--blue);} .tag-p{background:var(--purple-light);color:var(--purple);}
+.tag-t{background:var(--teal-light);color:var(--teal);} .tag-a{background:var(--amber-light);color:var(--amber);}
+.tag-r{background:var(--red-light);color:var(--red);} .tag-grey{background:#F4F1EC;color:var(--text-light);border:1px solid var(--border);}
+
+/* CALLOUTS */
+.cb{border-radius:9px;padding:14px 20px;margin:14px 0;display:flex;gap:12px;}
+.ci{font-size:18px;flex-shrink:0;margin-top:2px;}
+.cbody{flex:1;font-size:12.5px;}
+.cbody strong{display:block;font-size:12px;font-weight:700;margin-bottom:3px;}
+.cb.ok{background:var(--green-light);border:1px solid #C0DD97;}
+.cb.warn{background:#FFF8E8;border:1px solid #F5C842;}
+.cb.info{background:var(--teal-light);border:1px solid #9FE1CB;}
+.cb.alert{background:var(--red-light);border:1px solid #F7C1C1;}
+.cb.note{background:var(--saffron-light);border:1px solid var(--saffron-mid);}
+
+/* CARDS */
+.grid{display:grid;gap:12px;margin:12px 0;}
+.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+.g3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
+.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));}
+.card{background:white;border:0.5px solid var(--border);border-radius:10px;padding:15px 17px;}
+.ct{border-top:3px solid var(--saffron);}
+.ct.g{border-top-color:var(--green);} .ct.b{border-top-color:var(--blue);}
+.ct.p{border-top-color:var(--purple);} .ct.t{border-top-color:var(--teal);}
+.ct.a{border-top-color:var(--amber);} .ct.r{border-top-color:var(--red);}
+.card h4{text-transform:none;letter-spacing:0;font-size:13px;margin:0 0 5px;color:var(--dark);}
+.card p{font-size:11.5px;color:var(--text-light);margin:0;}
+
+/* GOVERNANCE PYRAMID */
+.gov-pyramid{display:flex;flex-direction:column;gap:6px;margin:18px 0;}
+.gov-level{border-radius:10px;padding:14px 20px;border:1px solid;display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;}
+.gl-patron{background:linear-gradient(135deg,#1A1A2E,#2E3B55);border-color:#3A4B6B;color:white;}
+.gl-bod{background:#FAEEDA;border-color:#FAC775;}
+.gl-gac{background:var(--green-light);border-color:#C0DD97;}
+.gl-authority{background:var(--saffron-light);border-color:var(--saffron-mid);}
+.gl-project{background:var(--blue-light);border-color:#B5D4F4;}
+.gov-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+.gov-body{flex:1;}
+.gov-title{font-size:14px;font-weight:600;margin-bottom:3px;}
+.gl-patron .gov-title{color:#F5C89A;}
+.gl-bod .gov-title{color:#633806;}
+.gl-gac .gov-title{color:var(--green);}
+.gl-authority .gov-title{color:var(--saffron);}
+.gl-project .gov-title{color:var(--blue);}
+.gov-desc{font-size:12px;line-height:1.5;}
+.gl-patron .gov-desc{color:rgba(255,255,255,0.7);}
+.gl-bod .gov-desc{color:#854F0B;}
+.gl-gac .gov-desc{color:var(--green);}
+.gl-authority .gov-desc{color:var(--saffron);}
+.gl-project .gov-desc{color:var(--blue);}
+
+/* GAC GRID */
+.gac-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px;margin:16px 0;}
+.gac-card{background:white;border:0.5px solid var(--border);border-radius:10px;padding:13px 15px;border-top:3px solid var(--saffron);}
+.gac-card.g{border-top-color:var(--green);} .gac-card.b{border-top-color:var(--blue);}
+.gac-card.p{border-top-color:var(--purple);} .gac-card.t{border-top-color:var(--teal);}
+.gac-card.a{border-top-color:var(--amber);}
+.gac-num{font-size:9px;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-light);margin-bottom:2px;font-weight:600;}
+.gac-name{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:6px;}
+.gac-depts span{display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 6px;margin:1px 2px 1px 0;font-size:10px;color:var(--text-light);}
+
+/* ZONE BAR */
+.zbar{display:flex;gap:0;margin:18px 0;border-radius:10px;overflow:hidden;border:1px solid var(--border);}
+.zone{flex:1;padding:14px 12px;text-align:center;}
+.zlabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;}
+.zdesc{font-size:10.5px;margin-top:4px;line-height:1.4;}
+.zarr{display:flex;align-items:center;justify-content:center;padding:0 4px;font-size:16px;color:var(--text-light);}
+.z1{background:var(--green-light);border-right:2px solid var(--border);}  .z1 .zlabel{color:var(--green);}
+.z2{background:var(--saffron-light);border-right:2px solid var(--border);} .z2 .zlabel{color:var(--saffron);}
+.z3{background:var(--blue-light);border-right:2px solid var(--border);}    .z3 .zlabel{color:var(--blue);}
+.z4{background:var(--purple-light);}  .z4 .zlabel{color:var(--purple);}
+
+/* FLOW */
+.flow{background:var(--dark);color:#A8E6CF;border-radius:9px;padding:18px 22px;font-family:monospace;font-size:12px;line-height:1.9;margin:14px 0;white-space:pre-wrap;}
+.fw{color:#FFD166;font-weight:bold;} .fc{color:#6C8C6C;}
+
+/* PERSON TYPES */
+.pt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin:12px 0;}
+.pt-card{background:white;border:0.5px solid var(--border);border-radius:9px;padding:12px 13px;border-left:3px solid var(--saffron);}
+.pt-card.g{border-left-color:var(--green);} .pt-card.b{border-left-color:var(--blue);}
+.pt-card.p{border-left-color:var(--purple);} .pt-card.t{border-left-color:var(--teal);}
+.pt-card.a{border-left-color:var(--amber);} .pt-card.r{border-left-color:var(--red);}
+.pt-num{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-light);margin-bottom:3px;}
+.pt-name{font-size:12.5px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.pt-detail{font-size:11px;color:var(--text-light);line-height:1.4;}
+
+/* PHASE */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0;}
+.pc{background:white;border:0.5px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden;}
+.pc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.p1::before{background:#E8721A;} .p2::before{background:#2E6B3E;} .p3::before{background:#185FA5;}
+.ptag{font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;color:var(--text-light);margin-bottom:4px;}
+.pc h4{font-size:13px;font-weight:700;color:var(--dark);margin:0 0 6px;text-transform:none;letter-spacing:0;}
+.tpill{font-size:10px;font-weight:600;padding:2px 9px;border-radius:12px;display:inline-block;margin-bottom:7px;}
+.p1 .tpill{background:var(--saffron-light);color:var(--saffron);}
+.p2 .tpill{background:var(--green-light);color:var(--green);}
+.p3 .tpill{background:var(--blue-light);color:var(--blue);}
+.pl{list-style:none;padding:0;}
+.pl li{font-size:11px;color:var(--text-light);padding:3px 0 3px 13px;position:relative;border-bottom:1px solid #F5F0EA;line-height:1.4;}
+.pl li:last-child{border-bottom:none;}
+.pl li::before{content:'→';position:absolute;left:0;color:var(--saffron);font-size:10px;}
+.pcost{margin-top:9px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--text-light);}
+.pcost strong{color:var(--dark);font-size:11.5px;}
+
+/* QLIST */
+.qlist{list-style:none;padding:0;}
+.qlist li{padding:9px 13px;background:white;border:0.5px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:12.5px;display:flex;gap:10px;align-items:flex-start;}
+.qnum{background:var(--saffron);color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.qnum.answered{background:var(--green);}
+
+/* FOOTER */
+.doc-footer{margin-top:50px;padding:28px 36px;background:var(--dark);color:rgba(255,255,255,0.55);text-align:center;font-size:11.5px;}
+.doc-footer strong{color:var(--saffron);}
+
+@media(max-width:680px){
+  .cover{padding:28px 20px;} .cover h1{font-size:24px;} .cover-meta{grid-template-columns:1fr;}
+  .container{padding:18px 14px;} .pgrid{grid-template-columns:1fr;}
+  .toc-grid{grid-template-columns:1fr;} .zbar{flex-direction:column;}
+  .zone{border-right:none;border-bottom:2px solid var(--border);}
+}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="vtag">Version 4.1 — Annakshetra scanning + billing logic updated</div>
+  <h1>Integrated Campus Management System<br/>Visitor · Food · Security · Festivals</h1>
+  <h2>Govardhan EcoVillage – ISKCON GEV, Galtare, Hamrapur, Wada, Palghar – 421303, Maharashtra</h2>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><label>Spiritual Patron</label><span>HH Radhanath Swami</span></div>
+    <div class="cover-meta-item"><label>Final Authority (Project)</label><span>Vasudev Prabhuji</span></div>
+    <div class="cover-meta-item"><label>IT Director</label><span>Sri Gaurcaran P (GAC)</span></div>
+    <div class="cover-meta-item"><label>Project Coordinator</label><span>Ram Prabhu (IT Software Head)</span></div>
+    <div class="cover-meta-item"><label>Document Version</label><span>4.0 — April 2026</span></div>
+    <div class="cover-meta-item"><label>Status</label><span>Final — Ready for Developer Handover</span></div>
+  </div>
+  <div class="cover-bar"></div>
+</div>
+
+<div class="container">
+
+<!-- TOC -->
+<div class="toc">
+  <h2>📋 Table of Contents</h2>
+  <div class="toc-grid">
+    <div class="toc-item"><span class="toc-num">01</span>Executive Summary</div>
+    <div class="toc-item"><span class="toc-num">02</span>Organisation Background</div>
+    <div class="toc-item"><span class="toc-num">03</span>Governance & Leadership</div>
+    <div class="toc-item"><span class="toc-num">04</span>Complete Department Directory</div>
+    <div class="toc-item"><span class="toc-num">05</span>Existing Technology Ecosystem</div>
+    <div class="toc-item"><span class="toc-num">06</span>Campus Zones & Access Control</div>
+    <div class="toc-item"><span class="toc-num">07</span>People Classification — 16 Types</div>
+    <div class="toc-item"><span class="toc-num">08</span>Module 1 — Visitor Management (VMS)</div>
+    <div class="toc-item"><span class="toc-num">09</span>Module 2 — Annakshetra & Food Service</div>
+    <div class="toc-item"><span class="toc-num">10</span>Module 3 — Festival & Event Management</div>
+    <div class="toc-item"><span class="toc-num">11</span>Module 4 — Security & Police Reporting</div>
+    <div class="toc-item"><span class="toc-num">12</span>Module 5 — Vehicle Management</div>
+    <div class="toc-item"><span class="toc-num">13</span>WhatsApp & Communication Layer</div>
+    <div class="toc-item"><span class="toc-num">14</span>Dashboard & Reports Library</div>
+    <div class="toc-item"><span class="toc-num">15</span>System Architecture & Integrations</div>
+    <div class="toc-item"><span class="toc-num">16</span>Technology Stack Recommendations</div>
+    <div class="toc-item"><span class="toc-num">17</span>Budget & Implementation Roadmap</div>
+    <div class="toc-item"><span class="toc-num">18</span>Non-Functional Requirements</div>
+    <div class="toc-item"><span class="toc-num">19</span>Open Questions Resolved</div>
+    <div class="toc-item"><span class="toc-num">20</span>Document Sign-Off</div>
+  </div>
+</div>
+
+<!-- S1: EXECUTIVE SUMMARY -->
+<div class="section">
+  <div class="sh"><div class="sn sn-o">1</div><h2>Executive Summary</h2></div>
+  <p>Govardhan EcoVillage (GEV) is an internationally recognised spiritual, wellness, and sustainability community under ISKCON, located in Wada, Palghar, Maharashtra. The campus hosts a highly diverse population daily — from spiritual pilgrims and paying guests to resident staff families, construction labourers, international yoga groups, and brahmachari monks — with footfall reaching <strong>15,000–20,000 on major festival days.</strong></p>
+  <p>This document defines the complete requirements for the <strong>GEV Integrated Campus Management System (ICMS)</strong> — a unified digital platform covering five primary modules:</p>
+  <div class="grid g3">
+    <div class="card ct"><h4>🚪 Visitor Management (VMS)</h4><p>Unified identity, 4-zone QR-based access control, 16 visitor types, contractor portal, police report.</p></div>
+    <div class="card ct g"><h4>🍲 Food Management (AMS)</h4><p>Annakshetra B/D token system, 3 paid cafés integration, free meal headcount, nightly forecasting.</p></div>
+    <div class="card ct b"><h4>🎉 Festival Module</h4><p>High-throughput batch entry, live crowd counting, 17-member committee dashboards, VIP management.</p></div>
+    <div class="card ct p"><h4>🔐 Security & Reporting</h4><p>Monthly police report, campus resident register, audit trail, role-based access control.</p></div>
+    <div class="card ct t"><h4>🚗 Vehicle Management</h4><p>Vehicle entry log, parking zone management, festival-day multi-lane counter, e-cart scheduling.</p></div>
+  </div>
+  <div class="cb ok"><div class="ci">✅</div><div class="cbody"><strong>Integration-first design</strong>GEV already has Greythr HRMS, ESSL Biometric (API available), eZee Booking Engine, ManyChat Pro (WhatsApp), and Petpooja POS at two cafés. The ICMS integrates all five — no duplicate data entry across any system.</div></div>
+</div>
+
+<!-- S2: ORGANISATION -->
+<div class="section">
+  <div class="sh"><div class="sn sn-g">2</div><h2>Organisation Background</h2></div>
+  <p>Govardhan EcoVillage operates under four core pillars — Spirituality, Wellness, Sustainability, and Social Impact. It has received international recognition including the UNWTO Award, WTM Responsible Tourism Global Winner, GRIHA Award, and Golden Globe Tigers Award.</p>
+  <h3>Typical Daily Campus Population</h3>
+  <div class="tw"><table>
+    <thead>
+      </thead>
+    <tbody>
+      <tr><td>Interakt (WhatsApp operations)</td><td>₹3,000–₹6,000</td><td>Plan + WhatsApp conversation fees</td></tr>
+      <tr><td>ManyChat Pro (existing)</td><td>₹2,500–₹4,000</td><td>Retain for social media flows</td></tr>
+      <tr><td>Server hosting (AWS/DigitalOcean, Mumbai)</td><td>₹4,000–₹8,000</td><td>Auto-scales on festival days</td></tr>
+      <tr><td>Developer AMC / support</td><td>₹8,000–₹15,000</td><td>Bug fixes, updates — include in contract</td></tr>
+      <tr><td>SSL, domain, misc.</td><td>₹1,000–₹2,000</td><td>Annual cost spread monthly</td></tr>
+      <tr><td><strong>Total estimated monthly</strong></td><td><strong>₹18,500–₹35,000</strong></td><td></td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- S18: NON-FUNCTIONAL -->
+<div class="section">
+  <div class="sh"><div class="sn sn-p">18</div><h2>Non-Functional Requirements</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th>Requirement</th><th>Specification</th></tr></thead>
+    <tbody>
+      <tr><td>Availability</td><td>99.5% uptime 24×7. Offline mode mandatory for gate tablets and Annakshetra counter (sync on reconnect). Zero downtime tolerance during festival peak hours.</td></tr>
+      <tr><td>Performance</td><td>QR scan to entry decision: &lt;3 seconds. WhatsApp auto-response: &lt;5 seconds. Dashboard load: &lt;5 seconds. Festival batch counter: real-time, no lag.</td></tr>
+      <tr><td>Scalability</td><td>Must handle 20,000+ concurrent visitors on festival days without degradation. Database and hosting auto-scale.</td></tr>
+      <tr><td>Security (RBAC)</td><td>5-layer role-based access. All ID proof images encrypted at rest. Every action logged in audit trail (immutable). Auto-lock after 5 failed login attempts. PDPA / IT Act compliant. Data hosted in India only.</td></tr>
+      <tr><td>Language</td><td>WhatsApp flows: English + Hindi (Devanagari). Admin portal: English. Gate tablet UI: large text, simple icons for all literacy levels.</td></tr>
+      <tr><td>Data Retention</td><td>Active visitor data: 1 year minimum. Police report data: 5 years (legal). Audit trail: permanent (never deleted). Archived profiles: retained indefinitely (deactivated, not deleted).</td></tr>
+      <tr><td>Compliance</td><td>Maharashtra lodging house regulations (C-Form). Labour law record-keeping (Aadhaar copy retention). PDPA for personal data. Monthly police report as required by local authorities.</td></tr>
+      <tr><td>Backup</td><td>Daily automated database backup to separate cloud location. Weekly backup test. Maximum data loss window: 24 hours.</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- S19: QUESTIONS RESOLVED -->
+<div class="section">
+  <div class="sh"><div class="sn sn-g">19</div><h2>Open Questions — All Resolved</h2></div>
+  <ul class="qlist">
+    <li><span class="qnum answered">✓</span>Booking system: eZee Booking Engine + MakeMyTrip, Goibibo OTA integrations</li>
+    <li><span class="qnum answered">✓</span>HRMS: Greythr — API integration confirmed</li>
+    <li><span class="qnum answered">✓</span>Biometric: ESSL — API available for weekly labourer data</li>
+    <li><span class="qnum answered">✓</span>WhatsApp platform: ManyChat Pro (existing) + Interakt (new for VMS ops)</li>
+    <li><span class="qnum answered">✓</span>Annakshetra B/D timings: Breakfast 7:15–8:15 AM · Dinner 6:30–7:15 PM</li>
+    <li><span class="qnum answered">✓</span>Annakshetra B/D: Paid registered service only — Staff (salary deduction), Volunteers (dept sponsored), Labourers (free welfare)</li>
+    <li><span class="qnum answered">✓</span>Free services: Lunch 12:45–2:30 PM + Khichadi 9:30 AM–12:30 PM and 4–7:30 PM — open to all</li>
+    <li><span class="qnum answered">✓</span>Three paid cafés: Govinda's Srinathji Bhavan (Petpooja, Ramesh P), Govinda's Guest Area (Petpooja, Prasad Panda P), Dhanvantari Café (manual, Ganesh Ghosh P)</li>
+    <li><span class="qnum answered">✓</span>Campus zones: 4 zones confirmed — Main Gate → Gate 7 → SBT Gate → Zone 4 (adjacent)</li>
+    <li><span class="qnum answered">✓</span>Brahmacharis: 55 residents, Madhav Prem P (head), separate kitchen, Maha Bhagavat P (GAC)</li>
+    <li><span class="qnum answered">✓</span>Varishtha Vaishnavas: 19 residents, Achyuta Avtar P / Achyut Patil (same person), VVSHCH building</li>
+    <li><span class="qnum answered">✓</span>Police report: Monthly, confirmed fields, Premanjan P responsible, Legal under Devarshi Narad P</li>
+    <li><span class="qnum answered">✓</span>Festival footfall: Janmashtami 15,000–20,000; New Year/holidays 10,000–12,000; other festivals 4,000–5,000</li>
+    <li><span class="qnum answered">✓</span>Vehicle scale: Weekdays &lt;100, Weekends 400–500, Festivals 1,000+</li>
+    <li><span class="qnum answered">✓</span>Sustainability interns: 3–6 months, 15–20/year, under Caitanyarup P</li>
+    <li><span class="qnum answered">✓</span>GAC structure: 16 members fully documented with department allocations (official PPTX + Excel April 2026)</li>
+    <li><span class="qnum answered">✓</span>Sri Gaurcaran P (GAC 4) and Sri Gurucaran P (GAC 9) confirmed as two different people</li>
+    <li><span class="qnum answered">✓</span>Govardhan Skill Centre: excluded — separate entity 1.5km offsite, not in VMS scope</li>
+    <li><span class="qnum answered">✓</span>GEMS = Govardhan English Medium School (Amolcaitanya P, on campus) — different from Skill Centre</li>
+    <li><span class="qnum answered">✓</span>IT head for project: Ram Prabhu (IT Software) reporting to Sri Gaurcaran P; IT Infra: Radhashyamsundar P</li>
+  </ul>
+</div>
+
+<!-- S20: SIGN-OFF -->
+<div class="section">
+  <div class="sh"><div class="sn sn-r">20</div><h2>Document Sign-Off</h2></div>
+  <p>This is the complete, definitive requirements document for the GEV Integrated Campus Management System, compiled through detailed Q&A sessions with Ram Prabhu (IT Software Head) in April 2026, and updated with the official Organizational Structure (PPTX) and GAC Department Allocation (Excel) documents dated 24 April 2026.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Name</th><th>Role</th><th>Review Date</th><th>Signature</th></tr></thead>
+    <tbody>
+      <tr><td>Vasudev Prabhuji</td><td>Final Authority — GEV Project</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+      <tr><td>Sri Gaurcaran Prabhuji</td><td>IT / HR Director (GAC 4)</td><td></td><td></td></tr>
+      <tr><td>Ram Prabhu</td><td>IT Software Head / Project Coordinator</td><td></td><td></td></tr>
+      <tr><td>Anand Prem Prabhu</td><td>Annakshetra Head Sevak</td><td></td><td></td></tr>
+      <tr><td>Premanjan Prabhu</td><td>Security In-charge</td><td></td><td></td></tr>
+      <tr><td>Anandnimai Prabhu</td><td>Construction HOD</td><td></td><td></td></tr>
+      <tr><td>Laxmanpran Prabhu</td><td>Maintenance Construction HOD</td><td></td><td></td></tr>
+      <tr><td>Balaji Govind Prabhu</td><td>Volunteer Coordinator</td><td></td><td></td></tr>
+      <tr><td>IT / Development Partner</td><td>Technical Lead (to be appointed)</td><td></td><td></td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+</div><!-- /container -->
+
+<div class="doc-footer">
+  <p>🕉️ &nbsp;<strong>Hare Krishna.</strong> &nbsp;This is the complete definitive requirements document for the GEV Integrated Campus Management System.</p>
+  <p style="margin-top:5px;">Document Version 4.0 (Final) &nbsp;|&nbsp; April 2026 &nbsp;|&nbsp; Compiled from Q&A sessions + Official Organogram (24 Apr 2026)</p>
+  <p style="margin-top:4px;font-size:10px;opacity:0.4;">Govardhan EcoVillage – ISKCON GEV &nbsp;|&nbsp; Galtare, Hamrapur, Wada, Palghar – 421303, Maharashtra &nbsp;|&nbsp; Patron: HH Radhanath Swami &nbsp;|&nbsp; ecovillage.org.in &nbsp;|&nbsp; iskcongev.com</p>
+</div>
+</body>
+</html>

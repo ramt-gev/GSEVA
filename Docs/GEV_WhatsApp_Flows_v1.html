@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GEV ICMS — WhatsApp Flows Configuration Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:#F6F2EC; --surface:#FFFFFF; --surface2:#FAF7F3;
+  --border:#E4DDD3; --border2:#EDE8E1;
+  --dark:#1E1B2E;
+  --saffron:#D4631A; --saffron-bg:#FEF3EB;
+  --green:#2D6A4F; --green-bg:#EBF5EF;
+  --blue:#1A4F8A; --blue-bg:#EBF2FB;
+  --purple:#5A3A9E; --purple-bg:#EEE9FB;
+  --teal:#0D6B58; --teal-bg:#E1F4EF;
+  --amber:#B06010; --amber-bg:#FDF4E7;
+  --red:#B33030; --red-bg:#FBECEC;
+  --wa-green:#25D366; --wa-dark:#128C7E;
+  --text:#1C1917; --text2:#57534E; --text3:#A8A29E;
+  --radius:10px; --radius-sm:7px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); font-size:13.5px; line-height:1.75; }
+
+/* COVER */
+.cover { background:linear-gradient(135deg,#1E1B2E 0%,#2A2640 50%,#1A2E2A 100%); color:white; padding:48px 64px; position:relative; overflow:hidden; }
+.cover::before { content:'💬'; position:absolute; right:56px; top:28px; font-size:110px; opacity:0.06; }
+.vtag { background:var(--wa-green); color:white; padding:3px 14px; border-radius:20px; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; display:inline-block; margin-bottom:10px; }
+.cover h1 { font-family:'Playfair Display',serif; font-size:32px; font-weight:700; line-height:1.2; margin-bottom:8px; }
+.cover h2 { font-size:15px; font-weight:300; color:rgba(255,255,255,0.65); margin-bottom:24px; }
+.cover-meta { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; max-width:680px; }
+.cover-meta label { font-size:10px; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.38); display:block; margin-bottom:2px; }
+.cover-meta span { font-size:12px; font-weight:500; color:rgba(255,255,255,0.85); }
+.cover-bar { height:4px; background:linear-gradient(90deg,#25D366,#128C7E,#075E54); margin-top:28px; }
+
+/* CONTAINER */
+.container { max-width:980px; margin:0 auto; padding:36px; }
+
+/* SECTION */
+.section { margin:44px 0; }
+.sh { display:flex; align-items:center; gap:12px; margin-bottom:20px; padding-bottom:11px; border-bottom:2px solid var(--border); }
+.sn { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; color:white; flex-shrink:0; }
+.sh h2 { font-family:'Playfair Display',serif; font-size:23px; color:var(--text); }
+
+/* FLOW CARD */
+.flow-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  margin-bottom:28px; overflow:hidden;
+  box-shadow:0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.03);
+}
+.flow-header {
+  padding:16px 20px; display:flex; align-items:flex-start; gap:14px;
+  border-bottom:1px solid var(--border2);
+}
+.flow-num-badge {
+  width:38px; height:38px; border-radius:10px; display:flex; align-items:center;
+  justify-content:center; font-size:15px; font-weight:700; color:white; flex-shrink:0;
+}
+.flow-title { font-family:'Playfair Display',serif; font-size:18px; color:var(--text); margin-bottom:3px; }
+.flow-meta { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.fmeta { font-size:11px; font-weight:600; padding:2px 8px; border-radius:12px; }
+.fm-platform { background:var(--wa-green); color:white; }
+.fm-trigger { background:var(--surface2); color:var(--text2); border:1px solid var(--border); }
+.fm-auto { background:var(--blue-bg); color:var(--blue); }
+.fm-manual { background:var(--amber-bg); color:var(--amber); }
+
+.flow-body { padding:0; }
+
+/* TWO PANELS */
+.panels { display:grid; grid-template-columns:1fr 1fr; gap:0; }
+.panel { padding:18px 20px; border-right:1px solid var(--border2); }
+.panel:last-child { border-right:none; }
+.panel-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text3); margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+
+/* CHAT BUBBLES */
+.chat { display:flex; flex-direction:column; gap:8px; }
+.bubble-wrap { display:flex; gap:8px; }
+.bubble-wrap.bot { flex-direction:column; align-items:flex-start; }
+.bubble-wrap.user { flex-direction:column; align-items:flex-end; }
+.bubble-label { font-size:9.5px; color:var(--text3); font-weight:600; margin-bottom:2px; padding:0 4px; }
+.bubble {
+  border-radius:12px; padding:9px 13px; max-width:90%; font-size:12.5px;
+  line-height:1.5; position:relative;
+}
+.bubble.bot {
+  background:var(--surface2); border:1px solid var(--border2); color:var(--text);
+  border-top-left-radius:3px;
+}
+.bubble.user {
+  background:var(--dark); color:rgba(255,255,255,0.88);
+  border-top-right-radius:3px;
+}
+.bubble.system {
+  background:var(--teal-bg); border:1px solid rgba(13,107,88,0.2); color:var(--teal);
+  font-size:11px; font-style:italic; border-radius:8px; align-self:center;
+  text-align:center; max-width:100%;
+}
+.bubble.alert {
+  background:var(--saffron-bg); border:1px solid rgba(212,99,26,0.25); color:var(--saffron);
+  font-size:11.5px; border-radius:8px;
+}
+.bubble strong { color:inherit; font-weight:700; }
+.bubble .wa-bold { font-weight:700; }
+.bubble .wa-italic { font-style:italic; }
+.time { font-size:9px; color:var(--text3); text-align:right; margin-top:2px; }
+.quick-reply { display:inline-block; background:var(--blue-bg); color:var(--blue); border:1px solid rgba(26,79,138,0.2); border-radius:16px; padding:4px 12px; font-size:11px; font-weight:600; margin:3px 3px 0 0; cursor:pointer; }
+
+/* CONFIG BOX */
+.config-box {
+  border-top:1px solid var(--border2);
+  padding:16px 20px; background:var(--surface2);
+}
+.config-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text3); margin-bottom:10px; }
+.config-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.config-item { }
+.config-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:3px; }
+.config-value { font-family:'DM Mono',monospace; font-size:11.5px; color:var(--dark); background:var(--surface); border:1px solid var(--border); border-radius:5px; padding:5px 9px; line-height:1.4; }
+
+/* WEBHOOK SPEC */
+.webhook-box {
+  border-top:1px solid var(--border2); padding:14px 20px;
+  background:#1E1B2E;
+}
+.webhook-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:rgba(255,255,255,0.4); margin-bottom:8px; }
+.webhook-code { font-family:'DM Mono',monospace; font-size:11.5px; color:#A8E6CF; line-height:1.7; white-space:pre-wrap; }
+.wc-key { color:#FFD166; }
+.wc-val { color:#A8E6CF; }
+.wc-str { color:#F4A261; }
+.wc-cmt { color:rgba(255,255,255,0.25); font-style:italic; }
+
+/* CALLOUT */
+.cb { border-radius:var(--radius); padding:12px 16px; margin:16px 0; display:flex; gap:10px; }
+.ci { font-size:15px; flex-shrink:0; margin-top:1px; }
+.cbody { font-size:12.5px; line-height:1.4; }
+.cbody strong { font-weight:700; display:block; margin-bottom:2px; }
+.cb.info { background:var(--blue-bg); border:1px solid #93C5FD; }
+.cb.note { background:var(--saffron-bg); border:1px solid rgba(212,99,26,0.3); }
+.cb.ok { background:var(--green-bg); border:1px solid #86EFAC; }
+
+/* TABLE */
+.tw { overflow-x:auto; margin:12px 0 18px; border-radius:var(--radius); }
+table { width:100%; border-collapse:collapse; font-size:12.5px; }
+thead tr { background:var(--dark); color:white; }
+thead th { padding:9px 13px; text-align:left; font-size:10.5px; font-weight:600; letter-spacing:0.3px; }
+tbody tr { border-bottom:1px solid var(--border2); }
+tbody tr:hover { background:var(--surface2); }
+tbody td { padding:9px 13px; vertical-align:top; }
+
+/* FOOTER */
+.doc-footer { margin-top:50px; padding:24px 36px; background:var(--dark); color:rgba(255,255,255,0.5); text-align:center; font-size:11.5px; }
+.doc-footer strong { color:var(--wa-green); }
+
+@media(max-width:700px){
+  .cover{padding:24px 20px;} .cover h1{font-size:22px;} .cover-meta{grid-template-columns:1fr;}
+  .container{padding:16px;} .panels{grid-template-columns:1fr;} .config-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="vtag">Step 4 — WhatsApp Flows Configuration</div>
+  <h1>GEV ICMS — WhatsApp Flows<br/>Complete Interakt Configuration Guide</h1>
+  <h2>13 operational flows — 12 Interakt + 1 ManyChat — English + Hindi messages — Webhook specifications</h2>
+  <div class="cover-meta">
+    <div><label>Platform</label><span>Interakt (Indian BSP) — 12 flows · ManyChat Pro — 1 flow</span></div>
+    <div><label>GEV WhatsApp Number</label><span>To be configured in Interakt account</span></div>
+    <div><label>Document Version</label><span>1.0 — April 2026</span></div>
+  </div>
+  <div class="cover-bar"></div>
+</div>
+
+<div class="container">
+
+<!-- OVERVIEW -->
+<div class="section">
+  <div class="sh"><div class="sn" style="background:var(--wa-green)">📋</div><h2>Overview — Platform & Flow Summary</h2></div>
+
+  <div class="cb info"><div class="ci">ℹ️</div><div class="cbody"><strong>Two platforms — clear division of purpose</strong>Interakt handles all VMS operational flows (visitor registration, QR passes, muster reports, meal forecasts, alerts). ManyChat Pro handles social media marketing (Instagram, Facebook, general enquiries). They run independently and never conflict.</div></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>#</th><th>Flow Name</th><th>Platform</th><th>Trigger Type</th><th>Primary Recipient</th><th>Language</th></tr></thead><tbody>
+      <tr><td>1</td><td>Walk-in Visitor Registration</td><td><span style="color:var(--wa-green);font-weight:700">Interakt</span></td><td>QR scan poster at Main Gate (visitor initiates)</td><td>Visitor</td><td>EN + HI</td></tr>
+      <tr><td>2</td><td>Pre-Arrival Guest Onboarding</td><td><span style="color:var(--wa-green);font-weight:700">Interakt</span></td><td>eZee booking webhook (auto)</td><td>Booked guest</td><td>EN + HI</td></tr>
+      <tr><td>3</td><td>Paid Day Visit Booking (₹850)</td><td><span style="color:var(--wa-green);font-weight:700">Interakt</span></td><td>Visitor enquires via WhatsApp</td><td>Visitor</td><td>EN + HI</td></tr>
+      <tr><td>4</td><td>Gate 7 — VF Tour Slot Booking</td><td><span style="color:var(--wa-green);font-weight:700">Interakt</span></td><td>Visitor requests VF tour</td><td>Visitor</td><td>EN + HI</td></tr>
+      <tr><td>5</td><td>Temporary Zone 3 Café Pass</td><td><span style="color:var(--wa-green);font-weight:700">Interakt</span></td><td>Receptionist triggers after payment</td><td>Visitor</td><td>EN + HI</td></tr>
+      <tr><td>6</td><td>Vendor Day Pass</td><td><span style="color:var(--wa-green);font-weight:700">Interakt</span></td><td>Vendor sends WhatsApp message</td><td>Vendor + Admin</td><td>EN + HI</td></tr>
+      <tr><td>7</td><td>Construction / Outstation Worker QR Pass</td><td><span style="color:var(--wa-green);font-weight:700">Interakt</span></td><td>HOD approves worker in Admin Portal</td><td>Worker</td><td>EN + HI</td></tr>
+      <tr><td>8</td><td>Annakshetra B/D Registration</td><td><span style="color:var(--wa-green);font-weight:700">Interakt</span></td><td>Eligible person opts in</td><td>Staff / Volunteer / Labourer</td><td>EN + HI</td></tr>
+      <tr><td>9</td><td>Nightly Meal Forecast Report</td><td><span style="color:var(--wa-green);font-weight:700">Interakt</span></td><td>Daily 9:00 PM auto-trigger</td><td>Anand Prem P + Hari Guru P</td><td>EN</td></tr>
+      <tr><td>10</td><td>Festival Pre-Registration</td><td><span style="color:var(--wa-green);font-weight:700">Interakt</span></td><td>Opens 7 days before festival</td><td>Visitors / Devotees</td><td>EN + HI</td></tr>
+      <tr><td>11</td><td>VIP Arrival Alert</td><td><span style="color:var(--wa-green);font-weight:700">Interakt</span></td><td>VIP QR scanned at Main Gate</td><td>Audaryacaitanya P + Jaduthakur P</td><td>EN</td></tr>
+      <tr><td>12</td><td>Departure Feedback</td><td><span style="color:var(--wa-green);font-weight:700">Interakt</span></td><td>Exit gate scan / key return</td><td>Departing guest / visitor</td><td>EN + HI</td></tr>
+      <tr><td>13</td><td>General Enquiries &amp; Social Media</td><td><span style="color:#6B21A8;font-weight:700">ManyChat</span></td><td>Website / IG / FB message</td><td>General public</td><td>EN</td></tr>
+    </tbody></table></div>
+</div>
+
+<!-- ══════════════════════════════════
+     FLOW 1 — WALK-IN VISITOR REGISTRATION
+══════════════════════════════════ -->
+<div class="section">
+  <div class="sh"><div class="sn" style="background:var(--saffron)">1</div><h2>Walk-in Visitor Registration</h2></div>
+
+  <div class="flow-card">
+    <div class="flow-header">
+      <div class="flow-num-badge" style="background:var(--saffron)">1</div>
+      <div>
+        <div class="flow-title">Walk-in Visitor Registration — Smart Registration Page</div>
+        <div class="flow-meta">
+          <span class="fmeta fm-platform">Interakt</span>
+          <span class="fmeta fm-trigger">Visitor scans QR poster at Main Gate → WhatsApp opens → bot sends registration link</span>
+          <span class="fmeta fm-manual">Visitor-initiated — web form, not chat collection</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-body">
+      <div class="panels">
+        <!-- ENGLISH -->
+        <div class="panel">
+          <div class="panel-title">🇬🇧 English Flow</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble-label">GEV Bot</div>
+              <div class="bubble bot">🕉️ <strong>Hare Krishna! Welcome to Govardhan EcoVillage</strong><br/><br/>Please complete your visit registration using the link below — it takes just 90 seconds! 🙏<br/><br/>📋 <strong>Register here:</strong><br/>https://gev-icms.com/register?mob={{mobile}}<br/><br/>You can:<br/>✅ Choose your group size &amp; add member details<br/>✅ Book Vrindavan Forest tour slot<br/>✅ Pre-indicate Annakshetra lunch<br/>✅ Add Zone 3 café access (₹350/person)<br/>✅ Choose paid programme (₹850/person)<br/><br/>Your QR pass will be sent here on WhatsApp once you complete registration. 🙏</div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble system">[ Visitor completes Smart Registration Page — 90 seconds ]</div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ <strong>Registration Complete — Hare Krishna!</strong><br/><br/>📱 Your GEV Day Pass QR code is below. Please show this at the Main Gate.<br/><br/>🕐 Valid today — <strong>until 8:00 PM</strong><br/>🗺️ Your access: Zone 1 + Zone 2 (+ Zone 3 if paid)<br/>🌳 VF Tour: Booked for <strong>{{vf_slot_time}}</strong> (if selected)<br/>🍽️ Annakshetra Free Lunch: 12:45–2:30 PM (if opted)<br/><br/>💡 Want Zone 3 later? Just walk to SBT Gate — upgrade available there directly.<br/><br/>🙏 Hare Krishna! Have a blessed visit.</div>
+              <div class="time">+ QR code image (shows name + group size + zone access)</div>
+            </div>
+          </div>
+        </div>
+        <!-- HINDI -->
+        <div class="panel">
+          <div class="panel-title">🇮🇳 Hindi Flow</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble-label">GEV Bot</div>
+              <div class="bubble bot">🕉️ <strong>हरे कृष्ण! गोवर्धन इकोविलेज में आपका स्वागत है</strong><br/><br/>कृपया नीचे दिए लिंक से अपना पंजीकरण पूरा करें — इसमें केवल 90 सेकंड लगते हैं! 🙏<br/><br/>📋 <strong>यहाँ पंजीकरण करें:</strong><br/>https://gev-icms.com/register?mob={{mobile}}<br/><br/>आप इसमें कर सकते हैं:<br/>✅ समूह का आकार और सदस्यों की जानकारी दर्ज करें<br/>✅ वृंदावन वन भ्रमण स्लॉट बुक करें<br/>✅ अन्नक्षेत्र दोपहर भोजन की पूर्व-सूचना दें<br/>✅ क्षेत्र 3 कैफे एक्सेस जोड़ें (₹350/व्यक्ति)<br/><br/>पंजीकरण पूर्ण होने पर आपका QR पास यहाँ WhatsApp पर भेजा जाएगा। 🙏</div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble system">[ आगंतुक स्मार्ट पंजीकरण पृष्ठ भरता है — 90 सेकंड ]</div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ <strong>पंजीकरण पूर्ण — हरे कृष्ण!</strong><br/><br/>📱 आपका GEV दिन पास QR कोड नीचे है।<br/><br/>🕐 आज वैध — <strong>शाम 8:00 बजे तक</strong><br/>🗺️ आपका प्रवेश: क्षेत्र 1 + क्षेत्र 2<br/>🌳 VF भ्रमण: <strong>{{vf_slot_time}}</strong> (यदि चुना हो)<br/><br/>🙏 हरे कृष्ण! आनंदमय यात्रा हो।</div>
+              <div class="time">+ QR कोड (नाम + समूह आकार + क्षेत्र प्रवेश सहित)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-box">
+        <div class="config-title">⚙️ Interakt Configuration</div>
+        <div class="config-grid">
+          <div class="config-item"><div class="config-label">Flow Name</div><div class="config-value">gev_walkin_registration (link-based — not chat collection)</div></div>
+          <div class="config-item"><div class="config-label">Trigger</div><div class="config-value">Any message from new unknown number → bot sends registration link immediately</div></div>
+          <div class="config-item"><div class="config-label">Data Collected</div><div class="config-value">All data collected via Smart Registration Page API — not from chat. mobile auto from WhatsApp.</div></div>
+          <div class="config-item"><div class="config-label">QR Pass Type</div><div class="config-value">day_pass — valid_until: today 20:00 IST</div></div>
+          <div class="config-item"><div class="config-label">Zone Access</div><div class="config-value">zone1: true, zone2: true, zone3: false, zone4: false</div></div>
+          <div class="config-item"><div class="config-label">DB Write</div><div class="config-value">INSERT persons + person_stays + qr_passes</div></div>
+        </div>
+      </div>
+      <div class="webhook-box">
+        <div class="webhook-title">Webhook Payload — POST /api/visitors/walkin-register</div>
+        <div class="webhook-code"><span class="wc-cmt">// Interakt sends this to ICMS when registration completes</span>
+{
+  <span class="wc-key">"flow"</span>: <span class="wc-str">"gev_walkin_registration"</span>,
+  <span class="wc-key">"mobile"</span>: <span class="wc-str">"+91XXXXXXXXXX"</span>,
+  <span class="wc-key">"person_type"</span>: <span class="wc-str">"free_day_visitor"</span>,
+  <span class="wc-key">"full_name"</span>: <span class="wc-str">"Vijay Patil"</span>,
+  <span class="wc-key">"city"</span>: <span class="wc-str">"Mumbai"</span>,
+  <span class="wc-key">"registration_source"</span>: <span class="wc-str">"whatsapp_bot"</span>,
+  <span class="wc-key">"zone_access"</span>: {<span class="wc-key">"zone1"</span>:<span class="wc-val">true</span>,<span class="wc-key">"zone2"</span>:<span class="wc-val">true</span>,<span class="wc-key">"zone3"</span>:<span class="wc-val">false</span>,<span class="wc-key">"zone4"</span>:<span class="wc-val">false</span>}
+}
+<span class="wc-cmt">// ICMS responds with QR pass URL → Interakt sends to visitor</span></div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- ══ FLOW 2 — PRE-ARRIVAL GUEST ONBOARDING ══ -->
+  <div class="flow-card">
+    <div class="flow-header">
+      <div class="flow-num-badge" style="background:var(--saffron)">2</div>
+      <div>
+        <div class="flow-title">Pre-Arrival Guest Onboarding</div>
+        <div class="flow-meta">
+          <span class="fmeta fm-platform">Interakt</span>
+          <span class="fmeta fm-trigger">eZee booking webhook — auto-triggered on new booking confirmation</span>
+          <span class="fmeta fm-auto">Fully Automated</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-body">
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-title">🇬🇧 English — Message 1 (Sent immediately on booking)</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🕉️ <strong>Hare Krishna, {{guest_name}}!</strong><br/><br/>Your room booking at <strong>Govardhan EcoVillage</strong> is confirmed.<br/><br/>📅 Check-in: <strong>{{checkin_date}}</strong><br/>📅 Check-out: <strong>{{checkout_date}}</strong><br/>🏠 Room: <strong>{{room_number}}</strong><br/>📖 Booking Ref: <strong>{{booking_ref}}</strong><br/><br/>To complete your arrival process, please upload a photo of your <strong>Aadhaar / Passport / Driving Licence</strong> by replying with the image.<br/><br/>This helps us prepare your campus pass in advance. 🙏</div>
+            </div>
+            <div class="bubble-wrap user">
+              <div class="bubble user">[ ID proof image uploaded ]</div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ Thank you! Your ID has been received.<br/><br/>Your <strong>GEV Campus Pass QR</strong> will be sent to you on the morning of your check-in date (<strong>{{checkin_date}}</strong>).<br/><br/>📍 <strong>Getting Here:</strong><br/>Govardhan EcoVillage, Galtare, Hamrapur, Wada, Palghar – 421303<br/>🚌 Nearest station: Virar / Vasai Road<br/>🚕 From Virar: ~45 mins by taxi<br/><br/>Questions? Reply to this message anytime. 🙏</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">🇮🇳 Hindi — Message 1 (बुकिंग पुष्टि पर तुरंत)</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🕉️ <strong>हरे कृष्ण, {{guest_name}} जी!</strong><br/><br/><strong>गोवर्धन इकोविलेज</strong> में आपकी कक्ष बुकिंग की पुष्टि हो गई है।<br/><br/>📅 चेक-इन: <strong>{{checkin_date}}</strong><br/>📅 चेक-आउट: <strong>{{checkout_date}}</strong><br/>🏠 कक्ष: <strong>{{room_number}}</strong><br/>📖 बुकिंग संख्या: <strong>{{booking_ref}}</strong><br/><br/>अपनी आगमन प्रक्रिया पूर्ण करने के लिए, कृपया अपने <strong>आधार / पासपोर्ट / ड्राइविंग लाइसेंस</strong> की फोटो भेजें।<br/><br/>इससे हम आपका कैम्पस पास पहले से तैयार कर सकते हैं। 🙏</div>
+            </div>
+            <div class="bubble-wrap user">
+              <div class="bubble user">[ आईडी प्रमाण की फोटो ]</div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ धन्यवाद! आपका आईडी प्राप्त हो गया।<br/><br/>आपका <strong>GEV कैम्पस पास QR कोड</strong> चेक-इन की सुबह (<strong>{{checkin_date}}</strong>) भेजा जाएगा।<br/><br/>📍 <strong>कैसे पहुँचें:</strong><br/>गोवर्धन इकोविलेज, गलतारे, हम्रापुर, वाडा, पालघर – 421303<br/>🚌 निकटतम स्टेशन: विरार / वसई रोड<br/>🚕 विरार से: ~45 मिनट टैक्सी से<br/><br/>कोई प्रश्न? इस संदेश पर उत्तर दें। 🙏</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="config-box">
+        <div class="config-title">⚙️ Interakt Configuration</div>
+        <div class="config-grid">
+          <div class="config-item"><div class="config-label">Flow Name</div><div class="config-value">gev_guest_onboarding</div></div>
+          <div class="config-item"><div class="config-label">Trigger</div><div class="config-value">eZee webhook → POST /api/webhooks/ezee-booking</div></div>
+          <div class="config-item"><div class="config-label">Variables</div><div class="config-value">{{guest_name}}, {{checkin_date}}, {{checkout_date}}, {{room_number}}, {{booking_ref}}</div></div>
+          <div class="config-item"><div class="config-label">QR Activation</div><div class="config-value">Scheduled job: activate QR at 06:00 on check-in date</div></div>
+          <div class="config-item"><div class="config-label">ID Upload</div><div class="config-value">Image stored to cloud → persons.id_proof_image_url updated</div></div>
+          <div class="config-item"><div class="config-label">Template</div><div class="config-value">gev_guest_welcome_v1 (pre-approved by Meta)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- ══ FLOW 3 — PAID DAY VISIT ₹850 ══ -->
+  <div class="flow-card">
+    <div class="flow-header">
+      <div class="flow-num-badge" style="background:var(--saffron)">3</div>
+      <div>
+        <div class="flow-title">Paid Day Visit Booking — ₹850 Programme</div>
+        <div class="flow-meta">
+          <span class="fmeta fm-platform">Interakt</span>
+          <span class="fmeta fm-trigger">Visitor enquires via WhatsApp link on website</span>
+          <span class="fmeta fm-manual">Visitor-initiated</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-body">
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-title">🇬🇧 English</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🕉️ <strong>Hare Krishna!</strong> Welcome to Govardhan EcoVillage.<br/><br/>You are enquiring about our <strong>Spiritual Day Programme (₹850/person)</strong>.<br/><br/>📅 Which date would you like to visit?<br/><span style="font-size:11px;color:var(--text3)">(Reply with date, e.g. 25 Apr 2026)</span></div>
+            </div>
+            <div class="bubble-wrap user"><div class="bubble user">25 April 2026</div></div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🕐 <strong>Programme Schedule — 25 Apr 2026</strong><br/><br/>10:00 AM — Temple Darshans<br/>10:30 AM — Yoga Nidra<br/>11:00 AM — GEV Tour (Full Goshala, Dioramas, Sustainability)<br/>1:00 PM — Govinda's Prasad Lunch (included)<br/>2:30 PM — Mahabharat Drama Video<br/>3:30 PM — Meditation + Interactive Gita Workshop<br/>4:45 PM — Vrindavan Forest Temples<br/>6:00 PM — Sri Govardhan Aarti<br/><br/>How many persons?</div>
+            </div>
+            <div class="bubble-wrap user"><div class="bubble user">2 persons</div></div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ <strong>Summary:</strong><br/>📅 25 April 2026<br/>👥 2 persons<br/>💰 Total: ₹1,700<br/><br/>Please pay via the link below to confirm your booking. QR passes will be sent immediately after payment.<br/><br/>💳 <strong>{{payment_link}}</strong></div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble system">[ Payment confirmed — ₹1,700 received ]</div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ <strong>Booking Confirmed!</strong> 🎉<br/><br/>📱 Your QR passes are attached (2 separate codes).<br/><br/>🕐 Arrive by <strong>9:45 AM</strong> at Main Gate.<br/>🚗 Parking available — Zone 1 parking lot.<br/>👗 Dress code: Modest, comfortable clothes.<br/><br/>🙏 We look forward to welcoming you!</div>
+              <div class="time">+ 2 QR code attachments</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">🇮🇳 Hindi</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🕉️ <strong>हरे कृष्ण!</strong> गोवर्धन इकोविलेज में आपका स्वागत है।<br/><br/>आप हमारे <strong>आध्यात्मिक दिन कार्यक्रम (₹850/व्यक्ति)</strong> के बारे में पूछ रहे हैं।<br/><br/>📅 आप किस तारीख को आना चाहते हैं?</div>
+            </div>
+            <div class="bubble-wrap user"><div class="bubble user">25 अप्रैल 2026</div></div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🕐 <strong>कार्यक्रम — 25 अप्रैल 2026</strong><br/><br/>सुबह 10:00 — मंदिर दर्शन<br/>10:30 — योग निद्रा<br/>11:00 — GEV भ्रमण (गोशाला, डायोरामा, सस्टेनेबिलिटी)<br/>दोपहर 1:00 — गोविंदा प्रसाद लंच (शामिल)<br/>2:30 — महाभारत ड्रामा वीडियो<br/>3:30 — ध्यान + गीता कार्यशाला<br/>4:45 — वृंदावन वन मंदिर<br/>6:00 — श्री गोवर्धन आरती<br/><br/>कितने व्यक्ति?</div>
+            </div>
+            <div class="bubble-wrap user"><div class="bubble user">2 व्यक्ति</div></div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ <strong>सारांश:</strong><br/>📅 25 अप्रैल 2026 · 👥 2 व्यक्ति<br/>💰 कुल: ₹1,700<br/><br/>बुकिंग की पुष्टि के लिए नीचे दिए लिंक से भुगतान करें।<br/>💳 <strong>{{payment_link}}</strong></div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ <strong>बुकिंग की पुष्टि हो गई!</strong> 🎉<br/><br/>📱 आपके QR पास संलग्न हैं (2 अलग कोड)।<br/>🕐 <strong>सुबह 9:45 बजे</strong> मुख्य द्वार पर पहुँचें।<br/>🙏 आपका स्वागत है!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="config-box">
+        <div class="config-title">⚙️ Interakt Configuration</div>
+        <div class="config-grid">
+          <div class="config-item"><div class="config-label">Flow Name</div><div class="config-value">gev_paid_day_visit</div></div>
+          <div class="config-item"><div class="config-label">Payment Gateway</div><div class="config-value">Razorpay → ₹850 × persons_count</div></div>
+          <div class="config-item"><div class="config-label">QR Pass Type</div><div class="config-value">tour_pass — zone1+2+3, valid on visit_date only</div></div>
+          <div class="config-item"><div class="config-label">DB Write</div><div class="config-value">INSERT persons + person_stays (paid_day_visitor) + qr_passes (one per person)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- ══ FLOW 4 — GATE 7 VF TOUR SLOT ══ -->
+  <div class="flow-card">
+    <div class="flow-header">
+      <div class="flow-num-badge" style="background:var(--green)">4</div>
+      <div>
+        <div class="flow-title">Gate 7 — Vrindavan Forest Tour Slot Booking</div>
+        <div class="flow-meta">
+          <span class="fmeta fm-platform">Interakt</span>
+          <span class="fmeta fm-trigger">Visitor at Main Gate requests VF tour</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-body">
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-title">🇬🇧 English</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🌳 <strong>Vrindavan Forest Tour</strong><br/><br/>Welcome! Please choose your preferred time slot for today:<br/><br/>
+                <span class="quick-reply">10:30 AM (8 spots left)</span>
+                <span class="quick-reply">12:00 PM (12 spots left)</span>
+                <span class="quick-reply">2:00 PM (30 spots)</span>
+                <span class="quick-reply">3:30 PM (30 spots)</span>
+                <span class="quick-reply">5:00 PM (30 spots)</span>
+              </div>
+            </div>
+            <div class="bubble-wrap user"><div class="bubble user">2:00 PM</div></div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ <strong>Slot Confirmed!</strong><br/>🕐 2:00 PM — Vrindavan Forest<br/>📱 Show this QR at Gate 7 at 1:55 PM<br/><br/>🌿 The forest is home to 108 sacred trees and traditional medicinal plants. Guides are available in Hindi and English.<br/><br/>🙏 Hare Krishna!</div>
+              <div class="time">+ QR code for Gate 7</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">🇮🇳 Hindi</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🌳 <strong>वृंदावन वन भ्रमण</strong><br/><br/>आज के लिए अपना पसंदीदा समय स्लॉट चुनें:<br/><br/>
+                <span class="quick-reply">सुबह 10:30 (8 जगह बची)</span>
+                <span class="quick-reply">दोपहर 12:00 (12 जगह)</span>
+                <span class="quick-reply">दोपहर 2:00 (30 जगह)</span>
+                <span class="quick-reply">शाम 3:30 (30 जगह)</span>
+                <span class="quick-reply">शाम 5:00 (30 जगह)</span>
+              </div>
+            </div>
+            <div class="bubble-wrap user"><div class="bubble user">दोपहर 2:00</div></div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ <strong>स्लॉट की पुष्टि!</strong><br/>🕐 दोपहर 2:00 बजे — वृंदावन वन<br/>📱 गेट 7 पर 1:55 बजे यह QR दिखाएं<br/><br/>🙏 हरे कृष्ण!</div>
+              <div class="time">+ गेट 7 के लिए QR कोड</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="config-box">
+        <div class="config-title">⚙️ Interakt Configuration</div>
+        <div class="config-grid">
+          <div class="config-item"><div class="config-label">Flow Name</div><div class="config-value">gev_vf_tour_slot</div></div>
+          <div class="config-item"><div class="config-label">Slot Check API</div><div class="config-value">GET /api/vf-slots/available?date=today → returns slots with booked_count</div></div>
+          <div class="config-item"><div class="config-label">DB Write</div><div class="config-value">INSERT vf_slot_bookings + UPDATE vf_tour_slots.booked_count +1</div></div>
+          <div class="config-item"><div class="config-label">QR Pass</div><div class="config-value">temp Gate 7 pass — valid for chosen slot ±30 minutes only</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- ══ FLOW 5 — ZONE 3 CAFÉ PASS ══ -->
+  <div class="flow-card">
+    <div class="flow-header">
+      <div class="flow-num-badge" style="background:var(--green)">5</div>
+      <div>
+        <div class="flow-title">Zone 3 Access Confirmation (Post SBT Gate Payment)</div>
+        <div class="flow-meta">
+          <span class="fmeta fm-platform">Interakt</span>
+          <span class="fmeta fm-trigger">Razorpay payment webhook after SBT Gate upgrade payment confirmed</span>
+          <span class="fmeta fm-auto">Fully Automated — triggered by payment</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-body">
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-title">🇬🇧 English — Sent to visitor</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🕉️ <strong>Your GEV Café Access Pass</strong><br/><br/>Your Zone 3 pass has been activated! 🎉<br/><br/>✅ Café: <strong>{{cafe_name}}</strong><br/>🕐 Valid: <strong>{{valid_from}}</strong> to <strong>{{valid_until}}</strong> (3 hours)<br/>📍 Location: {{directions}}<br/><br/>📱 Show this QR at the SBT Gate and at the café entrance.<br/><br/>🙏 Hare Krishna! Enjoy your prasad.</div>
+              <div class="time">+ QR code for Zone 3 access</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">🇮🇳 Hindi — आगंतुक को भेजा जाएगा</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🕉️ <strong>आपका GEV कैफे एक्सेस पास</strong><br/><br/>आपका क्षेत्र 3 पास सक्रिय हो गया है! 🎉<br/><br/>✅ कैफे: <strong>{{cafe_name}}</strong><br/>🕐 वैध: <strong>{{valid_from}}</strong> से <strong>{{valid_until}}</strong> तक (3 घंटे)<br/>📍 स्थान: {{directions}}<br/><br/>📱 SBT गेट पर और कैफे प्रवेश पर यह QR दिखाएं।<br/><br/>🙏 हरे कृष्ण! प्रसाद का आनंद लें।</div>
+              <div class="time">+ क्षेत्र 3 एक्सेस QR कोड</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="config-box">
+        <div class="config-title">⚙️ Interakt Configuration</div>
+        <div class="config-grid">
+          <div class="config-item"><div class="config-label">Flow Name</div><div class="config-value">gev_zone3_cafe_pass</div></div>
+          <div class="config-item"><div class="config-label">Trigger</div><div class="config-value">Razorpay webhook → POST /api/payments/zone3-upgrade-confirmed → Interakt send</div></div>
+          <div class="config-item"><div class="config-label">Variables</div><div class="config-value">{{cafe_name}}, {{valid_from}}, {{valid_until}}, {{directions}}</div></div>
+          <div class="config-item"><div class="config-label">DB Write</div><div class="config-value">INSERT temp_access_passes (zone=3, valid 3hrs)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- ══ FLOW 6 — VENDOR DAY PASS ══ -->
+  <div class="flow-card">
+    <div class="flow-header">
+      <div class="flow-num-badge" style="background:var(--blue)">6</div>
+      <div>
+        <div class="flow-title">Vendor Day Pass</div>
+        <div class="flow-meta">
+          <span class="fmeta fm-platform">Interakt</span>
+          <span class="fmeta fm-trigger">Vendor sends "vendor" or "delivery" to GEV WhatsApp number</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-body">
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-title">🇬🇧 English</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🚚 <strong>GEV Vendor / Delivery Registration</strong><br/><br/>Please provide the following details:<br/><br/>1️⃣ Your full name<br/>2️⃣ Company / Organisation name<br/>3️⃣ Purpose of visit / delivery<br/>4️⃣ Department at GEV you are delivering to<br/>5️⃣ Vehicle number (if applicable)<br/><br/>Reply with all 5 details in one message.</div>
+            </div>
+            <div class="bubble-wrap user">
+              <div class="bubble user">Suresh Patil · ABC Plumbing · Pipe material delivery · Maintenance dept · MH04 AB 1234</div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ Details received! Your request has been sent to GEV admin for approval.<br/><br/>⏳ You will receive your day pass within 15–30 minutes.<br/><br/>Hare Krishna! 🙏</div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble system">[ Admin approves in portal ]</div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ <strong>Day Pass Approved!</strong><br/><br/>📱 Your GEV Vendor Day Pass is below.<br/>📅 Valid today only — until <strong>6:00 PM</strong><br/>🏢 Department: <strong>Maintenance</strong><br/>🚗 Vehicle: <strong>MH04 AB 1234</strong><br/><br/>Please show this QR at the Main Gate on arrival.<br/>🙏 Hare Krishna!</div>
+              <div class="time">+ QR pass image</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">🇮🇳 Hindi</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🚚 <strong>GEV विक्रेता / डिलीवरी पंजीकरण</strong><br/><br/>कृपया निम्नलिखित विवरण प्रदान करें:<br/><br/>1️⃣ आपका पूरा नाम<br/>2️⃣ कंपनी / संगठन का नाम<br/>3️⃣ यात्रा / डिलीवरी का उद्देश्य<br/>4️⃣ GEV में कौन से विभाग में डिलीवरी<br/>5️⃣ वाहन संख्या (यदि लागू हो)<br/><br/>एक संदेश में सभी 5 विवरण लिखें।</div>
+            </div>
+            <div class="bubble-wrap user">
+              <div class="bubble user">सुरेश पाटिल · ABC प्लंबिंग · पाइप सामग्री डिलीवरी · मेंटेनेंस विभाग · MH04 AB 1234</div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ विवरण प्राप्त! आपका अनुरोध GEV प्रशासन को भेज दिया गया है।<br/>⏳ 15–30 मिनट में आपका दिन पास मिलेगा।<br/><br/>हरे कृष्ण! 🙏</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="config-box">
+        <div class="config-title">⚙️ Interakt Configuration</div>
+        <div class="config-grid">
+          <div class="config-item"><div class="config-label">Flow Name</div><div class="config-value">gev_vendor_day_pass</div></div>
+          <div class="config-item"><div class="config-label">Admin Alert</div><div class="config-value">On submission → notify Front Desk / Prasad Panda P for approval</div></div>
+          <div class="config-item"><div class="config-label">QR Pass Type</div><div class="config-value">day_pass — zone1 only, valid until 18:00 today</div></div>
+          <div class="config-item"><div class="config-label">DB Write</div><div class="config-value">INSERT persons (vendor_supplier) + vehicles + temp_access_passes</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- ══ FLOW 6 — CONSTRUCTION / OUTSTATION WORKER QR PASS ══ -->
+  <div class="flow-card">
+    <div class="flow-header">
+      <div class="flow-num-badge" style="background:var(--blue)">7</div>
+      <div>
+        <div class="flow-title">Construction / Outstation Worker QR Pass — On HOD Approval</div>
+        <div class="flow-meta">
+          <span class="fmeta fm-platform">Interakt</span>
+          <span class="fmeta fm-trigger">Anandnimai P or Laxmanpran P approves workers in Admin Portal — sent to each approved person</span>
+          <span class="fmeta fm-auto">Automated on approval</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-body">
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-title">🇬🇧 English — Sent to each approved worker<br/><small style="color:var(--text3);font-weight:400">For: Construction labourers (contractor portal approval) + Outstation weekly labourers (manual HOD registration)</small></div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🕉️ <strong>Hare Krishna, {{worker_name}}!</strong><br/><br/>Your registration at <strong>Govardhan EcoVillage</strong> has been approved by <strong>{{hod_name}}</strong>.<br/><br/>📱 Your <strong>GEV Campus Pass</strong> is attached below. Save this QR code — you will need it every day to enter the campus.<br/><br/>📋 <strong>Your Details:</strong><br/>🏗️ Contractor: {{company_name}}<br/>🏕️ Camp: {{camp_location}}<br/>📅 Valid: {{start_date}} to {{end_date}}<br/>🍽️ Annakshetra B/D: {{meal_status}}<br/><br/>⚠️ <strong>Important Rules:</strong><br/>• Always carry your phone for QR scanning<br/>• Do not share your QR with others<br/>• Entry only during working hours: 7 AM – 7 PM<br/>• Respect campus rules and dress code<br/><br/>🙏 Hare Krishna! Welcome to GEV.</div>
+              <div class="time">+ QR pass image</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">🇮🇳 Hindi — प्रत्येक स्वीकृत कामगार को भेजा जाता है</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🕉️ <strong>हरे कृष्ण, {{worker_name}} जी!</strong><br/><br/><strong>गोवर्धन इकोविलेज</strong> में आपका पंजीकरण <strong>{{hod_name}}</strong> द्वारा स्वीकृत हो गया है।<br/><br/>📱 आपका <strong>GEV कैम्पस पास</strong> नीचे संलग्न है। इसे सेव करें — प्रतिदिन कैम्पस प्रवेश के लिए यह QR दिखाना होगा।<br/><br/>📋 <strong>आपका विवरण:</strong><br/>🏗️ ठेकेदार: {{company_name}}<br/>🏕️ कैम्प: {{camp_location}}<br/>📅 वैध: {{start_date}} से {{end_date}} तक<br/>🍽️ अन्नक्षेत्र B/D: {{meal_status}}<br/><br/>⚠️ <strong>महत्वपूर्ण नियम:</strong><br/>• QR स्कैनिंग के लिए हमेशा फोन साथ रखें<br/>• अपना QR दूसरों के साथ साझा न करें<br/>• कार्य समय में ही प्रवेश: सुबह 7 – शाम 7 बजे<br/><br/>🙏 हरे कृष्ण! GEV में आपका स्वागत है।</div>
+              <div class="time">+ QR पास की छवि</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="config-box">
+        <div class="config-title">⚙️ Interakt Configuration</div>
+        <div class="config-grid">
+          <div class="config-item"><div class="config-label">Flow Name</div><div class="config-value">gev_worker_qr_pass</div></div>
+          <div class="config-item"><div class="config-label">Trigger</div><div class="config-value">Admin portal → POST /api/workers/approve → Interakt sends message</div></div>
+          <div class="config-item"><div class="config-label">Variables</div><div class="config-value">{{worker_name}}, {{company_name}}, {{hod_name}}, {{camp_location}}, {{start_date}}, {{end_date}}, {{meal_status}}</div></div>
+          <div class="config-item"><div class="config-label">Meal Status Text</div><div class="config-value">Camp A: "Registered ✅ (Breakfast + Dinner — Free Welfare)" · Camp B: "Not registered (can opt in)"</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- ══ FLOW 8 — ANNAKSHETRA B/D REGISTRATION ══ -->
+  <div class="flow-card">
+    <div class="flow-header">
+      <div class="flow-num-badge" style="background:var(--purple)">8</div>
+      <div>
+        <div class="flow-title">Annakshetra Breakfast / Dinner Registration</div>
+        <div class="flow-meta">
+          <span class="fmeta fm-platform">Interakt</span>
+          <span class="fmeta fm-trigger">Eligible person sends "meals" or "annakshetra" to GEV number</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-body">
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-title">🇬🇧 English</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🍽️ <strong>Annakshetra Meal Registration</strong><br/><br/>Which meal(s) would you like to register for?<br/><br/>
+                <span class="quick-reply">1. Breakfast (7:15–8:15 AM)</span>
+                <span class="quick-reply">2. Dinner (6:30–7:15 PM)</span>
+                <span class="quick-reply">3. Both Breakfast + Dinner</span>
+              </div>
+            </div>
+            <div class="bubble-wrap user"><div class="bubble user">3. Both Breakfast + Dinner</div></div>
+            <div class="bubble-wrap bot">
+              <div class="bubble system">[ System checks: Is this person eligible? — resident staff / volunteer / construction labourer ]</div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ <strong>Meal Registration Confirmed!</strong><br/><br/>🌅 <strong>Breakfast</strong> — 7:15 AM to 8:15 AM<br/>🌙 <strong>Dinner</strong> — 6:30 PM to 7:15 PM<br/>📍 Annakshetra, Lalita Bhavan<br/><br/>💰 Payment: <strong>Salary Deduction</strong> (monthly, via Greythr)<br/><br/>📱 Your existing campus QR is now updated for Annakshetra access. Just scan at the Annakshetra counter each meal.<br/><br/>🙏 Hare Krishna!</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">🇮🇳 Hindi</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🍽️ <strong>अन्नक्षेत्र भोजन पंजीकरण</strong><br/><br/>आप किस भोजन के लिए पंजीकरण करना चाहते हैं?<br/><br/>
+                <span class="quick-reply">1. नाश्ता (7:15–8:15 AM)</span>
+                <span class="quick-reply">2. रात्रि भोजन (6:30–7:15 PM)</span>
+                <span class="quick-reply">3. नाश्ता + रात्रि भोजन दोनों</span>
+              </div>
+            </div>
+            <div class="bubble-wrap user"><div class="bubble user">3. दोनों</div></div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ <strong>भोजन पंजीकरण की पुष्टि!</strong><br/><br/>🌅 <strong>नाश्ता</strong> — सुबह 7:15 से 8:15 बजे<br/>🌙 <strong>रात्रि भोजन</strong> — शाम 6:30 से 7:15 बजे<br/>📍 अन्नक्षेत्र, ललिता भवन<br/><br/>💰 भुगतान: <strong>वेतन कटौती</strong> (मासिक, Greythr के माध्यम से)<br/><br/>📱 अन्नक्षेत्र काउंटर पर अपना मौजूदा कैम्पस QR स्कैन करें।<br/><br/>🙏 हरे कृष्ण!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="config-box">
+        <div class="config-title">⚙️ Interakt Configuration</div>
+        <div class="config-grid">
+          <div class="config-item"><div class="config-label">Flow Name</div><div class="config-value">gev_annakshetra_registration</div></div>
+          <div class="config-item"><div class="config-label">Eligibility Check</div><div class="config-value">GET /api/persons/{mobile}/eligibility → returns person_type + allowed meals</div></div>
+          <div class="config-item"><div class="config-label">Not Eligible Response</div><div class="config-value">"Sorry, Annakshetra B/D is available for GEV staff, volunteers, and registered labourers only. Free Lunch is available 12:45–2:30 PM for all visitors!"</div></div>
+          <div class="config-item"><div class="config-label">DB Write</div><div class="config-value">INSERT meal_registrations (meal_type, payment_method, valid_from)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- ══ FLOW 9 — NIGHTLY MEAL FORECAST ══ -->
+  <div class="flow-card">
+    <div class="flow-header">
+      <div class="flow-num-badge" style="background:var(--purple)">9</div>
+      <div>
+        <div class="flow-title">Nightly Meal Forecast Report</div>
+        <div class="flow-meta">
+          <span class="fmeta fm-platform">Interakt</span>
+          <span class="fmeta fm-trigger">Daily 9:00 PM — auto-generated and sent</span>
+          <span class="fmeta fm-auto">Fully Automated</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-body">
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-title">🇬🇧 English — Sent to Anand Prem P + Hari Guru P</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🍲 <strong>GEV Meal Forecast — {{tomorrow_date}}</strong><br/><br/>📊 <strong>Annakshetra B/D — Exact count by category</strong><br/>🌅 Breakfast:<br/>&nbsp;&nbsp;👔 Payroll Staff: {{staff_b_count}} | 🤲 Volunteers: {{vol_b_count}}<br/>&nbsp;&nbsp;👷 Labourers Camp A: {{labourer_b_count}} | 📚 Students: {{student_b_count}}<br/>&nbsp;&nbsp;<strong>Total B: {{breakfast_total}}</strong><br/>🌙 Dinner:<br/>&nbsp;&nbsp;👔 Staff: {{staff_d_count}} | 🤲 Volunteers: {{vol_d_count}}<br/>&nbsp;&nbsp;👷 Labourers: {{labourer_d_count}} | 📚 Students: {{student_d_count}}<br/>&nbsp;&nbsp;<strong>Total D: {{dinner_total}}</strong><br/><br/>📊 <strong>Free Meals (Estimated)</strong><br/>🌿 Khichadi AM: ~<strong>{{khichadi_am_est}}</strong><br/>☀️ Free Lunch: ~<strong>{{free_lunch_est}}</strong><br/>🌿 Khichadi PM: ~<strong>{{khichadi_pm_est}}</strong><br/><br/>📊 <strong>Ashram Kitchen (Fixed)</strong><br/>🕉️ Brahmacharis: <strong>{{brahmachari_count}}</strong><br/>🙏 Varishtha Vaishnavas: <strong>{{vv_count}}</strong><br/><br/>🏨 Confirmed guests (eZee): <strong>{{guest_count}}</strong><br/>📚 Course students: <strong>{{student_count}}</strong><br/><br/>{{festival_note}}<br/><br/>🙏 Hare Krishna! Please plan accordingly.</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">📋 Variables Reference</div>
+          <div style="font-family:'DM Mono',monospace;font-size:11px;line-height:1.8;color:var(--text2)">
+            {{tomorrow_date}} → "Wed, 25 Apr 2026"<br/>
+            {{breakfast_count}} → meal_registrations COUNT<br/>
+            {{dinner_count}} → meal_registrations COUNT<br/>
+            {{khichadi_am_est}} → historical 7-day avg<br/>
+            {{free_lunch_est}} → confirmed guests + students + historical walk-in avg<br/>
+            {{khichadi_pm_est}} → historical 7-day avg<br/>
+            {{brahmachari_count}} → ashram_kitchen_counts latest<br/>
+            {{vv_count}} → ashram_kitchen_counts latest<br/>
+            {{guest_count}} → eZee confirmed bookings<br/>
+            {{student_count}} → active course students<br/>
+            {{festival_note}} → if festival tomorrow: "⚠️ FESTIVAL DAY — multiply estimates by 3x"
+          </div>
+          <div style="margin-top:12px;padding:10px;background:var(--green-bg);border-radius:7px;font-size:12px;color:var(--green)">
+            <strong>Recipients:</strong><br/>
+            • Anand Prem P (Annakshetra HOD)<br/>
+            • Hari Guru P (Kitchen HOD)<br/>
+            • Ram Prabhu (copy for records)
+          </div>
+        </div>
+      </div>
+      <div class="config-box">
+        <div class="config-title">⚙️ Interakt Configuration</div>
+        <div class="config-grid">
+          <div class="config-item"><div class="config-label">Flow Name</div><div class="config-value">gev_meal_forecast_nightly</div></div>
+          <div class="config-item"><div class="config-label">Schedule</div><div class="config-value">Daily 21:00 IST — CRON: 0 21 * * *</div></div>
+          <div class="config-item"><div class="config-label">Data Source</div><div class="config-value">GET /api/reports/meal-forecast?date=tomorrow</div></div>
+          <div class="config-item"><div class="config-label">DB Write</div><div class="config-value">INSERT meal_forecasts (forecast_date, all_counts, festival_flag)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- ══ FLOW 10 — FESTIVAL PRE-REGISTRATION ══ -->
+  <div class="flow-card">
+    <div class="flow-header">
+      <div class="flow-num-badge" style="background:var(--teal)">10</div>
+      <div>
+        <div class="flow-title">Festival Pre-Registration</div>
+        <div class="flow-meta">
+          <span class="fmeta fm-platform">Interakt</span>
+          <span class="fmeta fm-trigger">Opens 7 days before each festival — broadcast to existing visitors + public link</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-body">
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-title">🇬🇧 English</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🎉 <strong>{{festival_name}} at Govardhan EcoVillage</strong><br/>📅 <strong>{{festival_date}}</strong><br/><br/>We warmly invite you to join us for this auspicious celebration!<br/><br/>Pre-register now to receive your festival QR pass and skip the queue.<br/><br/>Please share:<br/>1️⃣ Your full name<br/>2️⃣ Number of persons in your group</div>
+            </div>
+            <div class="bubble-wrap user"><div class="bubble user">Ramesh Sharma, 4 persons</div></div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ <strong>Pre-Registration Confirmed!</strong><br/><br/>🎉 {{festival_name}} · {{festival_date}}<br/>👥 4 persons registered<br/><br/>📱 Your festival QR passes are attached (4 separate codes — one per person).<br/><br/>🕐 Suggested arrival: Before 9:00 AM for smooth entry.<br/>🚗 Parking: Festival parking area — follow GEV signage.<br/>🍽️ Free prasad available throughout the day.<br/><br/>🙏 Hare Krishna! May this festival bring joy and blessings.</div>
+              <div class="time">+ 4 festival QR pass images</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">🇮🇳 Hindi</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🎉 <strong>गोवर्धन इकोविलेज में {{festival_name}}</strong><br/>📅 <strong>{{festival_date}}</strong><br/><br/>हम आपको इस शुभ उत्सव में आमंत्रित करते हैं!<br/><br/>अभी पूर्व-पंजीकरण करें और अपना उत्सव QR पास पाएं।<br/><br/>कृपया बताएं:<br/>1️⃣ आपका पूरा नाम<br/>2️⃣ आपके समूह में व्यक्तियों की संख्या</div>
+            </div>
+            <div class="bubble-wrap user"><div class="bubble user">रमेश शर्मा, 4 व्यक्ति</div></div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">✅ <strong>पूर्व-पंजीकरण की पुष्टि!</strong><br/><br/>🎉 {{festival_name}} · {{festival_date}}<br/>👥 4 व्यक्ति पंजीकृत<br/><br/>📱 आपके उत्सव QR पास संलग्न हैं (4 अलग-अलग कोड)।<br/><br/>🕐 सुझाया गया आगमन: सुबह 9:00 बजे से पहले।<br/>🍽️ पूरे दिन मुफ्त प्रसाद उपलब्ध।<br/><br/>🙏 हरे कृष्ण! यह उत्सव आनंद और आशीर्वाद लाए।</div>
+              <div class="time">+ 4 उत्सव QR पास</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="config-box">
+        <div class="config-title">⚙️ Interakt Configuration</div>
+        <div class="config-grid">
+          <div class="config-item"><div class="config-label">Flow Name</div><div class="config-value">gev_festival_prereg</div></div>
+          <div class="config-item"><div class="config-label">Auto-Open</div><div class="config-value">7 days before festival_date in festival_events table → broadcast message to all known contacts</div></div>
+          <div class="config-item"><div class="config-label">QR Pass Type</div><div class="config-value">festival_pass — valid on festival_date only — zone1+2+3</div></div>
+          <div class="config-item"><div class="config-label">Group Limit</div><div class="config-value">Max 10 persons per registration; above 10 → direct to front desk</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- ══ FLOW 11 — VIP ARRIVAL ALERT ══ -->
+  <div class="flow-card">
+    <div class="flow-header">
+      <div class="flow-num-badge" style="background:var(--teal)">11</div>
+      <div>
+        <div class="flow-title">VIP Arrival Alert</div>
+        <div class="flow-meta">
+          <span class="fmeta fm-platform">Interakt</span>
+          <span class="fmeta fm-trigger">VIP QR scanned at Main Gate — instant alert sent</span>
+          <span class="fmeta fm-auto">Automated on gate scan</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-body">
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-title">🇬🇧 English — Sent to receiving team</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🙏 <strong>VIP ARRIVAL ALERT</strong><br/><br/><strong>{{vip_name}}</strong> has just entered at Main Gate.<br/><br/>📋 Title / Organisation: {{vip_title}}<br/>🕐 Arrival time: {{arrival_time}}<br/>👥 Group size: {{group_size}}<br/>🏠 Accommodation: {{accommodation}}<br/><br/>Please proceed to the Main Gate reception to welcome them.<br/><br/>🙏 Hare Krishna!</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;padding:10px;background:var(--saffron-bg);border-radius:7px;font-size:12px">
+            <strong style="color:var(--saffron)">Recipients:</strong><br/>
+            <span style="color:var(--text2)">• Audaryacaitanya P (VIP protocol)<br/>• Jaduthakur P (VIP reception)<br/>• Ram Prabhu (for record)<br/>• Relevant HOD if visit is dept-specific</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">⚙️ Configuration Notes</div>
+          <div style="font-size:12.5px;color:var(--text2);line-height:1.7">
+            <div style="margin-bottom:10px"><strong style="color:var(--text)">Trigger:</strong><br/>Gate scan result where person_type = 'vip_dignitary' → system immediately calls Interakt API to send alert</div>
+            <div style="margin-bottom:10px"><strong style="color:var(--text)">Speed requirement:</strong><br/>Alert must reach recipients within 30 seconds of gate scan. Use Interakt's high-priority message queue.</div>
+            <div style="margin-bottom:10px"><strong style="color:var(--text)">Fallback:</strong><br/>If WhatsApp delivery fails → system sends SMS via MSG91 to same recipients</div>
+            <div><strong style="color:var(--text)">VIP QR pass:</strong><br/>Issued manually by Ram Prabhu or Prasad Panda P in admin portal. Zone access: all 4 zones.</div>
+          </div>
+        </div>
+      </div>
+      <div class="webhook-box">
+        <div class="webhook-title">Webhook — Gate Scan → VIP Alert Trigger</div>
+        <div class="webhook-code"><span class="wc-cmt">// When gate_events INSERT detects vip_dignitary person_type</span>
+<span class="wc-cmt">// ICMS calls: POST https://api.interakt.ai/v1/public/message/</span>
+{
+  <span class="wc-key">"countryCode"</span>: <span class="wc-str">"+91"</span>,
+  <span class="wc-key">"phoneNumber"</span>: <span class="wc-str">"AUDARYACAITANYA_MOBILE"</span>,
+  <span class="wc-key">"type"</span>: <span class="wc-str">"Template"</span>,
+  <span class="wc-key">"template"</span>: {
+    <span class="wc-key">"name"</span>: <span class="wc-str">"gev_vip_arrival_alert"</span>,
+    <span class="wc-key">"languageCode"</span>: <span class="wc-str">"en"</span>,
+    <span class="wc-key">"bodyValues"</span>: [<span class="wc-str">"{{vip_name}}"</span>, <span class="wc-str">"{{vip_title}}"</span>, <span class="wc-str">"{{arrival_time}}"</span>]
+  }
+}</div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- ══ FLOW 12 — DEPARTURE FEEDBACK ══ -->
+  <div class="flow-card">
+    <div class="flow-header">
+      <div class="flow-num-badge" style="background:var(--teal)">12</div>
+      <div>
+        <div class="flow-title">Departure Feedback</div>
+        <div class="flow-meta">
+          <span class="fmeta fm-platform">Interakt</span>
+          <span class="fmeta fm-trigger">Exit gate scan OR key return logged at reception</span>
+          <span class="fmeta fm-auto">Automated on departure</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-body">
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-title">🇬🇧 English</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🙏 <strong>Thank you for visiting Govardhan EcoVillage, {{name}}!</strong><br/><br/>We hope your visit was spiritually nourishing and joyful.<br/><br/>⭐ How would you rate your overall experience?<br/><br/>
+                <span class="quick-reply">⭐⭐⭐⭐⭐ Excellent</span>
+                <span class="quick-reply">⭐⭐⭐⭐ Very Good</span>
+                <span class="quick-reply">⭐⭐⭐ Good</span>
+                <span class="quick-reply">⭐⭐ Could be better</span>
+              </div>
+            </div>
+            <div class="bubble-wrap user"><div class="bubble user">⭐⭐⭐⭐⭐ Excellent</div></div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">Thank you! 🙏 Would you like to share any specific feedback or suggestions? (Reply with your thoughts or type *skip*)</div>
+            </div>
+            <div class="bubble-wrap user"><div class="bubble user">The goshala tour was amazing. The guide was very knowledgeable!</div></div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🕉️ <strong>Thank you for your kind words!</strong><br/><br/>Your feedback has been shared with our team. 🙏<br/><br/>We look forward to welcoming you back to Govardhan EcoVillage.<br/><br/><em>Hare Krishna! May Lord Krishna's blessings be always with you.</em></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">🇮🇳 Hindi</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🙏 <strong>गोवर्धन इकोविलेज आने के लिए धन्यवाद, {{name}} जी!</strong><br/><br/>हमें आशा है कि आपकी यात्रा आध्यात्मिक रूप से समृद्ध और आनंदमय रही।<br/><br/>⭐ आप अपने समग्र अनुभव को कैसे रेट करेंगे?<br/><br/>
+                <span class="quick-reply">⭐⭐⭐⭐⭐ उत्कृष्ट</span>
+                <span class="quick-reply">⭐⭐⭐⭐ बहुत अच्छा</span>
+                <span class="quick-reply">⭐⭐⭐ अच्छा</span>
+                <span class="quick-reply">⭐⭐ बेहतर हो सकता था</span>
+              </div>
+            </div>
+            <div class="bubble-wrap user"><div class="bubble user">⭐⭐⭐⭐⭐ उत्कृष्ट</div></div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">धन्यवाद! 🙏 क्या आप कोई विशेष प्रतिक्रिया या सुझाव साझा करना चाहेंगे? (अपने विचार लिखें या *skip* टाइप करें)</div>
+            </div>
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🕉️ <strong>आपके शब्दों के लिए धन्यवाद!</strong><br/><br/>आपकी प्रतिक्रिया हमारी टीम के साथ साझा की गई है। 🙏<br/><br/>हम आपको पुनः गोवर्धन इकोविलेज में आमंत्रित करते हैं।<br/><br/><em>हरे कृष्ण! भगवान कृष्ण की कृपा सदा आप पर बनी रहे।</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="config-box">
+        <div class="config-title">⚙️ Interakt Configuration</div>
+        <div class="config-grid">
+          <div class="config-item"><div class="config-label">Flow Name</div><div class="config-value">gev_departure_feedback</div></div>
+          <div class="config-item"><div class="config-label">Trigger</div><div class="config-value">Exit gate scan OR key return in admin portal → POST /api/feedback/trigger</div></div>
+          <div class="config-item"><div class="config-label">Send Delay</div><div class="config-value">30 minutes after departure (gives visitor time to travel)</div></div>
+          <div class="config-item"><div class="config-label">DB Write</div><div class="config-value">INSERT feedback (overall_rating, comment, source='whatsapp')</div></div>
+          <div class="config-item"><div class="config-label">Eligible Types</div><div class="config-value">room_guest, paid_day_visitor, course_student, volunteer_seva — NOT construction labourers or vendors</div></div>
+          <div class="config-item"><div class="config-label">Skip Option</div><div class="config-value">"skip" response → INSERT feedback (no rating) + close conversation</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- ══ FLOW 13 — MANYCHAT GENERAL ENQUIRIES ══ -->
+  <div class="flow-card">
+    <div class="flow-header">
+      <div class="flow-num-badge" style="background:var(--purple)">13</div>
+      <div>
+        <div class="flow-title">General Enquiries & Social Media (ManyChat)</div>
+        <div class="flow-meta">
+          <span class="fmeta" style="background:#6B21A8;color:white">ManyChat Pro</span>
+          <span class="fmeta fm-trigger">Website chatbot / Instagram DM / Facebook Messenger</span>
+          <span class="fmeta fm-manual">Visitor-initiated</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-body">
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-title">🌐 Website Chatbot — Main Menu</div>
+          <div class="chat">
+            <div class="bubble-wrap bot">
+              <div class="bubble bot">🕉️ <strong>Hare Krishna! Welcome to Govardhan EcoVillage</strong><br/><br/>How can I help you today?<br/><br/>
+                <span class="quick-reply">🏨 Room Bookings</span>
+                <span class="quick-reply">🧘 Yoga & Wellness</span>
+                <span class="quick-reply">🌿 Sustainability</span>
+                <span class="quick-reply">📅 Visit GEV</span>
+                <span class="quick-reply">📍 How to Reach</span>
+                <span class="quick-reply">💼 Corporate Events</span>
+                <span class="quick-reply">📞 Contact Us</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">📋 ManyChat Configuration Notes</div>
+          <div style="font-size:12.5px;color:var(--text2);line-height:1.8">
+            <strong style="color:var(--text)">Existing flows to retain:</strong><br/>
+            • Room booking enquiry → redirect to eZee booking link<br/>
+            • Yoga course enquiry → send course brochure PDF<br/>
+            • Sustainability enquiry → send GEV sustainability report<br/>
+            • Festival enquiry → redirect to Interakt flow 11<br/>
+            • Directions → static message with Google Maps link<br/>
+            • Corporate events → send to Mohan Vilas P email<br/><br/>
+            <strong style="color:var(--text)">What NOT to do in ManyChat:</strong><br/>
+            • Do not handle visitor registration (→ Interakt Flow 1)<br/>
+            • Do not issue QR passes (→ Interakt only)<br/>
+            • Do not handle contractor queries (→ Interakt Flow 6)<br/>
+            • Do not collect ID proof images (→ Interakt Flow 2)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /section -->
+
+<!-- INTERAKT SETUP CHECKLIST -->
+<div class="section">
+  <div class="sh"><div class="sn" style="background:var(--teal)">⚙️</div><h2>Interakt Account Setup Checklist</h2></div>
+  <div class="cb ok"><div class="ci">✅</div><div class="cbody"><strong>Complete this setup before going live</strong>These steps must be done by Ram Prabhu / IT team in the Interakt dashboard before any flows can be activated.</div></div>
+  <div class="tw"><table>
+    <thead><tr><th>#</th><th>Setup Task</th><th>Where</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Create Interakt account (Indian BSP)</td><td>app.interakt.ai</td><td>Choose India BSP plan — INR billing</td></tr>
+      <tr><td>2</td><td>Connect GEV WhatsApp Business number</td><td>Interakt → Settings → WhatsApp</td><td>Separate from ManyChat number if possible, else same number with routing rules</td></tr>
+      <tr><td>3</td><td>Submit all message templates for Meta approval</td><td>Interakt → Templates</td><td>Allow 24–48 hours for approval. Templates: gev_guest_welcome_v1, gev_worker_qr_pass, gev_vip_arrival_alert, gev_festival_invite</td></tr>
+      <tr><td>4</td><td>Configure webhook endpoint</td><td>Interakt → Settings → Webhooks</td><td>Point to: https://gev-icms.com/api/webhooks/interakt</td></tr>
+      <tr><td>5</td><td>Set up CRON jobs in ICMS</td><td>Server cron scheduler</td><td>21:00 → nightly meal forecast · festival: 7 days before event date</td></tr>
+      <tr><td>6</td><td>Add all contractor supervisor numbers</td><td>Interakt → Contacts</td><td>Tag each with: contractor_supervisor + company_name + registered_count</td></tr>
+      <tr><td>7</td><td>Add internal team numbers</td><td>Interakt → Contacts</td><td>Anand Prem P, Hari Guru P, Anandnimai P, Laxmanpran P, Premanjan P, Ram Prabhu</td></tr>
+      <tr><td>8</td><td>Configure Razorpay payment link</td><td>Razorpay dashboard + Interakt</td><td>For Flow 3 (paid day visit) — dynamic amount based on person count</td></tr>
+      <tr><td>9</td><td>Test all 13 flows in sandbox</td><td>Interakt → Test Mode</td><td>Test each flow end-to-end before going live</td></tr>
+      <tr><td>10</td><td>Train front desk and gate staff</td><td>On-site training</td><td>1-hour training session — show them what each automated message looks like</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+</div><!-- /container -->
+
+<div class="doc-footer">
+  <p>🕉️ &nbsp;<strong>Hare Krishna.</strong> &nbsp;GEV ICMS — WhatsApp Flows Configuration Guide v1.0</p>
+  <p style="margin-top:5px;">13 Interakt flows + 1 ManyChat flow · English + Hindi messages · Complete webhook specifications</p>
+  <p style="margin-top:4px;font-size:10px;opacity:0.4;">Govardhan EcoVillage – ISKCON GEV · April 2026 · Document for Developer Handover</p>
+</div>
+
+</body>
+</html>

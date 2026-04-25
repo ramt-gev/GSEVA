@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>GEV Annakshetra — Canteen Counter</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --bg:#0D1B12; --surface:#132018; --surface2:#1A2B20; --surface3:#213528;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.04);
+  --green:#22C55E; --green2:#16A34A; --green-bg:rgba(34,197,94,0.12); --green-border:rgba(34,197,94,0.25);
+  --saffron:#F5A623; --saffron2:#E8721A; --saffron-bg:rgba(245,166,35,0.12); --saffron-border:rgba(245,166,35,0.25);
+  --red:#EF4444; --red-bg:rgba(239,68,68,0.12); --red-border:rgba(239,68,68,0.25);
+  --blue:#60A5FA; --blue-bg:rgba(96,165,250,0.1); --blue-border:rgba(96,165,250,0.2);
+  --purple:#C084FC; --purple-bg:rgba(192,132,252,0.1);
+  --amber:#FCD34D; --amber-bg:rgba(252,211,77,0.1);
+  --text:rgba(255,255,255,0.92); --text2:rgba(255,255,255,0.55); --text3:rgba(255,255,255,0.28);
+  --font:'Poppins',sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { height:100%; overflow:hidden; background:var(--bg); }
+body { font-family:var(--font); color:var(--text); display:flex; flex-direction:column; }
+
+/* ── SCREENS ── */
+.screen { display:none; flex-direction:column; height:100%; animation:sc 0.2s ease; }
+.screen.active { display:flex; }
+@keyframes sc { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── LOGIN ── */
+.login-bg {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:28px; background:radial-gradient(ellipse at top, #1A3A20 0%, #0D1B12 70%);
+}
+.login-om { font-size:48px; margin-bottom:10px; filter:drop-shadow(0 0 20px rgba(34,197,94,0.3)); }
+.login-title { font-size:22px; font-weight:700; color:var(--text); margin-bottom:4px; text-align:center; }
+.login-sub { font-size:12px; color:var(--text2); margin-bottom:32px; text-align:center; letter-spacing:0.3px; }
+.login-card { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:24px; width:100%; max-width:340px; }
+.login-field { margin-bottom:16px; }
+.login-label { font-size:11px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:7px; display:block; }
+.login-input { width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:12px 15px; font-family:var(--font); font-size:14px; color:var(--text); outline:none; transition:border-color 0.2s; }
+.login-input:focus { border-color:var(--green); }
+.login-btn { width:100%; background:var(--green2); border:none; border-radius:12px; padding:14px; font-family:var(--font); font-size:15px; font-weight:700; color:white; cursor:pointer; margin-top:6px; transition:all 0.15s; }
+.login-btn:active { transform:scale(0.98); background:#15803D; }
+.login-hint { font-size:11px; color:var(--text3); text-align:center; margin-top:12px; }
+
+/* ── TOP BAR ── */
+.topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:10px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.tb-icon { font-size:18px; }
+.tb-title { font-size:14px; font-weight:700; color:var(--text); flex:1; }
+.tb-meal { font-size:11px; font-weight:600; padding:4px 11px; border-radius:20px; }
+.tb-time { font-size:11px; color:var(--text3); margin-left:4px; }
+.tb-btn { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-family:var(--font); font-size:11.5px; color:var(--text2); cursor:pointer; }
+.tb-btn:active { background:var(--surface3); }
+
+/* ── MEAL SELECTOR ── */
+.meal-selector { flex:1; overflow-y:auto; padding:16px; }
+.ms-title { font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.ms-sub { font-size:12px; color:var(--text2); margin-bottom:20px; }
+.ms-current { background:var(--green-bg); border:1px solid var(--green-border); border-radius:12px; padding:14px; margin-bottom:18px; display:flex; align-items:center; gap:12px; }
+.ms-current-icon { font-size:24px; }
+.ms-current-text { flex:1; }
+.ms-current-label { font-size:11px; color:var(--green); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+.ms-current-meal { font-size:16px; font-weight:700; color:var(--text); }
+.ms-current-time { font-size:12px; color:var(--text2); }
+.meal-slot-list { display:flex; flex-direction:column; gap:10px; }
+.meal-slot { background:var(--surface); border:1.5px solid var(--border); border-radius:14px; padding:14px 16px; cursor:pointer; display:flex; align-items:center; gap:12px; transition:all 0.18s; }
+.meal-slot:active { transform:scale(0.99); }
+.meal-slot.active-slot { border-color:var(--saffron); background:var(--saffron-bg); }
+.meal-slot.scan-only { border-left:3px solid var(--green); }
+.meal-slot.scan-tap { border-left:3px solid var(--blue); }
+.ms-icon { font-size:24px; flex-shrink:0; }
+.ms-body { flex:1; }
+.ms-name { font-size:14px; font-weight:700; color:var(--text); margin-bottom:2px; }
+.ms-time { font-size:11.5px; color:var(--text2); margin-bottom:5px; }
+.ms-badges { display:flex; gap:6px; flex-wrap:wrap; }
+.badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:8px; }
+.badge-scan { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
+.badge-tap { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-border); }
+.badge-free { background:rgba(255,255,255,0.06); color:var(--text3); }
+.badge-billing { background:var(--saffron-bg); color:var(--saffron); border:1px solid var(--saffron-border); }
+.badge-active { background:var(--saffron-bg); color:var(--saffron); }
+.ms-count { text-align:right; }
+.ms-count-num { font-size:22px; font-weight:800; color:var(--green); }
+.ms-count-label { font-size:10px; color:var(--text3); }
+.start-btn { width:100%; background:var(--green2); border:none; border-radius:13px; padding:16px; font-family:var(--font); font-size:16px; font-weight:700; color:white; cursor:pointer; margin-top:20px; }
+.start-btn:active { background:#15803D; transform:scale(0.98); }
+
+/* ── SCAN SCREEN ── */
+.scan-screen { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+.scan-body { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; gap:0; }
+.scan-window { width:200px; height:200px; border-radius:20px; border:2px solid var(--green); background:rgba(34,197,94,0.04); display:flex; align-items:center; justify-content:center; position:relative; margin-bottom:16px; }
+.scan-corner { position:absolute; width:24px; height:24px; border-color:var(--green); border-style:solid; }
+.sc-tl { top:-1px;left:-1px; border-width:3px 0 0 3px; border-radius:6px 0 0 0; }
+.sc-tr { top:-1px;right:-1px; border-width:3px 3px 0 0; border-radius:0 6px 0 0; }
+.sc-bl { bottom:-1px;left:-1px; border-width:0 0 3px 3px; border-radius:0 0 0 6px; }
+.sc-br { bottom:-1px;right:-1px; border-width:0 3px 3px 0; border-radius:0 0 6px 0; }
+.scan-line { position:absolute; width:80%; height:2px; background:linear-gradient(90deg,transparent,var(--green),transparent); animation:scanline 2s ease-in-out infinite; }
+@keyframes scanline { 0%,100%{top:20%} 50%{top:80%} }
+.scan-icon { font-size:36px; color:var(--green); opacity:0.4; }
+.scan-label { font-size:13px; color:var(--text2); margin-bottom:20px; }
+.demo-btn { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:10px 20px; font-family:var(--font); font-size:13px; color:var(--text2); cursor:pointer; transition:all 0.15s; }
+.demo-btn:active { background:var(--surface3); color:var(--text); }
+
+/* ── TAP COUNTER (for lunch/khichadi) ── */
+.tap-section { background:var(--surface); border-top:1px solid var(--border); padding:14px 18px; flex-shrink:0; }
+.tap-label { font-size:11px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; text-align:center; }
+.tap-row { display:flex; align-items:center; gap:12px; justify-content:center; }
+.tap-btn { width:56px; height:56px; border-radius:14px; border:none; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; cursor:pointer; transition:all 0.12s; flex-shrink:0; }
+.tap-plus { background:var(--blue); color:white; box-shadow:0 3px 12px rgba(96,165,250,0.35); }
+.tap-plus:active { transform:scale(0.93); background:#3B82F6; }
+.tap-minus { background:var(--surface2); color:var(--text2); }
+.tap-minus:active { transform:scale(0.93); }
+.tap-count-wrap { flex:1; text-align:center; }
+.tap-count { font-size:42px; font-weight:800; color:var(--blue); line-height:1; }
+.tap-count-sub { font-size:11px; color:var(--text3); margin-top:3px; }
+
+/* ── LIVE STATS BAR ── */
+.stats-bar { background:var(--surface2); border-top:1px solid var(--border); padding:10px 16px; display:flex; gap:0; flex-shrink:0; }
+.stat-item { flex:1; text-align:center; border-right:1px solid var(--border); }
+.stat-item:last-child { border-right:none; }
+.stat-num { font-size:20px; font-weight:800; line-height:1.1; }
+.stat-lbl { font-size:9.5px; color:var(--text3); margin-top:1px; font-weight:500; }
+.sn-g { color:var(--green); }
+.sn-s { color:var(--saffron); }
+.sn-b { color:var(--blue); }
+.sn-r { color:var(--red); }
+
+/* ── RESULT SCREENS ── */
+.result-overlay { display:none; position:fixed; inset:0; z-index:100; flex-direction:column; align-items:center; justify-content:center; padding:24px; animation:sc 0.18s ease; }
+.result-overlay.show { display:flex; }
+.result-card { width:100%; max-width:360px; border-radius:22px; padding:28px 24px; text-align:center; }
+.r-icon { font-size:60px; margin-bottom:14px; }
+.r-status { font-size:22px; font-weight:800; margin-bottom:6px; }
+.r-name { font-size:17px; font-weight:600; margin-bottom:4px; }
+.r-detail { font-size:12.5px; line-height:1.6; margin-bottom:16px; }
+.r-badge { font-size:11px; font-weight:700; padding:4px 13px; border-radius:20px; display:inline-block; margin-bottom:14px; }
+.r-dismiss { background:rgba(255,255,255,0.12); border:none; border-radius:11px; padding:12px 24px; font-family:var(--font); font-size:14px; font-weight:600; color:white; cursor:pointer; width:100%; }
+
+/* SERVED */
+.ro-served { background:linear-gradient(160deg,#0A2010,#0F2E16); border:1px solid var(--green-border); }
+.ro-served .r-status { color:var(--green); }
+.ro-served .r-detail { color:rgba(255,255,255,0.55); }
+.ro-served .r-badge { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
+
+/* ALREADY SERVED */
+.ro-already { background:linear-gradient(160deg,#1C1200,#2A1C00); border:1px solid var(--saffron-border); }
+.ro-already .r-status { color:var(--saffron); }
+.ro-already .r-detail { color:rgba(255,255,255,0.55); }
+.ro-already .r-badge { background:var(--saffron-bg); color:var(--saffron); border:1px solid var(--saffron-border); }
+
+/* NOT REGISTERED */
+.ro-denied { background:linear-gradient(160deg,#1A0808,#240C0C); border:1px solid var(--red-border); }
+.ro-denied .r-status { color:var(--red); }
+.ro-denied .r-detail { color:rgba(255,255,255,0.55); }
+.ro-denied .r-badge { background:var(--red-bg); color:var(--red); border:1px solid var(--red-border); }
+
+/* FREE MEAL */
+.ro-free { background:linear-gradient(160deg,#0A1020,#0D1828); border:1px solid var(--blue-border); }
+.ro-free .r-status { color:var(--blue); }
+.ro-free .r-detail { color:rgba(255,255,255,0.55); }
+.ro-free .r-badge { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-border); }
+
+/* ── DASHBOARD ── */
+.dashboard { flex:1; overflow-y:auto; padding:14px; }
+.dash-section { margin-bottom:18px; }
+.dash-title { font-size:12px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; display:flex; align-items:center; gap:7px; }
+.dash-title::after { content:''; flex:1; height:1px; background:var(--border); }
+.meal-stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+.meal-stat-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px; }
+.msc-name { font-size:11px; font-weight:600; color:var(--text2); margin-bottom:8px; }
+.msc-row { display:flex; justify-content:space-between; margin-bottom:5px; font-size:12px; }
+.msc-bar-wrap { background:rgba(255,255,255,0.06); border-radius:4px; height:5px; overflow:hidden; margin-top:6px; }
+.msc-bar { height:100%; border-radius:4px; transition:width 0.5s; }
+
+.person-list { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+.pl-head { background:var(--surface2); padding:10px 14px; display:grid; grid-template-columns:1fr auto auto; gap:10px; }
+.pl-head span { font-size:10px; font-weight:700; color:var(--text3); text-transform:uppercase; letter-spacing:0.4px; }
+.pl-row { padding:10px 14px; border-top:1px solid var(--border2); display:grid; grid-template-columns:1fr auto auto; gap:10px; align-items:center; transition:background 0.15s; }
+.pl-row:hover { background:var(--surface2); }
+.pl-name { font-size:13px; font-weight:600; color:var(--text); }
+.pl-type { font-size:10.5px; color:var(--text3); margin-top:1px; }
+.pl-dept { font-size:10.5px; }
+.pl-status { font-size:10.5px; font-weight:700; padding:3px 10px; border-radius:8px; white-space:nowrap; }
+.ps-yes { background:var(--green-bg); color:var(--green); }
+.ps-no { background:rgba(255,255,255,0.05); color:var(--text3); }
+.pl-time { font-size:10px; color:var(--text3); text-align:right; min-width:40px; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav { background:var(--surface); border-top:1px solid var(--border); display:flex; flex-shrink:0; }
+.bn-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:10px 6px; cursor:pointer; transition:all 0.15s; border:none; background:none; }
+.bn-item:active { background:rgba(255,255,255,0.04); }
+.bn-icon { font-size:20px; }
+.bn-lbl { font-size:9.5px; color:var(--text3); font-weight:500; font-family:var(--font); }
+.bn-item.active .bn-lbl { color:var(--green); }
+.bn-item.active .bn-icon { filter:drop-shadow(0 0 5px rgba(34,197,94,0.5)); }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:3px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════
+     S1: LOGIN
+═══════════════════════════════ -->
+<div class="screen active" id="s-login">
+  <div class="login-bg">
+    <div class="login-om">🕉️</div>
+    <div class="login-title">Annakshetra</div>
+    <div class="login-sub">Food Service Management · Lalita Bhavan</div>
+    <div class="login-card">
+      <div class="login-field">
+        <label class="login-label">Username</label>
+        <input class="login-input" id="l-user" type="text" placeholder="e.g. anandprem" value="anandprem"/>
+      </div>
+      <div class="login-field">
+        <label class="login-label">Password</label>
+        <input class="login-input" id="l-pass" type="password" placeholder="Password" value="gev123"/>
+      </div>
+      <button class="login-btn" onclick="doLogin()">🌿 Sign In</button>
+      <div class="login-hint">canteen1 / canteen2 · gev123</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     S2: MEAL SELECTOR
+═══════════════════════════════ -->
+<div class="screen" id="s-meals">
+  <div class="topbar">
+    <span class="tb-icon">🍲</span>
+    <span class="tb-title">Annakshetra — Select Meal</span>
+    <button class="tb-btn" onclick="doLogout()">Logout</button>
+  </div>
+  <div class="meal-selector">
+    <div class="ms-title" id="ms-greeting">Good morning 🙏</div>
+    <div class="ms-sub" id="ms-user-sub">Anandprem Prabhu · Canteen Manager</div>
+
+    <div class="ms-current" id="ms-current-box">
+      <div class="ms-current-icon">⏰</div>
+      <div class="ms-current-text">
+        <div class="ms-current-label">Suggested now</div>
+        <div class="ms-current-meal" id="ms-auto-meal">Breakfast</div>
+        <div class="ms-current-time" id="ms-auto-time">7:15 – 8:15 AM</div>
+      </div>
+    </div>
+
+    <div class="meal-slot-list">
+
+      <div class="meal-slot scan-only" id="slot-breakfast" onclick="selectMeal('breakfast','Breakfast','7:15–8:15 AM','scan_only','billing')">
+        <span class="ms-icon">🌅</span>
+        <div class="ms-body">
+          <div class="ms-name">Breakfast</div>
+          <div class="ms-time">7:15 AM – 8:15 AM</div>
+          <div class="ms-badges">
+            <span class="badge badge-scan">QR Scan only</span>
+            <span class="badge badge-billing">Billing-relevant</span>
+          </div>
+        </div>
+        <div class="ms-count">
+          <div class="ms-count-num" id="ct-breakfast">38</div>
+          <div class="ms-count-label">served today</div>
+        </div>
+      </div>
+
+      <div class="meal-slot scan-tap" id="slot-khichadi_am" onclick="selectMeal('khichadi_am','Khichadi AM','9:30 AM–12:30 PM','scan_tap','free')">
+        <span class="ms-icon">🌿</span>
+        <div class="ms-body">
+          <div class="ms-name">Khichadi (Morning)</div>
+          <div class="ms-time">9:30 AM – 12:30 PM</div>
+          <div class="ms-badges">
+            <span class="badge badge-scan">Scan primary</span>
+            <span class="badge badge-tap">+ Tap fallback</span>
+            <span class="badge badge-free">Free for all</span>
+          </div>
+        </div>
+        <div class="ms-count">
+          <div class="ms-count-num" id="ct-khichadi_am">189</div>
+          <div class="ms-count-label">today</div>
+        </div>
+      </div>
+
+      <div class="meal-slot scan-tap active-slot" id="slot-free_lunch" onclick="selectMeal('free_lunch','Free Lunch Prasad','12:45–2:30 PM','scan_tap','free')">
+        <span class="ms-icon">☀️</span>
+        <div class="ms-body">
+          <div class="ms-name">Free Lunch Prasad</div>
+          <div class="ms-time">12:45 PM – 2:30 PM</div>
+          <div class="ms-badges">
+            <span class="badge badge-scan">Scan primary</span>
+            <span class="badge badge-tap">+ Tap fallback</span>
+            <span class="badge badge-free">Free for all</span>
+            <span class="badge badge-active">● Active now</span>
+          </div>
+        </div>
+        <div class="ms-count">
+          <div class="ms-count-num" id="ct-free_lunch">247</div>
+          <div class="ms-count-label">today</div>
+        </div>
+      </div>
+
+      <div class="meal-slot scan-tap" id="slot-khichadi_pm" onclick="selectMeal('khichadi_pm','Khichadi PM','4:00–7:30 PM','scan_tap','free')">
+        <span class="ms-icon">🌿</span>
+        <div class="ms-body">
+          <div class="ms-name">Khichadi (Evening)</div>
+          <div class="ms-time">4:00 PM – 7:30 PM</div>
+          <div class="ms-badges">
+            <span class="badge badge-scan">Scan primary</span>
+            <span class="badge badge-tap">+ Tap fallback</span>
+            <span class="badge badge-free">Free for all</span>
+          </div>
+        </div>
+        <div class="ms-count">
+          <div class="ms-count-num" id="ct-khichadi_pm">123</div>
+          <div class="ms-count-label">today</div>
+        </div>
+      </div>
+
+      <div class="meal-slot scan-only" id="slot-dinner" onclick="selectMeal('dinner','Dinner','6:30–7:15 PM','scan_only','billing')">
+        <span class="ms-icon">🌙</span>
+        <div class="ms-body">
+          <div class="ms-name">Dinner</div>
+          <div class="ms-time">6:30 PM – 7:15 PM</div>
+          <div class="ms-badges">
+            <span class="badge badge-scan">QR Scan only</span>
+            <span class="badge badge-billing">Billing-relevant</span>
+          </div>
+        </div>
+        <div class="ms-count">
+          <div class="ms-count-num" id="ct-dinner">0</div>
+          <div class="ms-count-label">served today</div>
+        </div>
+      </div>
+
+    </div>
+    <button class="start-btn" id="start-meal-btn" onclick="startMealService()">
+      Start Free Lunch Prasad Counter →
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     S3: SCAN COUNTER
+═══════════════════════════════ -->
+<div class="screen" id="s-scan">
+  <div class="topbar">
+    <span class="tb-icon" id="scan-icon">☀️</span>
+    <div style="flex:1">
+      <div class="tb-title" id="scan-title">Free Lunch Prasad</div>
+      <div class="tb-time" id="scan-time">12:45 – 2:30 PM</div>
+    </div>
+    <span class="tb-meal sn-b" id="scan-badge" style="background:rgba(96,165,250,0.12);color:#60A5FA;border:1px solid rgba(96,165,250,0.2)">Scan + Tap</span>
+    <button class="tb-btn" style="margin-left:8px" onclick="showScreen('s-meals')">← Back</button>
+  </div>
+
+  <div class="scan-screen">
+    <div class="scan-body" id="scan-body-area">
+      <div class="scan-window">
+        <div class="scan-corner sc-tl"></div>
+        <div class="scan-corner sc-tr"></div>
+        <div class="scan-corner sc-bl"></div>
+        <div class="scan-corner sc-br"></div>
+        <div class="scan-line"></div>
+        <div class="scan-icon">📱</div>
+      </div>
+      <div class="scan-label" id="scan-label-text">Point camera at visitor QR code</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+        <button class="demo-btn" onclick="demoScan('served')">✅ Demo — Served</button>
+        <button class="demo-btn" onclick="demoScan('already')">♻️ Already Served</button>
+        <button class="demo-btn" onclick="demoScan('not_reg')">❌ Not Registered</button>
+        <button class="demo-btn" onclick="demoScan('free')">🌿 Free Visitor</button>
+      </div>
+    </div>
+
+    <!-- TAP COUNTER (shown for scan_tap meals) -->
+    <div class="tap-section" id="tap-section">
+      <div class="tap-label">No QR — Tap Counter (Fallback)</div>
+      <div class="tap-row">
+        <button class="tap-btn tap-minus" onclick="changeTap(-1)">−</button>
+        <div class="tap-count-wrap">
+          <div class="tap-count" id="tap-count">0</div>
+          <div class="tap-count-sub">no-QR visitors today</div>
+        </div>
+        <button class="tap-btn tap-plus" onclick="changeTap(1)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live stats bar -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num sn-g" id="lb-scanned">247</div>
+      <div class="stat-lbl">QR Scanned</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num sn-b" id="lb-tap">12</div>
+      <div class="stat-lbl">Tap (no QR)</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num sn-s" id="lb-total">259</div>
+      <div class="stat-lbl">Total Today</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num sn-r" id="lb-forecast">380</div>
+      <div class="stat-lbl">Forecast</div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="bn-item active" onclick="switchTab('scan')">
+      <span class="bn-icon">📷</span><span class="bn-lbl">Scan</span>
+    </button>
+    <button class="bn-item" onclick="switchTab('dashboard')">
+      <span class="bn-icon">📊</span><span class="bn-lbl">Dashboard</span>
+    </button>
+    <button class="bn-item" onclick="switchTab('list')">
+      <span class="bn-icon">📋</span><span class="bn-lbl">Today's List</span>
+    </button>
+    <button class="bn-item" onclick="showScreen('s-meals')">
+      <span class="bn-icon">🔄</span><span class="bn-lbl">Change Meal</span>
+    </button>
+  </div>
+</div>
+
+<!-- RESULT OVERLAYS -->
+<div class="result-overlay ro-served" id="ro-served">
+  <div class="result-card">
+    <div class="r-icon">✅</div>
+    <div class="r-status">PRASAD SERVED</div>
+    <div class="r-name" id="ro-s-name">Prasad Panda Prabhu</div>
+    <div class="r-badge" id="ro-s-type">Payroll Staff · IT Dept</div>
+    <div class="r-detail" id="ro-s-detail">Breakfast · Token recorded<br/>Billing: Salary deduction</div>
+    <button class="r-dismiss" onclick="dismissResult('ro-served')">✓ Next</button>
+  </div>
+</div>
+
+<div class="result-overlay ro-already" id="ro-already">
+  <div class="result-card">
+    <div class="r-icon">⚠️</div>
+    <div class="r-status">ALREADY SERVED</div>
+    <div class="r-name" id="ro-a-name">Anita Desai</div>
+    <div class="r-badge" id="ro-a-type">Volunteer · Yoga Dept</div>
+    <div class="r-detail" id="ro-a-detail">Breakfast served at 7:38 AM<br/>Cannot serve again for same meal</div>
+    <button class="r-dismiss" onclick="dismissResult('ro-already')">← Back</button>
+  </div>
+</div>
+
+<div class="result-overlay ro-denied" id="ro-denied">
+  <div class="result-card">
+    <div class="r-icon">❌</div>
+    <div class="r-status">NOT REGISTERED</div>
+    <div class="r-name" id="ro-d-name">Unknown Visitor</div>
+    <div class="r-badge" id="ro-d-type">Day Visitor</div>
+    <div class="r-detail" id="ro-d-detail">Not registered for Annakshetra B/D<br/>For Breakfast/Dinner only.<br/>Free Lunch is available to all — tap counter.</div>
+    <button class="r-dismiss" onclick="dismissResult('ro-denied')">← Back</button>
+  </div>
+</div>
+
+<div class="result-overlay ro-free" id="ro-free">
+  <div class="result-card">
+    <div class="r-icon">🌿</div>
+    <div class="r-status" id="ro-f-status">LUNCH RECORDED ✓</div>
+    <div class="r-name" id="ro-f-name">Vijay Patil</div>
+    <div class="r-badge" id="ro-f-type">Free Day Visitor · Group of 4</div>
+    <div class="r-detail" id="ro-f-detail">Free Prasad Lunch · Statistics recorded<br/>No billing — complimentary for all</div>
+    <button class="r-dismiss" onclick="dismissResult('ro-free')">✓ Next</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     DASHBOARD TAB
+═══════════════════════════════ -->
+<div id="tab-dashboard" style="display:none;flex:1;overflow-y:auto;padding:14px;background:var(--bg)">
+  <div class="dash-section">
+    <div class="dash-title">📊 Today's Meal Summary — 24 Apr 2026</div>
+    <div class="meal-stats-grid">
+      <div class="meal-stat-card">
+        <div class="msc-name">🌅 Breakfast (B/D Registered)</div>
+        <div class="msc-row"><span style="color:var(--text2)">Served</span><span style="color:var(--green);font-weight:700">38</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Registered</span><span style="color:var(--saffron)">41</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Absent</span><span style="color:var(--text3)">3</span></div>
+        <div class="msc-bar-wrap"><div class="msc-bar" style="width:93%;background:var(--green)"></div></div>
+      </div>
+      <div class="meal-stat-card">
+        <div class="msc-name">☀️ Free Lunch Prasad</div>
+        <div class="msc-row"><span style="color:var(--text2)">QR Scans</span><span style="color:var(--blue);font-weight:700">247</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Tap (no QR)</span><span style="color:var(--blue)">12</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Total</span><span style="color:var(--saffron);font-weight:700">259</span></div>
+        <div class="msc-bar-wrap"><div class="msc-bar" style="width:68%;background:var(--blue)"></div></div>
+      </div>
+      <div class="meal-stat-card">
+        <div class="msc-name">🌿 Khichadi AM</div>
+        <div class="msc-row"><span style="color:var(--text2)">QR Scans</span><span style="color:var(--blue);font-weight:700">180</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Tap</span><span style="color:var(--blue)">9</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Total</span><span style="color:var(--saffron);font-weight:700">189</span></div>
+        <div class="msc-bar-wrap"><div class="msc-bar" style="width:60%;background:var(--green2)"></div></div>
+      </div>
+      <div class="meal-stat-card">
+        <div class="msc-name">🌙 Dinner (B/D Registered)</div>
+        <div class="msc-row"><span style="color:var(--text2)">Served</span><span style="color:var(--text3);font-weight:700">0</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Registered</span><span style="color:var(--saffron)">43</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Starts at</span><span style="color:var(--text3)">6:30 PM</span></div>
+        <div class="msc-bar-wrap"><div class="msc-bar" style="width:0%;background:var(--green)"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-section">
+    <div class="dash-title">🍽️ Free Lunch — By Visitor Type</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+      <div style="padding:10px 14px;display:grid;grid-template-columns:1fr auto auto auto;gap:10px;background:var(--surface2)">
+        <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase">Type</span>
+        <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase">QR</span>
+        <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase">Tap</span>
+        <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase">Total</span>
+      </div>
+      <div style="padding:9px 14px;border-top:1px solid var(--border2);display:grid;grid-template-columns:1fr auto auto auto;gap:10px;font-size:12.5px">
+        <span>Payroll Staff</span><span class="sn-g" style="font-weight:600">52</span><span style="color:var(--text3)">0</span><span style="font-weight:700">52</span>
+      </div>
+      <div style="padding:9px 14px;border-top:1px solid var(--border2);display:grid;grid-template-columns:1fr auto auto auto;gap:10px;font-size:12.5px">
+        <span>Construction Labourers</span><span class="sn-g" style="font-weight:600">88</span><span style="color:var(--text3)">2</span><span style="font-weight:700">90</span>
+      </div>
+      <div style="padding:9px 14px;border-top:1px solid var(--border2);display:grid;grid-template-columns:1fr auto auto auto;gap:10px;font-size:12.5px">
+        <span>Day Visitors</span><span class="sn-g" style="font-weight:600">64</span><span style="color:var(--text3)">7</span><span style="font-weight:700">71</span>
+      </div>
+      <div style="padding:9px 14px;border-top:1px solid var(--border2);display:grid;grid-template-columns:1fr auto auto auto;gap:10px;font-size:12.5px">
+        <span>Room Guests</span><span class="sn-g" style="font-weight:600">18</span><span style="color:var(--text3)">0</span><span style="font-weight:700">18</span>
+      </div>
+      <div style="padding:9px 14px;border-top:1px solid var(--border2);display:grid;grid-template-columns:1fr auto auto auto;gap:10px;font-size:12.5px">
+        <span>Volunteers</span><span class="sn-g" style="font-weight:600">14</span><span style="color:var(--text3)">0</span><span style="font-weight:700">14</span>
+      </div>
+      <div style="padding:9px 14px;border-top:1px solid var(--border2);display:grid;grid-template-columns:1fr auto auto auto;gap:10px;font-size:12.5px;background:var(--surface2)">
+        <span style="font-weight:700">Total</span><span style="font-weight:700;color:var(--blue)">247</span><span style="font-weight:700;color:var(--blue)">12</span><span style="font-weight:800;color:var(--saffron)">259</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     TODAY'S LIST TAB
+═══════════════════════════════ -->
+<div id="tab-list" style="display:none;flex:1;overflow-y:auto;padding:14px;background:var(--bg)">
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:7px 12px;font-size:12px;color:var(--text2)">
+      Showing: <strong style="color:var(--text)" id="list-meal-title">Free Lunch</strong>
+    </div>
+    <div style="background:var(--green-bg);border:1px solid var(--green-border);border-radius:9px;padding:7px 12px;font-size:12px;color:var(--green)">
+      ✓ Served: <strong id="list-served-count">38</strong>
+    </div>
+    <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:9px;padding:7px 12px;font-size:12px;color:var(--text3)">
+      ⏳ Pending: <strong id="list-pending-count">3</strong>
+    </div>
+  </div>
+  <div class="person-list">
+    <div class="pl-head">
+      <span>Person</span><span>Dept</span><span>Status</span>
+    </div>
+    <div class="pl-row">
+      <div><div class="pl-name">Prasad Panda P</div><div class="pl-type">Payroll Staff</div></div>
+      <div class="pl-dept" style="color:var(--text2);font-size:11px">Front Desk</div>
+      <div><span class="pl-status ps-yes">✓ 7:22</span></div>
+    </div>
+    <div class="pl-row">
+      <div><div class="pl-name">Anita Desai</div><div class="pl-type">Volunteer</div></div>
+      <div class="pl-dept" style="color:var(--text2);font-size:11px">Yoga</div>
+      <div><span class="pl-status ps-yes">✓ 7:35</span></div>
+    </div>
+    <div class="pl-row">
+      <div><div class="pl-name">Ramesh Kumar</div><div class="pl-type">Construction Labourer</div></div>
+      <div class="pl-dept" style="color:var(--text2);font-size:11px">Sharma Const.</div>
+      <div><span class="pl-status ps-yes">✓ 7:18</span></div>
+    </div>
+    <div class="pl-row">
+      <div><div class="pl-name">Vikas Prabhu</div><div class="pl-type">Payroll Staff</div></div>
+      <div class="pl-dept" style="color:var(--text2);font-size:11px">Courses</div>
+      <div><span class="pl-status ps-no">⏳ Pending</span></div>
+    </div>
+    <div class="pl-row">
+      <div><div class="pl-name">Sunita Rao</div><div class="pl-type">Volunteer</div></div>
+      <div class="pl-dept" style="color:var(--text2);font-size:11px">Annakshetra</div>
+      <div><span class="pl-status ps-yes">✓ 7:41</span></div>
+    </div>
+    <div class="pl-row">
+      <div><div class="pl-name">Mohan Yadav</div><div class="pl-type">Construction Labourer</div></div>
+      <div class="pl-dept" style="color:var(--text2);font-size:11px">Sharma Const.</div>
+      <div><span class="pl-status ps-no">⏳ Pending</span></div>
+    </div>
+    <div class="pl-row">
+      <div><div class="pl-name">Balaji Govind P</div><div class="pl-type">Payroll Staff</div></div>
+      <div class="pl-dept" style="color:var(--text2);font-size:11px">Volunteering</div>
+      <div><span class="pl-status ps-no">⏳ Pending</span></div>
+    </div>
+    <div style="padding:10px 14px;font-size:11px;color:var(--text3);border-top:1px solid var(--border2);text-align:center">
+      + 34 more registered for this meal slot
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// GEV ANNAKSHETRA CANTEEN COUNTER — Logic
+// ═══════════════════════════════════════════
+
+const USERS = {
+  'anandprem': { pass:'gev123', name:'Anandprem Prabhu', role:'Canteen Manager' },
+  'canteen1':  { pass:'gev123', name:'Sevak Counter 1',  role:'Canteen Operator' },
+  'canteen2':  { pass:'gev123', name:'Sevak Counter 2',  role:'Canteen Operator' },
+};
+
+const state = {
+  user: null,
+  currentMeal: { id:'free_lunch', name:'Free Lunch Prasad', time:'12:45–2:30 PM', mode:'scan_tap', type:'free' },
+  counts: { breakfast:38, khichadi_am:189, free_lunch:259, khichadi_pm:123, dinner:0 },
+  tapCount: 12,
+  scanCount: 247,
+  activeTab: 'scan',
+};
+
+// ─── LOGIN ───
+function doLogin() {
+  const u = document.getElementById('l-user').value.trim().toLowerCase();
+  const p = document.getElementById('l-pass').value;
+  const user = USERS[u];
+  if (!user || user.pass !== p) { alert('Invalid credentials. Try:\nanandprem / gev123\ncanteen1 / gev123'); return; }
+  state.user = { ...user, username: u };
+  // Update greeting
+  const hr = new Date().getHours();
+  const greet = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('ms-greeting').textContent = greet + ' 🙏';
+  document.getElementById('ms-user-sub').textContent = user.name + ' · ' + user.role;
+  // Auto-suggest meal
+  suggestMeal();
+  showScreen('s-meals');
+}
+
+function doLogout() {
+  state.user = null;
+  showScreen('s-login');
+}
+
+// ─── AUTO SUGGEST MEAL ───
+function suggestMeal() {
+  const hr = new Date().getHours(), mn = new Date().getMinutes();
+  const t = hr * 60 + mn;
+  let meal, time;
+  if      (t < 7*60+15)   { meal='Khichadi AM'; time='9:30 AM–12:30 PM'; }
+  else if (t < 8*60+15)   { meal='Breakfast';   time='7:15–8:15 AM'; }
+  else if (t < 12*60+30)  { meal='Khichadi AM'; time='9:30 AM–12:30 PM'; }
+  else if (t < 14*60+30)  { meal='Free Lunch';  time='12:45–2:30 PM'; }
+  else if (t < 19*60+30)  { meal='Khichadi PM'; time='4:00–7:30 PM'; }
+  else if (t < 19*60+15)  { meal='Dinner';      time='6:30–7:15 PM'; }
+  else                    { meal='Free Lunch';  time='12:45–2:30 PM'; }
+  document.getElementById('ms-auto-meal').textContent = meal;
+  document.getElementById('ms-auto-time').textContent = time;
+  document.getElementById('start-meal-btn').textContent = 'Start ' + state.currentMeal.name + ' Counter →';
+}
+
+// ─── MEAL SELECTION ───
+function selectMeal(id, name, time, mode, type) {
+  state.currentMeal = { id, name, time, mode, type };
+  document.querySelectorAll('.meal-slot').forEach(s => s.classList.remove('active-slot'));
+  document.getElementById('slot-' + id).classList.add('active-slot');
+  document.getElementById('start-meal-btn').textContent = 'Start ' + name + ' Counter →';
+}
+
+function startMealService() {
+  const m = state.currentMeal;
+  // Update scan screen topbar
+  const icons = { breakfast:'🌅', khichadi_am:'🌿', free_lunch:'☀️', khichadi_pm:'🌿', dinner:'🌙' };
+  document.getElementById('scan-icon').textContent = icons[m.id] || '🍽️';
+  document.getElementById('scan-title').textContent = m.name;
+  document.getElementById('scan-time').textContent = m.time;
+  const badge = document.getElementById('scan-badge');
+  if (m.mode === 'scan_only') {
+    badge.textContent = 'Scan Only';
+    badge.style.cssText = 'background:rgba(34,197,94,0.12);color:#22C55E;border:1px solid rgba(34,197,94,0.2)';
+    document.getElementById('tap-section').style.display = 'none';
+    document.getElementById('scan-label-text').textContent = 'Scan registered person\'s QR code';
+  } else {
+    badge.textContent = 'Scan + Tap';
+    badge.style.cssText = 'background:rgba(96,165,250,0.12);color:#60A5FA;border:1px solid rgba(96,165,250,0.2)';
+    document.getElementById('tap-section').style.display = 'block';
+    document.getElementById('scan-label-text').textContent = 'Scan QR or use tap counter below';
+  }
+  // Update stats bar
+  updateStatsBar();
+  document.getElementById('list-meal-title').textContent = m.name;
+  switchTab('scan');
+  showScreen('s-scan');
+}
+
+// ─── STATS BAR ───
+function updateStatsBar() {
+  document.getElementById('lb-scanned').textContent = state.scanCount;
+  document.getElementById('lb-tap').textContent = state.tapCount;
+  document.getElementById('lb-total').textContent = state.scanCount + state.tapCount;
+  document.getElementById('lb-forecast').textContent = state.currentMeal.type === 'billing' ? '43 reg' : '380';
+}
+
+// ─── TAP COUNTER ───
+function changeTap(delta) {
+  state.tapCount = Math.max(0, state.tapCount + delta);
+  document.getElementById('tap-count').textContent = state.tapCount;
+  updateStatsBar();
+  // Flash animation
+  const el = document.getElementById('tap-count');
+  el.style.transform = 'scale(1.2)';
+  el.style.color = delta > 0 ? '#60A5FA' : '#EF4444';
+  setTimeout(() => { el.style.transform = ''; el.style.color = ''; }, 200);
+}
+
+// ─── DEMO SCANS ───
+const DEMO_PEOPLE = {
+  served: {
+    meals: {
+      breakfast: { name:'Prasad Panda Prabhu', type:'Payroll Staff · Front Desk', detail:'Breakfast · Token recorded\nBilling: Salary deduction ₹1,860/month' },
+      free_lunch: { name:'Vijay Patil', type:'Free Day Visitor · Group of 4', detail:'Free Lunch Prasad · Statistics recorded\nNo billing — complimentary for all' },
+      dinner: { name:'Balaji Govind Prabhu', type:'Payroll Staff · Volunteering', detail:'Dinner · Token recorded\nBilling: Salary deduction' },
+      khichadi_am: { name:'Ramesh Kumar', type:'Construction Labourer', detail:'Khichadi AM · Statistics recorded\nComplimentary welfare meal' },
+      khichadi_pm: { name:'Sunita Rao', type:'Volunteer · Annakshetra', detail:'Khichadi PM · Statistics recorded' },
+    }
+  }
+};
+
+function demoScan(type) {
+  const m = state.currentMeal.id;
+  if (type === 'served') {
+    const p = DEMO_PEOPLE.served.meals[m] || DEMO_PEOPLE.served.meals.free_lunch;
+    if (state.currentMeal.type === 'free' || state.currentMeal.id.includes('khichadi')) {
+      // Free meal — show free result
+      document.getElementById('ro-f-status').textContent =
+        m === 'free_lunch' ? 'LUNCH RECORDED ✓' :
+        m === 'khichadi_am' ? 'KHICHADI AM ✓' : 'KHICHADI PM ✓';
+      document.getElementById('ro-f-name').textContent = p.name;
+      document.getElementById('ro-f-type').textContent = p.type;
+      document.getElementById('ro-f-detail').textContent = p.detail;
+      showResult('ro-free');
+    } else {
+      // B/D — show served
+      const mealLabel = m === 'breakfast' ? 'BREAKFAST SERVED ✓' : 'DINNER SERVED ✓';
+      document.getElementById('ro-s-name').textContent = p.name;
+      document.getElementById('ro-s-type').textContent = p.type;
+      document.getElementById('ro-s-detail').textContent = p.detail;
+      showResult('ro-served');
+    }
+    state.scanCount++;
+    updateStatsBar();
+  } else if (type === 'already') {
+    showResult('ro-already');
+  } else if (type === 'not_reg') {
+    if (state.currentMeal.type === 'free') {
+      // For free meals, "not registered" doesn't exist — everyone can scan
+      // Show as free meal instead
+      document.getElementById('ro-f-status').textContent = 'LUNCH RECORDED ✓';
+      document.getElementById('ro-f-name').textContent = 'Walk-in Visitor';
+      document.getElementById('ro-f-type').textContent = 'Free Day Visitor';
+      document.getElementById('ro-f-detail').textContent = 'Free Lunch · Statistics recorded\nAll visitors welcome for free meals';
+      showResult('ro-free');
+      state.scanCount++;
+      updateStatsBar();
+    } else {
+      showResult('ro-denied');
+    }
+  } else if (type === 'free') {
+    document.getElementById('ro-f-status').textContent = 'LUNCH RECORDED ✓';
+    document.getElementById('ro-f-name').textContent = 'Meera Pillai';
+    document.getElementById('ro-f-type').textContent = 'Free Day Visitor · Solo';
+    document.getElementById('ro-f-detail').textContent = 'Free Prasad Lunch · Statistics recorded\nNo billing — complimentary for all';
+    showResult('ro-free');
+    state.scanCount++;
+    updateStatsBar();
+  }
+}
+
+// ─── RESULT DISPLAY ───
+let resultTimer = null;
+function showResult(id) {
+  document.querySelectorAll('.result-overlay').forEach(r => r.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+  if (resultTimer) clearTimeout(resultTimer);
+  resultTimer = setTimeout(() => dismissResult(id), 3000);
+}
+function dismissResult(id) {
+  document.getElementById(id).classList.remove('show');
+  if (resultTimer) clearTimeout(resultTimer);
+}
+
+// ─── TABS ───
+function switchTab(tab) {
+  state.activeTab = tab;
+  // Bottom nav
+  document.querySelectorAll('.bn-item').forEach((b,i) => {
+    b.classList.toggle('active', ['scan','dashboard','list'].indexOf(tab) === i);
+  });
+  // Show/hide panels within scan screen
+  const scanBody = document.getElementById('scan-body-area');
+  const tapSec   = document.getElementById('tap-section');
+  const statsBar = document.querySelector('.stats-bar');
+  const dashTab  = document.getElementById('tab-dashboard');
+  const listTab  = document.getElementById('tab-list');
+
+  scanBody.style.display = tab === 'scan' ? 'flex' : 'none';
+  tapSec.style.display = (tab === 'scan' && state.currentMeal.mode !== 'scan_only') ? 'block' : 'none';
+  statsBar.style.display = tab === 'scan' ? 'flex' : 'none';
+  dashTab.style.display = tab === 'dashboard' ? 'block' : 'none';
+  listTab.style.display = tab === 'list' ? 'block' : 'none';
+}
+
+// ─── SCREEN NAVIGATION ───
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// Init
+document.addEventListener('keydown', e => { if(e.key==='Escape') document.querySelectorAll('.result-overlay').forEach(r=>r.classList.remove('show')); });
+</script>
+</body>
+</html>

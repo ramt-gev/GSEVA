@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>GEV — Day Visit Registration</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --saffron:#D4631A; --saffron2:#E8853E; --saffron-bg:#FEF3EB; --saffron-border:#F5A855;
+  --green:#2A6044; --green-bg:#EAF4EE; --green-border:#A0D4B4;
+  --blue:#1A4F8A; --blue-bg:#EBF2FB;
+  --amber:#B06010; --amber-bg:#FDF4E7;
+  --red:#B33030; --red-bg:#FBECEC;
+  --dark:#1A1827; --surface:#FFFFFF;
+  --bg:#F5F0E8; --border:#E0D5C5; --border2:#EDE6DA;
+  --text:#1C1917; --text2:#57534E; --text3:#A8A29E;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:14px; }
+
+/* ── HEADER ── */
+.header { background:var(--dark); padding:20px 20px 16px; text-align:center; position:relative; overflow:hidden; }
+.header::before { content:'🕉️'; position:absolute; right:16px; top:10px; font-size:48px; opacity:0.07; }
+.header-om { font-size:20px; margin-bottom:6px; }
+.header h1 { font-family:'Spectral',serif; font-size:22px; font-weight:700; color:#F5EFE6; line-height:1.2; margin-bottom:3px; }
+.header p { font-size:12px; color:rgba(255,255,255,0.45); letter-spacing:0.4px; }
+.header-bar { height:3px; background:linear-gradient(90deg,#D4631A,#F5A855,#f9d57a); margin-top:14px; margin-left:-20px; margin-right:-20px; }
+
+/* ── PROGRESS ── */
+.progress-bar { background:var(--surface); padding:12px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; position:sticky; top:0; z-index:50; }
+.prog-step { width:28px; height:28px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--text3); flex-shrink:0; transition:all 0.3s; }
+.prog-step.active { background:var(--saffron); border-color:var(--saffron); color:white; }
+.prog-step.done { background:var(--green); border-color:var(--green); color:white; }
+.prog-line { flex:1; height:2px; background:var(--border); border-radius:2px; transition:background 0.3s; }
+.prog-line.done { background:var(--green); }
+
+/* ── CONTAINER ── */
+.container { max-width:480px; margin:0 auto; padding:0; }
+
+/* ── SECTIONS ── */
+.section { display:none; padding:20px; animation:fade 0.25s ease; }
+.section.active { display:block; }
+@keyframes fade { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.section-title { font-family:'Spectral',serif; font-size:20px; font-weight:700; color:var(--dark); margin-bottom:4px; }
+.section-sub { font-size:12.5px; color:var(--text3); margin-bottom:20px; line-height:1.5; }
+
+/* ── FORM ELEMENTS ── */
+.field { margin-bottom:16px; }
+.field-label { font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:6px; display:flex; align-items:center; gap:5px; }
+.field-label .req { color:var(--saffron); }
+.field input, .field select {
+  width:100%; background:var(--surface); border:1.5px solid var(--border);
+  border-radius:10px; padding:12px 14px; font-family:'DM Sans',sans-serif;
+  font-size:14px; color:var(--text); outline:none; transition:border-color 0.2s;
+  -webkit-appearance:none;
+}
+.field input:focus, .field select:focus { border-color:var(--saffron); }
+.field-note { font-size:11px; color:var(--text3); margin-top:4px; }
+
+/* ── VISITOR TYPE CARDS ── */
+.type-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+.type-card {
+  border:2px solid var(--border); border-radius:12px; padding:16px 12px;
+  text-align:center; cursor:pointer; transition:all 0.2s; background:var(--surface);
+}
+.type-card:active { transform:scale(0.97); }
+.type-card.selected { border-color:var(--saffron); background:var(--saffron-bg); }
+.type-icon { font-size:24px; margin-bottom:7px; }
+.type-name { font-size:13px; font-weight:700; color:var(--text); margin-bottom:3px; }
+.type-desc { font-size:11px; color:var(--text3); line-height:1.4; }
+.type-price { font-size:12px; font-weight:700; color:var(--saffron); margin-top:5px; }
+.type-card.selected .type-name { color:var(--saffron); }
+
+/* ── GROUP COUNTER ── */
+.group-counter { background:var(--surface); border:1.5px solid var(--border); border-radius:12px; padding:16px; display:flex; align-items:center; gap:0; margin-bottom:8px; }
+.gc-minus, .gc-plus { width:40px; height:40px; border-radius:10px; border:none; background:var(--bg); font-size:20px; font-weight:700; color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; flex-shrink:0; }
+.gc-minus:active, .gc-plus:active { background:var(--saffron-bg); color:var(--saffron); }
+.gc-num { flex:1; text-align:center; font-family:'Spectral',serif; font-size:36px; font-weight:700; color:var(--dark); line-height:1; }
+.gc-label { text-align:center; font-size:11px; color:var(--text3); margin-top:4px; }
+.group-max-note { font-size:11px; color:var(--amber); background:var(--amber-bg); border-radius:8px; padding:7px 11px; display:flex; gap:6px; }
+
+/* ── MEMBER CARDS ── */
+.member-card { background:var(--surface); border:1.5px solid var(--border); border-radius:12px; padding:14px; margin-bottom:12px; }
+.member-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.member-av { width:32px; height:32px; border-radius:8px; background:var(--saffron-bg); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:var(--saffron); flex-shrink:0; }
+.member-title { font-size:13px; font-weight:700; color:var(--dark); }
+.member-fields { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.member-fields .field { margin-bottom:0; }
+
+/* ── SERVICE CARDS ── */
+.service-list { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+.service-card {
+  background:var(--surface); border:2px solid var(--border); border-radius:12px;
+  padding:14px; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden;
+}
+.service-card:active { transform:scale(0.99); }
+.service-card.selected { border-color:var(--green); background:var(--green-bg); }
+.service-card.selected.paid { border-color:var(--saffron); background:var(--saffron-bg); }
+.service-card.disabled { opacity:0.5; cursor:not-allowed; }
+.sc-top { display:flex; align-items:flex-start; gap:10px; }
+.sc-check { width:22px; height:22px; border-radius:6px; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; transition:all 0.2s; }
+.service-card.selected .sc-check { background:var(--green); border-color:var(--green); color:white; }
+.service-card.selected.paid .sc-check { background:var(--saffron); border-color:var(--saffron); }
+.sc-body { flex:1; }
+.sc-name { font-size:13.5px; font-weight:700; color:var(--text); margin-bottom:2px; }
+.sc-desc { font-size:11.5px; color:var(--text3); line-height:1.4; }
+.sc-tag { font-size:10px; font-weight:700; padding:2px 8px; border-radius:8px; display:inline-block; margin-top:5px; }
+.sc-free { background:var(--green-bg); color:var(--green); }
+.sc-paid { background:var(--saffron-bg); color:var(--saffron); }
+.sc-full { background:#FCEBEB; color:var(--red); }
+
+/* ── SLOT GRID ── */
+.slot-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+.slot-btn {
+  background:var(--surface); border:1.5px solid var(--border); border-radius:9px;
+  padding:10px 6px; text-align:center; cursor:pointer; transition:all 0.18s;
+}
+.slot-btn:active { transform:scale(0.96); }
+.slot-btn.selected { background:var(--saffron); border-color:var(--saffron); }
+.slot-time { font-size:13px; font-weight:700; color:var(--text); }
+.slot-avail { font-size:10px; color:var(--text3); margin-top:2px; }
+.slot-btn.selected .slot-time { color:white; }
+.slot-btn.selected .slot-avail { color:rgba(255,255,255,0.7); }
+.slot-btn.full { opacity:0.45; cursor:not-allowed; background:var(--bg); }
+
+/* ── PAYMENT SUMMARY ── */
+.pay-summary { background:var(--dark); border-radius:14px; padding:18px; margin-bottom:16px; }
+.ps-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:rgba(255,255,255,0.4); margin-bottom:12px; }
+.ps-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.07); font-size:13px; }
+.ps-row:last-of-type { border-bottom:none; }
+.ps-row .label { color:rgba(255,255,255,0.6); }
+.ps-row .amount { color:white; font-weight:600; }
+.ps-total { display:flex; justify-content:space-between; padding:12px 0 0; margin-top:6px; border-top:1px solid rgba(255,255,255,0.15); }
+.ps-total .label { font-size:14px; font-weight:700; color:rgba(255,255,255,0.7); }
+.ps-total .amount { font-family:'Spectral',serif; font-size:22px; font-weight:700; color:#F5A623; }
+.ps-free { background:var(--green-bg); border:1px solid var(--green-border); border-radius:10px; padding:12px 14px; text-align:center; margin-bottom:16px; }
+.ps-free-icon { font-size:20px; margin-bottom:4px; }
+.ps-free-text { font-size:13px; font-weight:600; color:var(--green); }
+
+/* ── BUTTONS ── */
+.btn-primary {
+  width:100%; background:var(--saffron); border:none; border-radius:12px;
+  padding:16px; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:700;
+  color:white; cursor:pointer; transition:all 0.18s; letter-spacing:0.2px;
+  box-shadow:0 4px 16px rgba(212,99,26,0.3);
+}
+.btn-primary:active { transform:scale(0.98); background:#B85516; }
+.btn-primary:disabled { opacity:0.5; cursor:not-allowed; }
+.btn-secondary {
+  width:100%; background:transparent; border:1.5px solid var(--border); border-radius:12px;
+  padding:13px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500;
+  color:var(--text2); cursor:pointer; margin-top:10px; transition:all 0.15s;
+}
+.btn-secondary:active { background:var(--border2); }
+
+/* ── CALLOUTS ── */
+.callout { border-radius:10px; padding:12px 14px; margin-bottom:14px; display:flex; gap:9px; }
+.callout-info { background:var(--blue-bg); border:1px solid #93C5FD; }
+.callout-warn { background:var(--amber-bg); border:1px solid #F5C842; }
+.callout-body { font-size:12px; line-height:1.5; color:var(--text2); }
+.callout-body strong { display:block; font-weight:700; margin-bottom:1px; color:var(--text); }
+
+/* ── SUCCESS SCREEN ── */
+.success-screen { display:none; padding:28px 20px; text-align:center; }
+.success-screen.active { display:block; animation:fade 0.4s ease; }
+.success-icon { font-size:64px; margin-bottom:16px; }
+.success-title { font-family:'Spectral',serif; font-size:26px; font-weight:700; color:var(--green); margin-bottom:8px; }
+.success-sub { font-size:14px; color:var(--text2); line-height:1.6; margin-bottom:24px; }
+.qr-placeholder { background:var(--surface); border:2px dashed var(--border); border-radius:14px; padding:28px; margin-bottom:18px; }
+.qr-inner { width:140px; height:140px; background:var(--bg); border:1px solid var(--border); margin:0 auto 12px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--text3); }
+.qr-note { font-size:12px; color:var(--text3); }
+.success-details { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:16px; text-align:left; }
+.sd-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid var(--border2); font-size:13px; }
+.sd-row:last-child { border-bottom:none; }
+.sd-label { color:var(--text3); }
+.sd-value { font-weight:600; color:var(--text); }
+.wa-note { background:#E8F5E9; border:1px solid #A5D6A7; border-radius:10px; padding:12px 14px; font-size:12px; color:#1B5E20; display:flex; gap:9px; }
+
+/* ── DIVIDER ── */
+.divider { height:1px; background:var(--border2); margin:18px 0; }
+.or-divider { display:flex; align-items:center; gap:12px; margin:14px 0; color:var(--text3); font-size:12px; }
+.or-divider::before, .or-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ── LOADING ── */
+.loading { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center; flex-direction:column; gap:14px; }
+.loading.active { display:flex; }
+.loading-spinner { width:44px; height:44px; border:3px solid rgba(255,255,255,0.2); border-top-color:var(--saffron); border-radius:50%; animation:spin 0.8s linear infinite; }
+.loading-text { color:white; font-size:14px; font-weight:500; }
+@keyframes spin { to{transform:rotate(360deg)} }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-om">🕉️</div>
+  <h1>Govardhan EcoVillage</h1>
+  <p>Day Visit Registration · Wada, Palghar, Maharashtra</p>
+  <div class="header-bar"></div>
+</div>
+
+<!-- Progress Bar -->
+<div class="progress-bar">
+  <div class="prog-step active" id="step-1">1</div>
+  <div class="prog-line" id="line-1"></div>
+  <div class="prog-step" id="step-2">2</div>
+  <div class="prog-line" id="line-2"></div>
+  <div class="prog-step" id="step-3">3</div>
+  <div class="prog-line" id="line-3"></div>
+  <div class="prog-step" id="step-4">4</div>
+</div>
+
+<div class="container">
+
+  <!-- ══ SECTION 1 — VISIT TYPE + GROUP SIZE ══ -->
+  <div class="section active" id="sec-1">
+    <div class="section-title">Welcome to GEV 🙏</div>
+    <div class="section-sub">Let's set up your visit. This takes about 90 seconds.</div>
+
+    <div class="field">
+      <div class="field-label">Visit Type <span class="req">*</span></div>
+      <div class="type-grid">
+        <div class="type-card selected" onclick="selectType(this,'free')" id="type-free">
+          <div class="type-icon">🚶</div>
+          <div class="type-name">Free Darshan</div>
+          <div class="type-desc">Temples, Vrindavan Forest, Free Lunch</div>
+          <div class="type-price">Free</div>
+        </div>
+        <div class="type-card" onclick="selectType(this,'paid')" id="type-paid">
+          <div class="type-icon">⭐</div>
+          <div class="type-name">Full Programme</div>
+          <div class="type-desc">Complete spiritual day experience</div>
+          <div class="type-price">₹850/person</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">How many persons are in your group? <span class="req">*</span></div>
+      <div class="group-counter">
+        <button class="gc-minus" onclick="changeGroup(-1)">−</button>
+        <div>
+          <div class="gc-num" id="group-num">1</div>
+          <div class="gc-label">person(s)</div>
+        </div>
+        <button class="gc-plus" onclick="changeGroup(1)">+</button>
+      </div>
+      <div class="group-max-note" id="group-max-note" style="display:none">
+        ℹ️ Maximum group size is <strong id="max-group-display">10</strong> persons per registration.
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Your Name (Group Leader) <span class="req">*</span></div>
+      <input type="text" id="leader-name" placeholder="Full name as per ID proof"/>
+    </div>
+
+    <div class="field">
+      <div class="field-label">WhatsApp Mobile <span class="req">*</span></div>
+      <input type="tel" id="leader-mobile" value="+91 " placeholder="+91 XXXXX XXXXX"/>
+      <div class="field-note">📱 Your QR pass will be sent to this number</div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Visiting From (City)</div>
+      <input type="text" id="leader-city" placeholder="e.g. Mumbai, Pune, Nashik"/>
+    </div>
+
+    <button class="btn-primary" onclick="goToStep2()">Continue →</button>
+  </div>
+
+  <!-- ══ SECTION 2 — MEMBER DETAILS ══ -->
+  <div class="section" id="sec-2">
+    <div class="section-title">Group Members 👨‍👩‍👧‍👦</div>
+    <div class="section-sub">Please provide details for each person in your group.</div>
+    <div id="members-container"></div>
+    <button class="btn-primary" onclick="goToStep3()">Continue →</button>
+    <button class="btn-secondary" onclick="goToStep(1)">← Back</button>
+  </div>
+
+  <!-- ══ SECTION 3 — SERVICES ══ -->
+  <div class="section" id="sec-3">
+    <div class="section-title">Choose Services</div>
+    <div class="section-sub" id="sec3-sub">Select what you would like during your visit today.</div>
+
+    <div class="service-list" id="services-list">
+
+      <div class="service-card selected" id="svc-darshan" onclick="toggleService(this,'darshan')">
+        <div class="sc-top">
+          <div class="sc-check">✓</div>
+          <div class="sc-body">
+            <div class="sc-name">🕌 Temple Darshan (Zone 1)</div>
+            <div class="sc-desc">Radha Vrindavanbehari &amp; Radha Madanmohan · Morning &amp; evening aarti</div>
+            <span class="sc-tag sc-free">Always included · Free</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-card selected" id="svc-lunch" onclick="toggleService(this,'lunch')">
+        <div class="sc-top">
+          <div class="sc-check">✓</div>
+          <div class="sc-body">
+            <div class="sc-name">🍽️ Annakshetra Free Lunch</div>
+            <div class="sc-desc">Prasad lunch 12:45–2:30 PM · Lalita Bhavan · Please indicate so our team can plan</div>
+            <span class="sc-tag sc-free">Free for all · Pre-indicate for planning</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-card" id="svc-vf" onclick="toggleService(this,'vf')">
+        <div class="sc-top">
+          <div class="sc-check"></div>
+          <div class="sc-body">
+            <div class="sc-name">🌳 Vrindavan Forest Tour (Zone 2)</div>
+            <div class="sc-desc">Sacred forest with 108 trees · Guided tour · Book your time slot</div>
+            <span class="sc-tag sc-free">Free · Slot booking required</span>
+          </div>
+        </div>
+        <div id="vf-slots" style="display:none;margin-top:12px">
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">Select your preferred time slot:</div>
+          <div class="slot-grid">
+            <div class="slot-btn" onclick="event.stopPropagation();selectSlot(this,'10:30')">
+              <div class="slot-time">10:30 AM</div>
+              <div class="slot-avail">6 left</div>
+            </div>
+            <div class="slot-btn" onclick="event.stopPropagation();selectSlot(this,'12:00')">
+              <div class="slot-time">12:00 PM</div>
+              <div class="slot-avail">18 left</div>
+            </div>
+            <div class="slot-btn" onclick="event.stopPropagation();selectSlot(this,'14:00')">
+              <div class="slot-time">2:00 PM</div>
+              <div class="slot-avail">30 left</div>
+            </div>
+            <div class="slot-btn" onclick="event.stopPropagation();selectSlot(this,'15:30')">
+              <div class="slot-time">3:30 PM</div>
+              <div class="slot-avail">30 left</div>
+            </div>
+            <div class="slot-btn full" onclick="event.stopPropagation()">
+              <div class="slot-time">5:00 PM</div>
+              <div class="slot-avail">Full</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-card" id="svc-zone3" onclick="toggleService(this,'zone3')">
+        <div class="sc-top">
+          <div class="sc-check"></div>
+          <div class="sc-body">
+            <div class="sc-name">🏪 Govinda's Guest Area (Zone 3)</div>
+            <div class="sc-desc">Lunch at Govinda's Guest Area · 1:00–2:30 PM · Zone 3 access included</div>
+            <span class="sc-tag sc-paid">₹350/person · <span id="zone3-total-tag">₹350 total</span></span>
+            <span class="sc-tag" id="zone3-avail-tag" style="background:var(--green-bg);color:var(--green);margin-left:4px">4 spots left</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Paid programme extra info -->
+    <div id="paid-programme-info" style="display:none">
+      <div class="callout callout-info">
+        <span>⭐</span>
+        <div class="callout-body">
+          <strong>Paid Programme (₹850/person) includes:</strong>
+          Full Goshala tour · Spiritual sessions · Govinda's lunch · Cart facility · All zones
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="goToStep4()">Review &amp; Pay →</button>
+    <button class="btn-secondary" onclick="goToStep(state.groupSize <= 1 ? 1 : 2)">← Back</button>
+  </div>
+
+  <!-- ══ SECTION 4 — REVIEW + PAY ══ -->
+  <div class="section" id="sec-4">
+    <div class="section-title">Review Your Visit</div>
+    <div class="section-sub">Check your details before confirming.</div>
+
+    <div id="review-content"></div>
+
+    <div id="pay-section">
+      <!-- Free visit -->
+      <div id="pay-free" style="display:none">
+        <div class="ps-free">
+          <div class="ps-free-icon">🙏</div>
+          <div class="ps-free-text">No payment required · Free visit confirmed</div>
+        </div>
+        <button class="btn-primary" id="submit-btn" onclick="submitRegistration()">
+          ✅ Get My QR Pass
+        </button>
+      </div>
+
+      <!-- Paid visit -->
+      <div id="pay-paid" style="display:none">
+        <div class="pay-summary" id="pay-summary-box"></div>
+        <button class="btn-primary" id="pay-btn" onclick="initiatePayment()">
+          💳 Pay & Get QR Pass
+        </button>
+        <div class="or-divider">or</div>
+        <div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:12px">Cash payment at Main Gate reception</div>
+      </div>
+    </div>
+
+    <button class="btn-secondary" onclick="goToStep(3)">← Back</button>
+  </div>
+
+  <!-- ══ SUCCESS ══ -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">Hare Krishna! 🕉️</div>
+    <div class="success-sub">Your registration is complete. Your QR pass has been sent to your WhatsApp.</div>
+
+    <div class="qr-placeholder">
+      <div class="qr-inner">📱 QR Pass<br/>Sent on<br/>WhatsApp</div>
+      <div class="qr-note">Check your WhatsApp for your GEV Day Pass QR code</div>
+    </div>
+
+    <div class="success-details" id="success-details"></div>
+
+    <div class="wa-note">
+      <span>💬</span>
+      <span>Your QR pass image has been sent to <strong id="success-mobile"></strong> via WhatsApp. Show the QR at the Main Gate to enter.</span>
+    </div>
+
+    <!-- GOVINDA'S BUFFET UPGRADE -->
+    <div style="margin-top:16px;background:linear-gradient(135deg,#1A1827,#2A1F10);border-radius:14px;overflow:hidden;" id="govindas-upgrade-section">
+      <div style="padding:16px 16px 0;display:flex;align-items:flex-start;gap:12px">
+        <div style="font-size:28px;flex-shrink:0">🍽️</div>
+        <div>
+          <div style="font-family:'Spectral',serif;font-size:16px;font-weight:700;color:#F5EFE6;margin-bottom:4px">Want Special Govinda's Buffet Lunch?</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:10px">Authentic satvik cuisine at Govinda's Guest Area · Serene garden setting · ₹350 per person</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+            <span style="background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.25);border-radius:8px;padding:4px 10px;font-size:11px;color:#F5A623;font-weight:600">🕐 1:00 – 2:30 PM</span>
+            <span style="background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.25);border-radius:8px;padding:4px 10px;font-size:11px;color:#F5A623;font-weight:600">📍 Zone 3 · Govinda's Guest Area</span>
+            <span style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:4px 10px;font-size:11px;color:#22C55E;font-weight:600" id="govindas-spots-text">✓ Spots available</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin:0 16px;padding:12px;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.15);border-radius:10px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:12px;color:rgba(255,255,255,0.5)">₹350 × <span id="upgrade-persons-count">1</span> person(s)</span>
+          <span style="font-family:'Spectral',serif;font-size:20px;font-weight:700;color:#F5A623" id="upgrade-total-display">₹350</span>
+        </div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.35)">Zone 3 access included · Valid until 8:00 PM today · WhatsApp confirmation sent</div>
+      </div>
+      <div style="padding:0 16px 16px">
+        <button onclick="initiateGovindaUpgrade()" id="govindas-upgrade-btn"
+          style="width:100%;background:linear-gradient(135deg,#F5A623,#D4631A);border:none;border-radius:11px;padding:15px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:800;color:white;cursor:pointer;letter-spacing:0.2px;box-shadow:0 4px 18px rgba(212,99,26,0.45);">
+          🍽️ &nbsp;Upgrade to Special Govinda's Buffet Lunch
+        </button>
+        <div style="text-align:center;margin-top:8px;font-size:11px;color:rgba(255,255,255,0.3)">Secure payment · Razorpay · UPI / Card / Net Banking</div>
+      </div>
+    </div>
+
+    <!-- UPGRADE SUCCESS STATE (replaces button after payment) -->
+    <div id="govindas-upgrade-success" style="display:none;margin-top:16px;background:var(--green-bg);border:1.5px solid var(--green-border);border-radius:14px;padding:16px;text-align:center">
+      <div style="font-size:28px;margin-bottom:8px">✅</div>
+      <div style="font-family:'Spectral',serif;font-size:16px;font-weight:700;color:var(--green);margin-bottom:4px">Govinda's Buffet Confirmed!</div>
+      <div style="font-size:12px;color:var(--green);line-height:1.6;margin-bottom:10px">Zone 3 access activated · <span id="upgrade-success-amount"></span> paid · WhatsApp receipt sent</div>
+      <div style="background:white;border-radius:8px;padding:10px;font-size:12px;color:var(--text2)">
+        📍 Govinda's Guest Area · Zone 3 · 1:00–2:30 PM<br/>
+        Show your QR at the SBT Gate to enter Zone 3
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- Loading overlay -->
+<div class="loading" id="loading">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loading-text">Processing...</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// GEV Smart Registration Page — Logic
+// ═══════════════════════════════════════════
+
+const CONFIG = {
+  maxGroupSize: 10,
+  zone3Price: 350,
+  vfSlotCapacity: 30,
+  programme850Price: 850,
+};
+
+const state = {
+  visitType: 'free',
+  groupSize: 1,
+  leaderName: '',
+  leaderMobile: '',
+  leaderCity: '',
+  members: [],
+  services: {
+    darshan: true,
+    lunch: true,
+    vf: false,
+    zone3: false,
+  },
+  vfSlot: null,
+  totalAmount: 0,
+};
+
+// ─── STEP NAVIGATION ───
+function goToStep(n) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + n).classList.add('active');
+  // Update progress
+  for (let i = 1; i <= 4; i++) {
+    const step = document.getElementById('step-' + i);
+    step.classList.remove('active', 'done');
+    if (i < n) step.classList.add('done'), step.textContent = '✓';
+    else if (i === n) step.classList.add('active'), step.textContent = i;
+    else step.textContent = i;
+    if (i < 4) {
+      const line = document.getElementById('line-' + i);
+      line.classList.toggle('done', i < n);
+    }
+  }
+  window.scrollTo(0, 0);
+  updateGovindaUpgradeDisplay();
+}
+
+function goToStep2() {
+  const name = document.getElementById('leader-name').value.trim();
+  const mobile = document.getElementById('leader-mobile').value.trim();
+  if (!name) { alert('Please enter your name.'); return; }
+  if (mobile.replace(/\s/g,'').length < 10) { alert('Please enter a valid mobile number.'); return; }
+  state.leaderName = name;
+  state.leaderMobile = mobile;
+  state.leaderCity = document.getElementById('leader-city').value.trim();
+  buildMemberFields();
+  if (state.groupSize === 1) {
+    // Skip member details for solo visitor
+    state.members = [{ name, age: '', gender: '', relation: 'self' }];
+    goToStep3();
+  } else {
+    goToStep(2);
+  }
+}
+
+function goToStep3() {
+  if (state.groupSize > 1) {
+    // Collect member data
+    state.members = [];
+    for (let i = 1; i <= state.groupSize; i++) {
+      const mname = document.getElementById(`m${i}-name`)?.value?.trim() || '';
+      const mage  = document.getElementById(`m${i}-age`)?.value || '';
+      const mgender = document.getElementById(`m${i}-gender`)?.value || '';
+      if (!mname && i === 1) { alert('Please enter the leader\'s name.'); return; }
+      state.members.push({ name: mname || `Member ${i}`, age: mage, gender: mgender, relation: i === 1 ? 'Leader' : 'Group member' });
+    }
+  }
+  updateServicePrices();
+  goToStep(3);
+}
+
+function goToStep4() {
+  if (state.services.vf && !state.vfSlot) {
+    alert('Please select a Vrindavan Forest tour time slot.');
+    return;
+  }
+  buildReview();
+  goToStep(4);
+}
+
+// ─── VISIT TYPE ───
+function selectType(card, type) {
+  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  state.visitType = type;
+  document.getElementById('paid-programme-info').style.display = type === 'paid' ? 'block' : 'none';
+  if (type === 'paid') {
+    // Paid programme includes everything — auto-select and disable zone3
+    ['darshan','lunch','vf'].forEach(s => {
+      state.services[s] = true;
+      const el = document.getElementById('svc-' + s);
+      if (el) el.classList.add('selected');
+    });
+  }
+  updateServicePrices();
+}
+
+// ─── GROUP SIZE ───
+function changeGroup(delta) {
+  const newSize = state.groupSize + delta;
+  if (newSize < 1 || newSize > CONFIG.maxGroupSize) return;
+  state.groupSize = newSize;
+  document.getElementById('group-num').textContent = newSize;
+  const note = document.getElementById('group-max-note');
+  const maxDisplay = document.getElementById('max-group-display');
+  maxDisplay.textContent = CONFIG.maxGroupSize;
+  note.style.display = newSize >= CONFIG.maxGroupSize ? 'flex' : 'none';
+  updateServicePrices();
+}
+
+// ─── MEMBER FIELDS ───
+function buildMemberFields() {
+  const container = document.getElementById('members-container');
+  container.innerHTML = '';
+  const icons = ['👤','👤','👶','👶','👴','👵','👤','👤','👶','👶'];
+  for (let i = 1; i <= state.groupSize; i++) {
+    const isLeader = i === 1;
+    container.innerHTML += `
+      <div class="member-card">
+        <div class="member-header">
+          <div class="member-av">${icons[i-1] || '👤'}</div>
+          <div class="member-title">${isLeader ? 'You (Group Leader)' : 'Member ' + i}</div>
+        </div>
+        <div class="member-fields">
+          <div class="field" style="grid-column:1/-1">
+            <div class="field-label">Full Name *</div>
+            <input type="text" id="m${i}-name" placeholder="Full name" value="${isLeader ? state.leaderName : ''}"/>
+          </div>
+          <div class="field">
+            <div class="field-label">Age</div>
+            <input type="number" id="m${i}-age" placeholder="Age" min="1" max="120"/>
+          </div>
+          <div class="field">
+            <div class="field-label">Gender</div>
+            <select id="m${i}-gender">
+              <option value="">Select</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+      </div>`;
+  }
+}
+
+// ─── SERVICES ───
+function toggleService(card, service) {
+  if (card.classList.contains('disabled')) return;
+  if (service === 'darshan') return; // always included
+  state.services[service] = !state.services[service];
+  card.classList.toggle('selected', state.services[service]);
+  if (service === 'vf') {
+    document.getElementById('vf-slots').style.display = state.services.vf ? 'block' : 'none';
+    if (!state.services.vf) state.vfSlot = null;
+  }
+  updateServicePrices();
+}
+
+function selectSlot(btn, time) {
+  document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+  if (!btn.classList.contains('full')) {
+    btn.classList.add('selected');
+    state.vfSlot = time;
+  }
+}
+
+function updateServicePrices() {
+  const g = state.groupSize;
+  const zone3Total = CONFIG.zone3Price * g;
+  const progTotal = CONFIG.programme850Price * g;
+  document.getElementById('zone3-total-tag').textContent = '₹' + zone3Total.toLocaleString('en-IN') + ' total';
+
+  let total = 0;
+  if (state.visitType === 'paid') total += progTotal;
+  if (state.services.zone3 && state.visitType !== 'paid') total += zone3Total;
+  state.totalAmount = total;
+
+  // Update zone3 card paid styling
+  const z3card = document.getElementById('svc-zone3');
+  if (z3card) {
+    z3card.classList.toggle('paid', state.services.zone3);
+    const check = z3card.querySelector('.sc-check');
+    if (check) check.textContent = state.services.zone3 ? '✓' : '';
+  }
+}
+
+// ─── REVIEW ───
+function buildReview() {
+  const g = state.groupSize;
+  const html = `
+    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:16px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:10px">Your Details</div>
+      <div style="display:flex;flex-direction:column;gap:7px;font-size:13px">
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Group Leader</span><span style="font-weight:600">${state.leaderName}</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Mobile</span><span style="font-weight:600">${state.leaderMobile}</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Visit Type</span><span style="font-weight:600">${state.visitType === 'paid' ? '⭐ Paid Programme' : '🚶 Free Darshan'}</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Group Size</span><span style="font-weight:600">${g} person${g>1?'s':''}</span></div>
+        ${state.services.vf && state.vfSlot ? `<div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">VF Tour Slot</span><span style="font-weight:600">${state.vfSlot}</span></div>` : ''}
+        ${state.services.lunch ? `<div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Annakshetra Lunch</span><span style="font-weight:600;color:var(--green)">Pre-indicated ✓</span></div>` : ''}
+        ${state.services.zone3 ? `<div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Govinda's Guest Area</span><span style="font-weight:600;color:var(--saffron)">₹${(CONFIG.zone3Price*g).toLocaleString('en-IN')} ✓</span></div>` : ''}
+      </div>
+    </div>`;
+
+  document.getElementById('review-content').innerHTML = html;
+
+  const hasPaid = state.totalAmount > 0;
+  document.getElementById('pay-free').style.display = hasPaid ? 'none' : 'block';
+  document.getElementById('pay-paid').style.display = hasPaid ? 'block' : 'none';
+
+  if (hasPaid) {
+    let rows = '';
+    if (state.visitType === 'paid') rows += `<div class="ps-row"><span class="label">₹850 Programme × ${g}</span><span class="amount">₹${(850*g).toLocaleString('en-IN')}</span></div>`;
+    if (state.services.zone3 && state.visitType !== 'paid') rows += `<div class="ps-row"><span class="label">Govinda's Guest Area × ${g}</span><span class="amount">₹${(350*g).toLocaleString('en-IN')}</span></div>`;
+    document.getElementById('pay-summary-box').innerHTML = `
+      <div class="ps-title">Payment Summary</div>
+      ${rows}
+      <div class="ps-total"><span class="label">Total</span><span class="amount">₹${state.totalAmount.toLocaleString('en-IN')}</span></div>`;
+    document.getElementById('pay-btn').textContent = `💳  Pay ₹${state.totalAmount.toLocaleString('en-IN')} & Get QR Pass`;
+  }
+}
+
+// ─── SUBMIT ───
+function submitRegistration() {
+  showLoading('Registering your visit...');
+  setTimeout(() => {
+    hideLoading();
+    showSuccess();
+  }, 2000);
+}
+
+function initiatePayment() {
+  showLoading('Opening payment...');
+  setTimeout(() => {
+    hideLoading();
+    // Simulate Razorpay
+    showLoading('Processing payment...');
+    setTimeout(() => {
+      hideLoading();
+      showSuccess();
+    }, 2000);
+  }, 1000);
+}
+
+function showSuccess() {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('success-screen').classList.add('active');
+  document.getElementById('success-mobile').textContent = state.leaderMobile;
+  const g = state.groupSize;
+  const services = [];
+  if (state.services.darshan) services.push('Temple Darshan');
+  if (state.services.lunch) services.push('Annakshetra Lunch');
+  if (state.services.vf && state.vfSlot) services.push(`VF Tour ${state.vfSlot}`);
+  if (state.services.zone3) services.push("Govinda's Guest Area");
+  if (state.visitType === 'paid') services.push('Full Programme ₹850');
+  document.getElementById('success-details').innerHTML = `
+    <div class="sd-row"><span class="sd-label">Name</span><span class="sd-value">${state.leaderName}</span></div>
+    <div class="sd-row"><span class="sd-label">Group</span><span class="sd-value">${g} person${g>1?'s':''}</span></div>
+    <div class="sd-row"><span class="sd-label">Access</span><span class="sd-value">${state.services.zone3 || state.visitType==='paid' ? 'Zone 1 + 2 + 3' : 'Zone 1 + 2'}</span></div>
+    <div class="sd-row"><span class="sd-label">Services</span><span class="sd-value">${services.join(' · ')}</span></div>
+    <div class="sd-row"><span class="sd-label">Valid until</span><span class="sd-value">Today 8:00 PM</span></div>
+    ${state.totalAmount > 0 ? `<div class="sd-row"><span class="sd-label">Paid</span><span class="sd-value" style="color:var(--green)">₹${state.totalAmount.toLocaleString('en-IN')} ✓</span></div>` : ''}`;
+
+  // Update progress — all done
+  for (let i = 1; i <= 4; i++) {
+    const step = document.getElementById('step-' + i);
+    step.classList.remove('active');
+    step.classList.add('done');
+    step.textContent = '✓';
+    if (i < 4) document.getElementById('line-' + i).classList.add('done');
+  }
+  window.scrollTo(0, 0);
+}
+
+function showLoading(text) {
+  document.getElementById('loading-text').textContent = text || 'Processing...';
+  document.getElementById('loading').classList.add('active');
+}
+function hideLoading() {
+  document.getElementById('loading').classList.remove('active');
+}
+
+// ─── GOVINDA'S BUFFET UPGRADE ───
+function updateGovindaUpgradeDisplay() {
+  const g = state.groupSize;
+  const total = CONFIG.zone3Price * g;
+  const el = document.getElementById('upgrade-persons-count');
+  const totalEl = document.getElementById('upgrade-total-display');
+  if (el) el.textContent = g;
+  if (totalEl) totalEl.textContent = '₹' + total.toLocaleString('en-IN');
+}
+
+function initiateGovindaUpgrade() {
+  const g = state.groupSize;
+  const total = CONFIG.zone3Price * g;
+  const btn = document.getElementById('govindas-upgrade-btn');
+  btn.textContent = '⏳  Opening payment...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    // Simulate Razorpay payment
+    btn.textContent = '⏳  Processing payment...';
+    setTimeout(() => {
+      // Payment success
+      const upgradeSection = document.getElementById('govindas-upgrade-section');
+      const successSection = document.getElementById('govindas-upgrade-success');
+      if (upgradeSection) upgradeSection.style.display = 'none';
+      if (successSection) {
+        successSection.style.display = 'block';
+        document.getElementById('upgrade-success-amount').textContent =
+          '₹' + total.toLocaleString('en-IN');
+      }
+      // In production: POST to /api/payments/zone3-upgrade
+      // Razorpay confirms → ICMS activates Zone 3 on QR → Interakt sends WhatsApp receipt
+    }, 2000);
+  }, 800);
+}
+
+// Init
+updateServicePrices();
+updateGovindaUpgradeDisplay();
+</script>
+</body>
+</html>

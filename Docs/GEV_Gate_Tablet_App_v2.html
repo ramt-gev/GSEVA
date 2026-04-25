@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>GEV Gate Access — Campus Control</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --bg:#0A0F1E;
+  --surface:#111827;
+  --surface2:#1C2536;
+  --border:rgba(255,255,255,0.08);
+  --saffron:#F5A623;
+  --saffron-glow:rgba(245,166,35,0.3);
+  --green:#22C55E;
+  --green-glow:rgba(34,197,94,0.3);
+  --red:#EF4444;
+  --red-glow:rgba(239,68,68,0.3);
+  --text:#F1F5F9;
+  --text-muted:#94A3B8;
+  --text-dim:#475569;
+  --radius:16px;
+  --radius-sm:10px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  font-family:'Noto Sans', sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  overflow:hidden;
+  position:relative;
+}
+
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(245,166,35,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,166,35,0.025) 1px, transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none; z-index:0;
+}
+
+/* ── SCREEN SYSTEM ── */
+.screen {
+  display:none;
+  position:absolute; inset:0;
+  z-index:1;
+  flex-direction:column;
+}
+.screen.active { display:flex; }
+
+/* ══ SCREEN 1 — LOGIN ══ */
+#s-login {
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  overflow-y:auto;
+}
+
+.login-top { text-align:center; margin-bottom:28px; }
+
+.om {
+  font-size:50px; display:block; margin-bottom:8px;
+  filter:drop-shadow(0 0 20px var(--saffron-glow));
+  animation:breathe 3s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%,100% { filter:drop-shadow(0 0 15px var(--saffron-glow)); }
+  50%      { filter:drop-shadow(0 0 32px rgba(245,166,35,0.5)); }
+}
+
+.login-title {
+  font-family:'Rajdhani', sans-serif;
+  font-size:28px; font-weight:700;
+  letter-spacing:2px; color:var(--saffron);
+}
+.login-sub {
+  font-size:11px; color:var(--text-muted);
+  letter-spacing:1px; text-transform:uppercase; margin-top:4px;
+}
+
+.login-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  width:100%; max-width:420px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+
+.field-label {
+  font-size:10px; text-transform:uppercase;
+  letter-spacing:0.8px; color:var(--text-muted);
+  display:block; margin-bottom:7px;
+}
+
+.gate-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:14px; }
+
+.gate-opt {
+  background:var(--surface2);
+  border:1.5px solid var(--border);
+  border-radius:9px; padding:11px 6px;
+  text-align:center; cursor:pointer;
+  transition:all 0.18s;
+}
+.gate-opt:hover { border-color:rgba(245,166,35,0.4); }
+.gate-opt.sel   { border-color:var(--saffron); background:rgba(245,166,35,0.08); }
+.gate-opt-ic    { font-size:20px; display:block; margin-bottom:4px; }
+.gate-opt-nm    { font-family:'Rajdhani', sans-serif; font-size:12px; font-weight:600; color:var(--text); }
+.gate-opt-sb    { font-size:9px; color:var(--text-dim); margin-top:1px; }
+
+.canteen-note {
+  background:rgba(34,197,94,0.06);
+  border:1px solid rgba(34,197,94,0.15);
+  border-radius:8px; padding:9px 12px;
+  font-size:11px; color:rgba(255,255,255,0.4);
+  text-align:center; margin-bottom:16px;
+}
+.canteen-note strong { color:rgba(255,255,255,0.65); }
+
+.inp {
+  width:100%;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:13px 15px;
+  color:var(--text);
+  font-family:'Noto Sans', sans-serif;
+  font-size:15px; outline:none;
+  transition:border-color 0.2s;
+  margin-bottom:14px;
+}
+.inp:focus { border-color:var(--saffron); }
+.inp::placeholder { color:var(--text-dim); font-size:13px; }
+
+.err-msg {
+  background:rgba(239,68,68,0.1);
+  border:1px solid rgba(239,68,68,0.25);
+  border-radius:8px; padding:10px 14px;
+  font-size:12px; color:#FCA5A5;
+  margin-bottom:12px; display:none;
+}
+
+.btn-login {
+  width:100%;
+  background:linear-gradient(135deg,#F5A623,#E8721A);
+  border:none; border-radius:var(--radius-sm);
+  padding:15px;
+  font-family:'Rajdhani', sans-serif;
+  font-size:17px; font-weight:700;
+  letter-spacing:1.5px; color:white;
+  cursor:pointer; text-transform:uppercase;
+  box-shadow:0 4px 20px rgba(245,166,35,0.3);
+  transition:all 0.2s; margin-top:4px;
+}
+.btn-login:hover  { transform:translateY(-1px); box-shadow:0 6px 28px rgba(245,166,35,0.4); }
+.btn-login:active { transform:translateY(0); }
+
+.demo-hint {
+  text-align:center; margin-top:14px;
+  font-size:11px; color:var(--text-dim);
+  background:rgba(255,255,255,0.03);
+  border-radius:8px; padding:8px;
+  border:1px solid var(--border);
+}
+.demo-hint span { color:var(--saffron); font-weight:600; }
+
+/* ══ SCREEN 2 — SCANNER ══ */
+#s-scanner { overflow:hidden; }
+
+.top-bar {
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:12px 16px;
+  display:flex; align-items:center; gap:10px;
+  flex-shrink:0;
+}
+
+.gate-pill {
+  background:rgba(245,166,35,0.1);
+  border:1px solid rgba(245,166,35,0.3);
+  border-radius:8px; padding:5px 12px;
+  display:flex; align-items:center; gap:7px;
+}
+.live-dot {
+  width:7px; height:7px; border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 7px var(--green-glow);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+.gate-label-txt {
+  font-family:'Rajdhani', sans-serif;
+  font-size:14px; font-weight:600; color:var(--saffron);
+}
+
+.top-bar-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
+.clock-txt {
+  font-family:'Rajdhani', sans-serif;
+  font-size:18px; font-weight:600; letter-spacing:1px;
+}
+
+.icon-btn {
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:8px; width:36px; height:36px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:15px; transition:all 0.18s; color:var(--text-muted);
+}
+.icon-btn:hover { border-color:var(--saffron); color:var(--saffron); }
+
+.scan-body {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:20px; gap:18px; overflow:hidden;
+}
+
+.qr-frame-wrap { position:relative; width:220px; height:220px; flex-shrink:0; }
+.qr-frame-inner {
+  width:100%; height:100%;
+  border-radius:12px; position:relative; overflow:hidden;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(245,166,35,0.15);
+}
+.c { position:absolute; width:28px; height:28px; border-color:var(--saffron); border-style:solid; }
+.c-tl { top:8px;    left:8px;    border-width:3px 0 0 3px; border-radius:4px 0 0 0; }
+.c-tr { top:8px;    right:8px;   border-width:3px 3px 0 0; border-radius:0 4px 0 0; }
+.c-bl { bottom:8px; left:8px;    border-width:0 0 3px 3px; border-radius:0 0 0 4px; }
+.c-br { bottom:8px; right:8px;   border-width:0 3px 3px 0; border-radius:0 0 4px 0; }
+.scan-ln {
+  position:absolute; left:12px; right:12px; height:2px;
+  background:linear-gradient(90deg,transparent,var(--saffron),transparent);
+  animation:scan 2.4s ease-in-out infinite; top:50%;
+}
+@keyframes scan {
+  0%   { top:16%; opacity:0; }
+  10%  { opacity:1; }
+  90%  { opacity:1; }
+  100% { top:84%; opacity:0; }
+}
+.qr-ph {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:8px;
+}
+.qr-ph-icon { font-size:36px; opacity:0.25; }
+.qr-ph-txt  { font-size:11px; color:var(--text-dim); text-align:center; line-height:1.5; }
+
+.scan-instr-main {
+  font-family:'Rajdhani', sans-serif;
+  font-size:20px; font-weight:700;
+  letter-spacing:0.5px; text-align:center;
+}
+.scan-instr-sub { font-size:12px; color:var(--text-muted); text-align:center; margin-top:4px; }
+
+.manual-row { display:flex; gap:8px; width:100%; max-width:360px; }
+.manual-inp {
+  flex:1; background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:11px 14px; color:var(--text);
+  font-family:'Noto Sans', sans-serif; font-size:13px;
+  outline:none; transition:border-color 0.2s;
+}
+.manual-inp:focus { border-color:var(--saffron); }
+.manual-inp::placeholder { color:var(--text-dim); font-size:12px; }
+.search-btn {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:11px 14px; cursor:pointer; font-size:16px;
+  transition:all 0.18s;
+}
+.search-btn:hover { border-color:var(--saffron); }
+
+.stats-bar {
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  padding:10px 16px;
+  display:flex; flex-shrink:0;
+}
+.stat-col { flex:1; text-align:center; padding:0 8px; border-right:1px solid var(--border); }
+.stat-col:last-child { border-right:none; }
+.stat-num { font-family:'Rajdhani', sans-serif; font-size:21px; font-weight:700; line-height:1; }
+.stat-num.g { color:var(--green); }
+.stat-num.r { color:var(--red); }
+.stat-num.s { color:var(--saffron); }
+.stat-lbl { font-size:9px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; margin-top:2px; }
+
+.bottom-nav {
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  flex-shrink:0; padding:6px 12px;
+  display:flex; gap:4px; align-items:center; justify-content:space-around;
+}
+.bnav-btn {
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:8px 4px; border-radius:8px; cursor:pointer;
+  border:none; background:none; transition:all 0.18s; color:var(--text-dim);
+  font-family:'Noto Sans', sans-serif;
+}
+.bnav-btn:hover  { background:rgba(255,255,255,0.04); }
+.bnav-btn.active { background:rgba(245,166,35,0.1); color:var(--saffron); }
+.bnav-icon  { font-size:19px; }
+.bnav-label { font-size:9px; font-weight:500; letter-spacing:0.3px; white-space:nowrap; }
+
+/* ══ SCREEN 3 — ALLOWED ══ */
+#s-allowed {
+  align-items:center; justify-content:center;
+  background:radial-gradient(ellipse at center, rgba(34,197,94,0.08) 0%, var(--bg) 70%);
+  padding:28px 24px; gap:0; overflow-y:auto;
+  animation:fade-in 0.28s ease;
+}
+@keyframes fade-in { from{opacity:0;transform:scale(0.97)} to{opacity:1;transform:scale(1)} }
+
+.res-ring {
+  width:110px; height:110px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:50px; margin-bottom:20px; flex-shrink:0;
+  border:3px solid var(--green);
+  box-shadow:0 0 40px var(--green-glow);
+  animation:glow-g 1.5s ease-in-out infinite;
+}
+@keyframes glow-g { 0%,100%{box-shadow:0 0 30px var(--green-glow)} 50%{box-shadow:0 0 52px rgba(34,197,94,0.45)} }
+.res-ring.red { border-color:var(--red); box-shadow:0 0 40px var(--red-glow); animation:glow-r 1.5s ease-in-out infinite; }
+@keyframes glow-r { 0%,100%{box-shadow:0 0 30px var(--red-glow)} 50%{box-shadow:0 0 52px rgba(239,68,68,0.4)} }
+
+.res-status {
+  font-family:'Rajdhani', sans-serif;
+  font-size:30px; font-weight:700;
+  letter-spacing:3px; text-transform:uppercase;
+  margin-bottom:5px; color:var(--green);
+}
+.res-status.red { color:var(--red); }
+.res-name { font-size:20px; font-weight:500; margin-bottom:3px; }
+.res-type { font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:20px; }
+
+.res-card {
+  background:var(--surface); border-radius:var(--radius); padding:16px;
+  width:100%; max-width:380px; margin-bottom:20px;
+  border:1px solid rgba(34,197,94,0.18);
+}
+.res-card.red-card { border-color:rgba(239,68,68,0.18); }
+
+.det-row {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:8px 0; border-bottom:1px solid var(--border);
+}
+.det-row:last-child { border-bottom:none; }
+.det-ic  { font-size:14px; flex-shrink:0; width:20px; text-align:center; margin-top:2px; }
+.det-lbl { font-size:9px; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-dim); }
+.det-val { font-size:13px; font-weight:500; color:var(--text); margin-top:1px; }
+
+.zone-chips { display:flex; gap:5px; flex-wrap:wrap; margin-top:5px; }
+.zchip { font-size:10px; padding:2px 8px; border-radius:12px; font-weight:600; }
+.zchip.a { background:rgba(34,197,94,0.15); color:var(--green); border:1px solid rgba(34,197,94,0.3); }
+.zchip.b { background:rgba(239,68,68,0.08); color:var(--red); border:1px solid rgba(239,68,68,0.2); text-decoration:line-through; opacity:0.5; }
+
+.btn-next {
+  border:none; border-radius:var(--radius-sm);
+  padding:14px 44px;
+  font-family:'Rajdhani', sans-serif;
+  font-size:16px; font-weight:700;
+  letter-spacing:1.5px; color:white;
+  cursor:pointer; text-transform:uppercase;
+  transition:all 0.18s; width:100%; max-width:280px;
+}
+.btn-next.g { background:linear-gradient(135deg,#22C55E,#16A34A); box-shadow:0 4px 20px var(--green-glow); }
+.btn-next.r { background:linear-gradient(135deg,#EF4444,#DC2626); box-shadow:0 4px 20px var(--red-glow); }
+.btn-next:hover { transform:translateY(-1px); }
+
+/* ══ SCREEN 4 — DENIED ══ */
+#s-denied {
+  align-items:center; justify-content:center;
+  background:radial-gradient(ellipse at center, rgba(239,68,68,0.06) 0%, var(--bg) 70%);
+  padding:28px 24px; gap:0; overflow-y:auto;
+  animation:fade-in 0.28s ease;
+}
+
+.deny-box {
+  background:rgba(239,68,68,0.06);
+  border:1px solid rgba(239,68,68,0.2);
+  border-radius:10px; padding:14px 16px;
+  width:100%; max-width:380px; margin-bottom:12px; text-align:center;
+}
+.deny-box-lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim); margin-bottom:5px; }
+.deny-box-msg { font-size:14px; font-weight:500; color:var(--red); line-height:1.4; }
+
+.btn-override {
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:11px 24px;
+  font-family:'Rajdhani', sans-serif;
+  font-size:13px; font-weight:600;
+  letter-spacing:0.8px; color:var(--text-muted);
+  cursor:pointer; text-transform:uppercase;
+  margin-bottom:8px; transition:all 0.18s;
+  width:100%; max-width:280px;
+}
+.btn-override:hover { border-color:var(--saffron); color:var(--saffron); }
+
+/* ══ SCREEN 5 — EVENTS ══ */
+#s-events { overflow:hidden; }
+.events-header {
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:14px 16px;
+  display:flex; align-items:center; gap:10px; flex-shrink:0;
+}
+.events-title {
+  font-family:'Rajdhani', sans-serif;
+  font-size:17px; font-weight:600; letter-spacing:0.5px; color:var(--saffron);
+}
+.events-body { flex:1; overflow-y:auto; padding:12px; }
+.ev-item {
+  background:var(--surface2); border-radius:9px; padding:11px 13px;
+  margin-bottom:8px; border-left:3px solid;
+  animation:ev-in 0.25s ease;
+}
+@keyframes ev-in { from{opacity:0;transform:translateX(-6px)} to{opacity:1;transform:translateX(0)} }
+.ev-item.a { border-left-color:var(--green); }
+.ev-item.d { border-left-color:var(--red); }
+.ev-top    { display:flex; justify-content:space-between; margin-bottom:4px; }
+.ev-badge  { font-size:10px; font-weight:700; padding:2px 8px; border-radius:8px; }
+.ev-badge.a { background:rgba(34,197,94,0.15); color:var(--green); }
+.ev-badge.d { background:rgba(239,68,68,0.15); color:var(--red); }
+.ev-time   { font-size:10px; color:var(--text-dim); }
+.ev-name   { font-size:13px; font-weight:500; }
+.ev-sub    { font-size:11px; color:var(--text-muted); margin-top:2px; }
+.events-empty { text-align:center; color:var(--text-dim); padding:32px; font-size:14px; }
+
+/* ══ SCREEN 6 — LOGOUT ══ */
+#s-logout { align-items:center; justify-content:center; padding:32px; }
+.logout-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:32px 28px;
+  width:100%; max-width:360px; text-align:center;
+}
+.logout-icon  { font-size:48px; margin-bottom:16px; display:block; }
+.logout-title { font-family:'Rajdhani', sans-serif; font-size:24px; font-weight:700; color:var(--text); margin-bottom:8px; letter-spacing:0.5px; }
+.logout-sub   { font-size:13px; color:var(--text-muted); margin-bottom:8px; }
+.logout-gate  { font-family:'Rajdhani', sans-serif; font-size:16px; font-weight:600; color:var(--saffron); margin-bottom:28px; }
+.logout-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:28px; }
+.ls-item { background:var(--surface2); border-radius:9px; padding:12px 8px; }
+.ls-num  { font-family:'Rajdhani', sans-serif; font-size:26px; font-weight:700; line-height:1; }
+.ls-num.g { color:var(--green); }
+.ls-num.r { color:var(--red); }
+.ls-num.s { color:var(--saffron); }
+.ls-lbl  { font-size:10px; color:var(--text-dim); margin-top:3px; }
+.btn-confirm-logout {
+  width:100%; background:linear-gradient(135deg,#EF4444,#DC2626);
+  border:none; border-radius:var(--radius-sm); padding:14px;
+  font-family:'Rajdhani', sans-serif; font-size:16px; font-weight:700;
+  letter-spacing:1.5px; color:white; cursor:pointer; text-transform:uppercase;
+  box-shadow:0 4px 20px var(--red-glow); margin-bottom:10px;
+}
+.btn-cancel-logout {
+  width:100%; background:transparent; border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:12px;
+  font-family:'Rajdhani', sans-serif; font-size:15px; font-weight:600;
+  letter-spacing:1px; color:var(--text-muted); cursor:pointer; text-transform:uppercase;
+}
+
+/* ══ SBT GATE — ZONE 3 UPGRADE OVERLAY ══ */
+.upgrade-overlay {
+  display:none;
+  position:absolute; inset:0; z-index:20;
+  background:#0A0F1E;
+  flex-direction:column; overflow-y:auto;
+}
+.upgrade-overlay.visible { display:flex; }
+
+.upgrade-header {
+  padding:16px 20px;
+  background:rgba(245,166,35,0.08);
+  border-bottom:1px solid rgba(245,166,35,0.15);
+  flex-shrink:0;
+}
+.upgrade-badge {
+  display:inline-flex; align-items:center; gap:7px;
+  background:rgba(245,166,35,0.15);
+  border:1px solid rgba(245,166,35,0.3);
+  border-radius:20px; padding:5px 14px; margin-bottom:10px;
+}
+.upgrade-badge span { font-size:11px; font-weight:700; color:#F5A623; text-transform:uppercase; letter-spacing:0.6px; }
+.upgrade-person { font-size:18px; font-weight:700; color:white; margin-bottom:3px; }
+.upgrade-group  { font-size:12px; color:rgba(255,255,255,0.55); margin-bottom:8px; }
+.upgrade-zones  { display:flex; gap:7px; }
+.uz     { font-size:10px; font-weight:700; padding:3px 10px; border-radius:10px; }
+.uz-ok  { background:rgba(34,197,94,0.18); color:#22C55E; border:1px solid rgba(34,197,94,0.25); }
+.uz-no  { background:rgba(239,68,68,0.12); color:#EF4444; border:1px solid rgba(239,68,68,0.2); text-decoration:line-through; opacity:0.6; }
+.upgrade-body { flex:1; padding:20px; }
+.upgrade-card {
+  background:rgba(245,166,35,0.07); border:1px solid rgba(245,166,35,0.2);
+  border-radius:14px; padding:20px; margin-bottom:16px;
+}
+.uc-title  { font-size:13px; font-weight:700; color:#F5C090; margin-bottom:12px; }
+.uc-detail { font-size:12px; color:rgba(255,255,255,0.65); line-height:1.8; margin-bottom:14px; }
+.uc-calc   {
+  font-size:22px; font-weight:700; color:#F5A623; text-align:center;
+  padding:14px; background:rgba(245,166,35,0.1); border-radius:10px; margin-bottom:16px;
+}
+.uc-calc small { font-size:12px; color:rgba(255,255,255,0.45); display:block; margin-top:3px; }
+.upgrade-pay-btn {
+  width:100%; background:linear-gradient(135deg,#F5A623,#E8721A);
+  border:none; border-radius:12px; padding:16px;
+  font-family:'Rajdhani', sans-serif; font-size:16px; font-weight:700;
+  color:white; cursor:pointer; margin-bottom:10px;
+  letter-spacing:0.5px; box-shadow:0 4px 16px rgba(232,114,26,0.4);
+}
+.upgrade-skip-btn {
+  width:100%; background:transparent; border:1px solid rgba(255,255,255,0.15);
+  border-radius:12px; padding:12px; font-size:13px; font-weight:500;
+  color:rgba(255,255,255,0.5); cursor:pointer; font-family:'Noto Sans', sans-serif;
+}
+.upgrade-full-box {
+  background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25);
+  border-radius:10px; padding:14px; text-align:center;
+}
+.upgrade-full-title { font-size:13px; font-weight:700; color:#EF4444; margin-bottom:5px; }
+.upgrade-full-desc  { font-size:11px; color:rgba(255,255,255,0.5); line-height:1.5; }
+
+/* ══ UPGRADE SUCCESS OVERLAY ══ */
+.upgrade-success {
+  display:none;
+  position:absolute; inset:0; z-index:21;
+  background:#0A1A12;
+  flex-direction:column; align-items:center; justify-content:center;
+  padding:28px 24px; text-align:center;
+}
+.upgrade-success.visible { display:flex; }
+.us-icon  { font-size:56px; margin-bottom:14px; }
+.us-title { font-size:20px; font-weight:800; color:#22C55E; margin-bottom:6px; }
+.us-sub   { font-size:13px; color:rgba(255,255,255,0.55); margin-bottom:20px; line-height:1.5; }
+.us-detail {
+  background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2);
+  border-radius:10px; padding:14px 18px;
+  width:100%; max-width:320px; text-align:left; margin-bottom:20px;
+}
+.us-row {
+  display:flex; justify-content:space-between;
+  font-size:12px; padding:5px 0;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.us-row:last-child { border-bottom:none; }
+.us-row span:first-child { color:rgba(255,255,255,0.45); }
+.us-row span:last-child  { color:white; font-weight:600; }
+.us-return { font-size:12px; color:rgba(255,255,255,0.4); }
+</style>
+</head>
+<body>
+
+
+<!-- ══ SCREEN 1 — LOGIN ══ -->
+<div class="screen active" id="s-login">
+  <div class="login-top">
+    <span class="om">&#x1F549;&#xFE0F;</span>
+    <div class="login-title">GEV GATE ACCESS</div>
+    <div class="login-sub">Campus Control System &middot; Govardhan EcoVillage</div>
+  </div>
+
+  <div class="login-card">
+    <span class="field-label">Select Your Gate</span>
+    <div class="gate-grid">
+      <div class="gate-opt sel" id="go-main" onclick="selectGate('main_gate','Main Gate','go-main')">
+        <span class="gate-opt-ic">&#x1F6A7;</span>
+        <div class="gate-opt-nm">Main Gate</div>
+        <div class="gate-opt-sb">Campus Entry</div>
+      </div>
+      <div class="gate-opt" id="go-g7" onclick="selectGate('gate_7','Gate No. 7','go-g7')">
+        <span class="gate-opt-ic">&#x1F333;</span>
+        <div class="gate-opt-nm">Gate No. 7</div>
+        <div class="gate-opt-sb">Vrindavan Forest</div>
+      </div>
+      <div class="gate-opt" id="go-sbt" onclick="selectGate('sbt_gate','SBT Gate','go-sbt')">
+        <span class="gate-opt-ic">&#x1F3E0;</span>
+        <div class="gate-opt-nm">SBT Gate</div>
+        <div class="gate-opt-sb">Guest Area &middot; Zone 3</div>
+      </div>
+      <div class="gate-opt" id="go-exit" onclick="selectGate('exit_gate','Exit Gate','go-exit')">
+        <span class="gate-opt-ic">&#x1F6AA;</span>
+        <div class="gate-opt-nm">Exit Gate</div>
+        <div class="gate-opt-sb">Campus Exit</div>
+      </div>
+    </div>
+
+    <div class="canteen-note">
+      &#x1F372; Annakshetra meal scanning &mdash; use the dedicated <strong>Canteen Counter App</strong>
+    </div>
+
+    <span class="field-label">Username</span>
+    <input type="text" class="inp" id="inp-user"
+           placeholder="e.g. gate.staff or premanjan"
+           onkeydown="if(event.key==='Enter')doLogin()"/>
+
+    <span class="field-label">Password</span>
+    <input type="password" class="inp" id="inp-pass"
+           placeholder="Enter your password"
+           onkeydown="if(event.key==='Enter')doLogin()"/>
+
+    <div class="err-msg" id="login-err"></div>
+
+    <button class="btn-login" onclick="doLogin()">&#x1F64F; JAI GOVARDHAN &mdash; LOGIN</button>
+
+    <div class="demo-hint">
+      Demo &mdash; Username: <span>gate.staff</span> &nbsp;&middot;&nbsp; Password: <span>gev123</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ SCREEN 2 — SCANNER ══ -->
+<div class="screen" id="s-scanner">
+
+  <div class="top-bar">
+    <div class="gate-pill">
+      <div class="live-dot"></div>
+      <span class="gate-label-txt" id="gate-label-txt">Main Gate</span>
+    </div>
+    <div class="top-bar-right">
+      <span class="clock-txt" id="clock">--:--</span>
+      <div class="icon-btn" onclick="goScreen('s-events')">&#x1F4CB;</div>
+    </div>
+  </div>
+
+  <div class="scan-body" id="scan-body">
+    <div class="qr-frame-wrap">
+      <div class="qr-frame-inner">
+        <div class="c c-tl"></div><div class="c c-tr"></div>
+        <div class="c c-bl"></div><div class="c c-br"></div>
+        <div class="scan-ln"></div>
+        <div class="qr-ph">
+          <span class="qr-ph-icon">&#x1F4F1;</span>
+          <div class="qr-ph-txt">Camera opens here<br/>on physical device</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="scan-instr-main">Show QR Code to Camera</div>
+      <div class="scan-instr-sub">Hold the visitor's QR code steady in front of the camera</div>
+    </div>
+    <div class="manual-row">
+      <input type="text" class="manual-inp" id="manual-inp"
+             placeholder="Or type mobile number / QR code manually"
+             onkeydown="if(event.key==='Enter')doManualSearch()"/>
+      <button class="search-btn" onclick="doManualSearch()">&#x1F50D;</button>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-col">
+      <div class="stat-num g" id="st-allowed">0</div>
+      <div class="stat-lbl">Allowed</div>
+    </div>
+    <div class="stat-col">
+      <div class="stat-num r" id="st-denied">0</div>
+      <div class="stat-lbl">Denied</div>
+    </div>
+    <div class="stat-col">
+      <div class="stat-num s" id="st-total">0</div>
+      <div class="stat-lbl">Total Today</div>
+    </div>
+    <div class="stat-col">
+      <div class="stat-num" id="st-time" style="color:var(--text-muted);font-size:13px">&#x2014;</div>
+      <div class="stat-lbl">Last Scan</div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="bnav-btn active" onclick="goScreen('s-scanner')">
+      <span class="bnav-icon">&#x1F4F7;</span>
+      <span class="bnav-label">Scanner</span>
+    </button>
+    <button class="bnav-btn" onclick="goScreen('s-events')">
+      <span class="bnav-icon">&#x1F4CB;</span>
+      <span class="bnav-label">Events</span>
+    </button>
+    <button class="bnav-btn" onclick="demoScan()">
+      <span class="bnav-icon">&#x25B6;&#xFE0F;</span>
+      <span class="bnav-label">Demo Scan</span>
+    </button>
+    <button class="bnav-btn" onclick="prepLogout();goScreen('s-logout')">
+      <span class="bnav-icon">&#x1F513;</span>
+      <span class="bnav-label">Logout</span>
+    </button>
+  </div>
+
+  <!-- Zone 3 Upgrade Overlay (SBT Gate only) -->
+  <div class="upgrade-overlay" id="upgrade-overlay">
+    <div class="upgrade-header">
+      <div class="upgrade-badge"><span>&#x2B06;&#xFE0F; Zone 3 Upgrade Available</span></div>
+      <div class="upgrade-person" id="upg-name">&#x2014;</div>
+      <div class="upgrade-group"  id="upg-group">&#x2014;</div>
+      <div class="upgrade-zones">
+        <span class="uz uz-ok">Zone 1 &#x2713;</span>
+        <span class="uz uz-ok">Zone 2 &#x2713;</span>
+        <span class="uz uz-no">Zone 3</span>
+      </div>
+    </div>
+    <div class="upgrade-body">
+      <div class="upgrade-card" id="upg-available">
+        <div class="uc-title">&#x1F37D;&#xFE0F; Govinda's Guest Area &mdash; Buffet Lunch</div>
+        <div class="uc-detail">
+          Spots available today: <strong id="upg-spots" style="color:#22C55E">12</strong> remaining<br/>
+          Price: &#x20B9;350 per person &middot; Zone 3 access included<br/>
+          Valid until 8:00 PM &middot; WhatsApp confirmation sent
+        </div>
+        <div class="uc-calc" id="upg-calc">
+          &#x20B9;350 &times; 1 person = <strong>&#x20B9;350</strong>
+          <small>Pay via UPI &mdash; receipt to WhatsApp</small>
+        </div>
+        <button class="upgrade-pay-btn" id="upg-pay-btn" onclick="processUpgrade()">
+          &#x1F4B3;&nbsp; Pay &#x20B9;350 &mdash; Enter Zone 3
+        </button>
+        <button class="upgrade-skip-btn" onclick="hideUpgrade()">
+          &#x2715; Cancel &mdash; Go back to scanner
+        </button>
+      </div>
+      <div class="upgrade-full-box" id="upg-full" style="display:none">
+        <div class="upgrade-full-title">&#x274C; Govinda's Buffet &mdash; Fully Booked Today</div>
+        <div class="upgrade-full-desc">
+          All covers reserved for today.<br/><br/>
+          Alternatives:<br/>
+          &#x1F374; Govinda's Srinathji Bhavan &mdash; Zone 1 (Lunch &#x20B9;100)<br/>
+          &#x1F331; Annakshetra Free Lunch &mdash; 12:45&ndash;2:30 PM
+        </div>
+        <button class="upgrade-skip-btn" style="margin-top:10px" onclick="hideUpgrade()">
+          &#x2190; Back to Scanner
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upgrade Success Overlay -->
+  <div class="upgrade-success" id="upgrade-success">
+    <div class="us-icon">&#x2705;</div>
+    <div class="us-title">Zone 3 Access Granted!</div>
+    <div class="us-sub">Payment confirmed &middot; WhatsApp receipt sent &middot; Gate opening</div>
+    <div class="us-detail">
+      <div class="us-row"><span>Visitor</span><span id="us-name">&#x2014;</span></div>
+      <div class="us-row"><span>Persons</span><span id="us-persons">&#x2014;</span></div>
+      <div class="us-row"><span>Amount paid</span><span id="us-amount">&#x2014;</span></div>
+      <div class="us-row"><span>Zone 3 valid</span><span id="us-valid">&#x2014;</span></div>
+      <div class="us-row"><span>Cafe</span><span>Govinda's Guest Area</span></div>
+    </div>
+    <div class="us-return">&#x1F504; Returning to scanner in 5 seconds...</div>
+  </div>
+
+</div>
+
+
+<!-- ══ SCREEN 3 — ALLOWED ══ -->
+<div class="screen" id="s-allowed">
+  <div class="res-ring" id="allowed-ring">&#x2705;</div>
+  <div class="res-status" id="allowed-status">ENTRY ALLOWED</div>
+  <div class="res-name"   id="allowed-name">&#x2014;</div>
+  <div class="res-type"   id="allowed-type">&#x2014;</div>
+  <div class="res-card">
+    <div class="det-row">
+      <span class="det-ic">&#x1FAAA;</span>
+      <div><div class="det-lbl">Person Type</div><div class="det-val" id="a-ptype">&#x2014;</div></div>
+    </div>
+    <div class="det-row">
+      <span class="det-ic">&#x1F3E2;</span>
+      <div><div class="det-lbl">Department / Contractor</div><div class="det-val" id="a-dept">&#x2014;</div></div>
+    </div>
+    <div class="det-row">
+      <span class="det-ic">&#x1F4C5;</span>
+      <div><div class="det-lbl">Stay Period</div><div class="det-val" id="a-stay">&#x2014;</div></div>
+    </div>
+    <div class="det-row">
+      <span class="det-ic">&#x1F35D;</span>
+      <div><div class="det-lbl">Annakshetra B/D</div><div class="det-val" id="a-meals">&#x2014;</div></div>
+    </div>
+    <div class="det-row">
+      <span class="det-ic">&#x1F5FA;&#xFE0F;</span>
+      <div><div class="det-lbl">Zone Access</div><div class="zone-chips" id="a-zones"></div></div>
+    </div>
+  </div>
+  <button class="btn-next g" onclick="goScreen('s-scanner')">NEXT SCAN &#x2192;</button>
+  <div class="bottom-nav" style="position:static;width:100%;margin-top:12px">
+    <button class="bnav-btn" onclick="goScreen('s-scanner')"><span class="bnav-icon">&#x1F4F7;</span><span class="bnav-label">Scanner</span></button>
+    <button class="bnav-btn" onclick="goScreen('s-events')"><span class="bnav-icon">&#x1F4CB;</span><span class="bnav-label">Events</span></button>
+    <button class="bnav-btn" onclick="demoScan()"><span class="bnav-icon">&#x25B6;&#xFE0F;</span><span class="bnav-label">Next Demo</span></button>
+    <button class="bnav-btn" onclick="prepLogout();goScreen('s-logout')"><span class="bnav-icon">&#x1F513;</span><span class="bnav-label">Logout</span></button>
+  </div>
+</div>
+
+
+<!-- ══ SCREEN 4 — DENIED ══ -->
+<div class="screen" id="s-denied">
+  <div class="res-ring red">&#x1F6AB;</div>
+  <div class="res-status red" id="denied-status">ACCESS DENIED</div>
+  <div class="res-name" id="denied-name">&#x2014;</div>
+  <div class="res-type" id="denied-type">&#x2014;</div>
+  <div class="deny-box">
+    <div class="deny-box-lbl">Reason for Denial</div>
+    <div class="deny-box-msg" id="deny-reason">&#x2014;</div>
+  </div>
+  <div class="res-card red-card" style="max-width:380px">
+    <div class="det-row">
+      <span class="det-ic">&#x1FAAA;</span>
+      <div><div class="det-lbl">Person Type</div><div class="det-val" id="d-ptype">&#x2014;</div></div>
+    </div>
+    <div class="det-row">
+      <span class="det-ic">&#x1F4DE;</span>
+      <div><div class="det-lbl">Mobile</div><div class="det-val" id="d-mobile">&#x2014;</div></div>
+    </div>
+    <div class="det-row">
+      <span class="det-ic">&#x1F5FA;&#xFE0F;</span>
+      <div><div class="det-lbl">Zone Access</div><div class="zone-chips" id="d-zones"></div></div>
+    </div>
+    <div class="det-row">
+      <span class="det-ic">&#x1F4A1;</span>
+      <div><div class="det-lbl">Action Required</div><div class="det-val" id="d-action" style="color:var(--saffron);font-size:12px">&#x2014;</div></div>
+    </div>
+  </div>
+  <button class="btn-override" onclick="doOverride()">&#x26A0;&#xFE0F; Manual Override (Admin Only)</button>
+  <button class="btn-next r" onclick="goScreen('s-scanner')">NEXT SCAN &#x2192;</button>
+  <div class="bottom-nav" style="position:static;width:100%;margin-top:10px">
+    <button class="bnav-btn" onclick="goScreen('s-scanner')"><span class="bnav-icon">&#x1F4F7;</span><span class="bnav-label">Scanner</span></button>
+    <button class="bnav-btn" onclick="goScreen('s-events')"><span class="bnav-icon">&#x1F4CB;</span><span class="bnav-label">Events</span></button>
+    <button class="bnav-btn" onclick="demoScan()"><span class="bnav-icon">&#x25B6;&#xFE0F;</span><span class="bnav-label">Next Demo</span></button>
+    <button class="bnav-btn" onclick="prepLogout();goScreen('s-logout')"><span class="bnav-icon">&#x1F513;</span><span class="bnav-label">Logout</span></button>
+  </div>
+</div>
+
+
+<!-- ══ SCREEN 5 — EVENTS ══ -->
+<div class="screen" id="s-events">
+  <div class="events-header">
+    <button class="icon-btn" onclick="goScreen('s-scanner')" style="flex-shrink:0">&#x2190;</button>
+    <span class="events-title">Recent Gate Events</span>
+    <span style="margin-left:auto;font-size:11px;color:var(--text-dim)" id="events-gate-lbl">Main Gate</span>
+  </div>
+  <div class="events-body" id="events-body">
+    <div class="events-empty">No events yet &mdash; press Demo Scan to test</div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bnav-btn" onclick="goScreen('s-scanner')"><span class="bnav-icon">&#x1F4F7;</span><span class="bnav-label">Scanner</span></button>
+    <button class="bnav-btn active"><span class="bnav-icon">&#x1F4CB;</span><span class="bnav-label">Events</span></button>
+    <button class="bnav-btn" onclick="demoScan()"><span class="bnav-icon">&#x25B6;&#xFE0F;</span><span class="bnav-label">Demo Scan</span></button>
+    <button class="bnav-btn" onclick="prepLogout();goScreen('s-logout')"><span class="bnav-icon">&#x1F513;</span><span class="bnav-label">Logout</span></button>
+  </div>
+</div>
+
+
+<!-- ══ SCREEN 6 — LOGOUT ══ -->
+<div class="screen" id="s-logout">
+  <div class="logout-card">
+    <span class="logout-icon">&#x1F513;</span>
+    <div class="logout-title">End Your Shift?</div>
+    <div class="logout-sub">You are logged in at:</div>
+    <div class="logout-gate" id="logout-gate-name">Main Gate</div>
+    <div class="logout-stats">
+      <div class="ls-item"><div class="ls-num g" id="lo-allowed">0</div><div class="ls-lbl">Allowed</div></div>
+      <div class="ls-item"><div class="ls-num r" id="lo-denied">0</div><div class="ls-lbl">Denied</div></div>
+      <div class="ls-item"><div class="ls-num s" id="lo-total">0</div><div class="ls-lbl">Total</div></div>
+    </div>
+    <button class="btn-confirm-logout" onclick="doLogout()">&#x2705; CONFIRM LOGOUT</button>
+    <button class="btn-cancel-logout"  onclick="goScreen('s-scanner')">&#x2190; BACK TO SCANNER</button>
+  </div>
+</div>
+
+
+<script>
+var state = {
+  gate:        { id: 'main_gate', name: 'Main Gate' },
+  loggedIn:    false,
+  stats:       { allowed: 0, denied: 0 },
+  events:      [],
+  demoIdx:     0,
+  upgradeData: null
+};
+
+var USERS = {
+  'gate.staff': { pass: 'gev123',   role: 'gate_operator', name: 'Suresh Kumar'     },
+  'premanjan':  { pass: 'gev123',   role: 'security',      name: 'Premanjan Prabhu' },
+  'ram.prabhu': { pass: 'admin123', role: 'super_admin',   name: 'Ram Prabhu'       }
+};
+
+var DEMOS = [
+  {
+    result: 'allow',
+    person: {
+      name: 'Arun Mehta', type: 'Room Guest', subtype: 'eZee booking',
+      dept: 'Guest Services', stay: '24-26 Apr',
+      meals: 'B+D registered', mobile: '+91 98201 12345',
+      zones: ['zone1','zone2','zone3'], group_size: 2
+    }
+  },
+  {
+    result: 'allow',
+    person: {
+      name: 'Ramesh Kumar', type: 'Construction Labourer', subtype: 'Sharma Const. Co.',
+      dept: 'Construction', stay: '1 Mar - 30 Jun',
+      meals: 'B+D (Free welfare)', mobile: '+91 87654 32101',
+      zones: ['zone1','zone2','zone3'], group_size: 1
+    }
+  },
+  {
+    result: 'deny',
+    person: {
+      name: 'Vijay Patil', type: 'Free Day Visitor', subtype: 'Walk-in',
+      dept: '-', stay: 'Today only',
+      meals: '-', mobile: '+91 98765 43210',
+      zones: ['zone1','zone2'], group_size: 4
+    },
+    deny:   'Zone 3 not permitted for free day visitors',
+    action: 'Offer Zone 3 upgrade at SBT Gate - Rs.350 per person'
+  },
+  {
+    result: 'allow',
+    person: {
+      name: 'Priya Sharma', type: 'Volunteer / Seva', subtype: 'Yoga Dept',
+      dept: 'Govardhan School of Yoga', stay: '1 May - 30 Jun',
+      meals: 'B+D (Dept sponsored)', mobile: '+91 99112 34567',
+      zones: ['zone1','zone2','zone3'], group_size: 1
+    }
+  },
+  {
+    result: 'allow',
+    person: {
+      name: 'Dr. Divya Nair', type: 'Course Student', subtype: 'Ayurveda (4-week)',
+      dept: 'Govardhan Ayurveda', stay: '10 Apr - 8 May',
+      meals: 'B+D registered', mobile: '+91 98765 11223',
+      zones: ['zone1','zone2','zone3'], group_size: 1
+    }
+  },
+  {
+    result: 'deny',
+    person: {
+      name: 'Suresh Vendor', type: 'Vendor / Supplier', subtype: 'ABC Plumbing',
+      dept: '-', stay: 'Day pass',
+      meals: '-', mobile: '+91 97654 32109',
+      zones: ['zone1'], group_size: 1
+    },
+    deny:   'Day pass not yet approved by admin',
+    action: 'Contact Admin Portal for approval'
+  }
+];
+
+function pad2(n) {
+  return n < 10 ? '0' + n : '' + n;
+}
+
+function nowTime() {
+  var d = new Date();
+  return pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
+}
+
+function goScreen(id) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) {
+    screens[i].classList.remove('active');
+  }
+  var t = document.getElementById(id);
+  if (t) { t.classList.add('active'); }
+}
+
+function selectGate(id, name, elId) {
+  var opts = document.querySelectorAll('.gate-opt');
+  for (var i = 0; i < opts.length; i++) {
+    opts[i].classList.remove('sel');
+  }
+  var el = document.getElementById(elId);
+  if (el) { el.classList.add('sel'); }
+  state.gate = { id: id, name: name };
+}
+
+function doLogin() {
+  var userEl = document.getElementById('inp-user');
+  var passEl = document.getElementById('inp-pass');
+  var errEl  = document.getElementById('login-err');
+  var user   = userEl.value.trim().toLowerCase();
+  var pass   = passEl.value;
+
+  errEl.style.display = 'none';
+
+  if (!user || !pass) {
+    errEl.textContent    = 'Please enter both username and password.';
+    errEl.style.display  = 'block';
+    return;
+  }
+
+  var u = USERS[user];
+  if (!u || u.pass !== pass) {
+    errEl.textContent    = 'Invalid credentials. Try: gate.staff / gev123';
+    errEl.style.display  = 'block';
+    return;
+  }
+
+  state.loggedIn = true;
+  state.user     = { username: user, role: u.role, name: u.name };
+
+  var lbl = document.getElementById('gate-label-txt');
+  if (lbl) { lbl.textContent = state.gate.name; }
+
+  var evLbl = document.getElementById('events-gate-lbl');
+  if (evLbl) { evLbl.textContent = state.gate.name; }
+
+  var loGate = document.getElementById('logout-gate-name');
+  if (loGate) { loGate.textContent = state.gate.name; }
+
+  startClock();
+  goScreen('s-scanner');
+}
+
+function doLogout() {
+  state.loggedIn    = false;
+  state.stats       = { allowed: 0, denied: 0 };
+  state.events      = [];
+  state.demoIdx     = 0;
+  state.upgradeData = null;
+
+  document.getElementById('inp-user').value  = '';
+  document.getElementById('inp-pass').value  = '';
+  document.getElementById('login-err').style.display = 'none';
+
+  updateStats();
+  hideUpgrade();
+  hideUpgradeSuccess();
+  goScreen('s-login');
+}
+
+function prepLogout() {
+  document.getElementById('lo-allowed').textContent = state.stats.allowed;
+  document.getElementById('lo-denied').textContent  = state.stats.denied;
+  document.getElementById('lo-total').textContent   = state.stats.allowed + state.stats.denied;
+  var loGate = document.getElementById('logout-gate-name');
+  if (loGate) { loGate.textContent = state.gate.name; }
+}
+
+function startClock() {
+  function tick() {
+    var d  = new Date();
+    var ts = pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
+    var el = document.getElementById('clock');
+    if (el) { el.textContent = ts; }
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+function demoScan() {
+  var scan = DEMOS[state.demoIdx % DEMOS.length];
+  state.demoIdx++;
+  processScan(scan);
+}
+
+function doManualSearch() {
+  var el = document.getElementById('manual-inp');
+  var q  = el ? el.value.trim() : '';
+  if (!q) {
+    alert('Enter a name or mobile number to search.');
+    return;
+  }
+  processScan(DEMOS[0]);
+}
+
+function processScan(result) {
+  var t = nowTime();
+
+  if (result.result === 'allow') {
+    state.stats.allowed++;
+    updateStats(t);
+    fillAllowed(result);
+
+    if (state.gate.id === 'sbt_gate' &&
+        result.person.type &&
+        result.person.type.indexOf('Day') !== -1) {
+      showUpgrade(result.person);
+      return;
+    }
+
+    addEvent('a', result.person.name, result.person.type + ' - ' + state.gate.name, t);
+    goScreen('s-allowed');
+
+    setTimeout(function() {
+      var scr = document.getElementById('s-allowed');
+      if (scr && scr.classList.contains('active')) {
+        goScreen('s-scanner');
+      }
+    }, 4000);
+
+  } else {
+    state.stats.denied++;
+    updateStats(t);
+    fillDenied(result);
+
+    addEvent('d', result.person.name, (result.deny || 'Denied') + ' - ' + state.gate.name, t);
+    goScreen('s-denied');
+
+    setTimeout(function() {
+      var scr = document.getElementById('s-denied');
+      if (scr && scr.classList.contains('active')) {
+        goScreen('s-scanner');
+      }
+    }, 5000);
+  }
+}
+
+function fillAllowed(result) {
+  var p    = result.person;
+  var allZ = ['zone1','zone2','zone3','zone4'];
+  var zLbl = { zone1:'Zone 1', zone2:'Zone 2', zone3:'Zone 3', zone4:'Zone 4' };
+
+  document.getElementById('allowed-status').textContent    = 'ACCESS GRANTED';
+  document.getElementById('allowed-status').style.color    = 'var(--green)';
+  document.getElementById('allowed-ring').style.borderColor = 'var(--green)';
+  document.getElementById('allowed-ring').textContent       = '\u2705';
+  document.getElementById('allowed-name').textContent       = p.name;
+  document.getElementById('allowed-type').textContent       = p.type + (p.subtype ? ' - ' + p.subtype : '');
+  document.getElementById('a-ptype').textContent  = p.type;
+  document.getElementById('a-dept').textContent   = p.dept  || '-';
+  document.getElementById('a-stay').textContent   = p.stay  || '-';
+  document.getElementById('a-meals').textContent  = p.meals || '-';
+  document.getElementById('a-meals').style.color  = (p.meals && p.meals.indexOf('B+D') !== -1) ? 'var(--green)' : 'inherit';
+
+  var zc = document.getElementById('a-zones');
+  if (zc) {
+    var html = '';
+    for (var i = 0; i < allZ.length; i++) {
+      var z   = allZ[i];
+      var cls = (p.zones && p.zones.indexOf(z) !== -1) ? 'a' : 'b';
+      html   += '<span class="zchip ' + cls + '">' + zLbl[z] + '</span>';
+    }
+    zc.innerHTML = html;
+  }
+}
+
+function fillDenied(result) {
+  var p    = result.person;
+  var allZ = ['zone1','zone2','zone3','zone4'];
+  var zLbl = { zone1:'Zone 1', zone2:'Zone 2', zone3:'Zone 3', zone4:'Zone 4' };
+
+  document.getElementById('denied-status').textContent = 'ACCESS DENIED';
+  document.getElementById('denied-name').textContent   = p.name;
+  document.getElementById('denied-type').textContent   = p.type + (p.subtype ? ' - ' + p.subtype : '');
+  document.getElementById('d-ptype').textContent       = p.type;
+  document.getElementById('d-mobile').textContent      = p.mobile  || '-';
+  document.getElementById('deny-reason').textContent   = result.deny   || 'Not eligible for this zone';
+  document.getElementById('d-action').textContent      = result.action || 'Contact admin for assistance';
+
+  var zc = document.getElementById('d-zones');
+  if (zc) {
+    var html = '';
+    for (var i = 0; i < allZ.length; i++) {
+      var z   = allZ[i];
+      var cls = (p.zones && p.zones.indexOf(z) !== -1) ? 'a' : 'b';
+      html   += '<span class="zchip ' + cls + '">' + zLbl[z] + '</span>';
+    }
+    zc.innerHTML = html;
+  }
+}
+
+function doOverride() {
+  var reason = prompt('Enter reason for manual override.\n(This will be logged in the audit trail)');
+  if (reason && reason.trim()) {
+    alert('Override logged. Ram Prabhu has been notified. Audit entry created.');
+    goScreen('s-scanner');
+  }
+}
+
+function updateStats(t) {
+  document.getElementById('st-allowed').textContent = state.stats.allowed;
+  document.getElementById('st-denied').textContent  = state.stats.denied;
+  document.getElementById('st-total').textContent   = state.stats.allowed + state.stats.denied;
+  if (t) {
+    document.getElementById('st-time').textContent = t;
+  }
+}
+
+function addEvent(type, name, sub, time) {
+  state.events.unshift({ type: type, name: name, sub: sub, time: time });
+  if (state.events.length > 30) { state.events.pop(); }
+  renderEvents();
+}
+
+function renderEvents() {
+  var body = document.getElementById('events-body');
+  if (!body) { return; }
+  if (state.events.length === 0) {
+    body.innerHTML = '<div class="events-empty">No events yet</div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < state.events.length; i++) {
+    var e = state.events[i];
+    html += '<div class="ev-item ' + e.type + '">';
+    html += '<div class="ev-top">';
+    html += '<span class="ev-badge ' + e.type + '">' + (e.type === 'a' ? '\u2713 Allowed' : '\u2717 Denied') + '</span>';
+    html += '<span class="ev-time">' + e.time + '</span>';
+    html += '</div>';
+    html += '<div class="ev-name">' + e.name + '</div>';
+    html += '<div class="ev-sub">'  + e.sub  + '</div>';
+    html += '</div>';
+  }
+  body.innerHTML = html;
+}
+
+/* ── SBT GATE UPGRADE ── */
+
+function showUpgrade(personData) {
+  var groupSize = personData.group_size || 1;
+  var price     = 350;
+  var total     = price * groupSize;
+  var cafeAvail = 12;
+
+  state.upgradeData = { personData: personData, total: total, groupSize: groupSize };
+
+  document.getElementById('upg-name').textContent  = personData.name;
+  document.getElementById('upg-group').textContent =
+    'Group of ' + groupSize + ' - ' + (personData.type || 'Day Visitor') + ' - Today only';
+
+  var calcEl = document.getElementById('upg-calc');
+  calcEl.innerHTML =
+    '\u20B9' + price + ' x ' + groupSize + ' person' + (groupSize > 1 ? 's' : '') +
+    ' = <strong>\u20B9' + total.toLocaleString('en-IN') + '</strong>' +
+    "<small>Govinda's Buffet Lunch &middot; Valid until 8:00 PM</small>";
+
+  var payBtn = document.getElementById('upg-pay-btn');
+  payBtn.textContent = 'Pay \u20B9' + total.toLocaleString('en-IN') + ' \u2014 Enter Zone 3';
+  payBtn.disabled    = false;
+
+  var avail = document.getElementById('upg-available');
+  var full  = document.getElementById('upg-full');
+
+  if (cafeAvail <= 0) {
+    avail.style.display = 'none';
+    full.style.display  = 'block';
+  } else {
+    avail.style.display = 'block';
+    full.style.display  = 'none';
+    document.getElementById('upg-spots').textContent = cafeAvail;
+  }
+
+  document.getElementById('upgrade-overlay').classList.add('visible');
+}
+
+function hideUpgrade() {
+  document.getElementById('upgrade-overlay').classList.remove('visible');
+  state.upgradeData = null;
+}
+
+function hideUpgradeSuccess() {
+  document.getElementById('upgrade-success').classList.remove('visible');
+}
+
+function processUpgrade() {
+  if (!state.upgradeData) { return; }
+
+  var data       = state.upgradeData;
+  var personData = data.personData;
+  var total      = data.total;
+  var groupSize  = data.groupSize;
+  var btn        = document.getElementById('upg-pay-btn');
+
+  btn.textContent = 'Processing payment...';
+  btn.disabled    = true;
+
+  setTimeout(function() {
+    document.getElementById('upgrade-overlay').classList.remove('visible');
+
+    document.getElementById('us-name').textContent    = personData.name;
+    document.getElementById('us-persons').textContent = groupSize + ' person' + (groupSize > 1 ? 's' : '');
+    document.getElementById('us-amount').textContent  = '\u20B9' + total.toLocaleString('en-IN');
+    document.getElementById('us-valid').textContent   = 'Until 8:00 PM today';
+    document.getElementById('upgrade-success').classList.add('visible');
+
+    var t = nowTime();
+    addEvent('a', personData.name, 'Zone 3 upgrade \u20B9' + total + ' - SBT Gate', t);
+    state.stats.allowed++;
+    updateStats(t);
+
+    setTimeout(function() {
+      document.getElementById('upgrade-success').classList.remove('visible');
+      btn.textContent   = 'Pay \u20B9' + total.toLocaleString('en-IN') + ' \u2014 Enter Zone 3';
+      btn.disabled      = false;
+      state.upgradeData = null;
+      goScreen('s-scanner');
+    }, 5000);
+
+  }, 2000);
+}
+
+document.addEventListener('keydown', function(e) {
+  if (!state.loggedIn) { return; }
+  if (e.key === 'Enter')  { demoScan(); }
+  if (e.key === 'Escape') { goScreen('s-scanner'); }
+});
+</script>
+
+</body>
+</html>

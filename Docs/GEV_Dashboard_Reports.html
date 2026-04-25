@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GEV ICMS — Dashboard & Reports</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0C0E14;
+  --surface: #13161F;
+  --surface2: #191D29;
+  --surface3: #1F2434;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.04);
+
+  --saffron: #F5943A;
+  --saffron2: #FBBA72;
+  --saffron-dim: rgba(245,148,58,0.12);
+  --saffron-glow: rgba(245,148,58,0.25);
+  --green: #3DBF82;
+  --green-dim: rgba(61,191,130,0.1);
+  --red: #EF5959;
+  --red-dim: rgba(239,89,89,0.1);
+  --blue: #5B9CF6;
+  --blue-dim: rgba(91,156,246,0.1);
+  --amber: #F5C842;
+  --amber-dim: rgba(245,200,66,0.1);
+  --purple: #A78BFA;
+  --purple-dim: rgba(167,139,250,0.1);
+  --teal: #2DD4C0;
+  --teal-dim: rgba(45,212,192,0.1);
+
+  --text: #F0EDE8;
+  --text2: #9B97A0;
+  --text3: #55525A;
+  --font: 'Syne', sans-serif;
+  --serif: 'DM Serif Display', serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; }
+body { font-family:var(--font); background:var(--bg); color:var(--text); display:flex; font-size:13px; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:220px; flex-shrink:0; background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column; height:100vh; overflow-y:auto;
+}
+.brand {
+  padding:22px 18px 16px;
+  border-bottom:1px solid var(--border);
+}
+.brand-om { font-size:22px; display:block; margin-bottom:6px; }
+.brand-name {
+  font-family:var(--serif); font-size:15px; color:var(--saffron);
+  line-height:1.2; margin-bottom:2px;
+}
+.brand-sub { font-size:9px; color:var(--text3); letter-spacing:1.5px; text-transform:uppercase; }
+
+.nav-section { padding:18px 14px 6px; font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text3); }
+
+.nav-item {
+  display:flex; align-items:center; gap:9px;
+  padding:9px 16px; cursor:pointer;
+  color:var(--text2); font-size:12px; font-weight:500;
+  border:none; background:none; width:100%; text-align:left;
+  border-left:2px solid transparent; transition:all 0.15s;
+  font-family:var(--font);
+}
+.nav-item:hover { color:var(--text); background:var(--surface2); }
+.nav-item.active { color:var(--saffron); background:var(--saffron-dim); border-left-color:var(--saffron); }
+.nav-icon { font-size:13px; width:16px; text-align:center; flex-shrink:0; }
+.nav-badge { background:var(--red); color:white; font-size:9px; font-weight:700; padding:1px 5px; border-radius:8px; margin-left:auto; }
+
+.sidebar-footer { margin-top:auto; padding:14px 16px; border-top:1px solid var(--border); font-size:10px; color:var(--text3); }
+.sidebar-user { font-size:11px; font-weight:600; color:var(--text2); margin-bottom:2px; }
+
+/* ── MAIN ── */
+.main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+.topbar {
+  height:52px; padding:0 24px; display:flex; align-items:center; gap:12px;
+  border-bottom:1px solid var(--border); background:var(--surface); flex-shrink:0;
+}
+.topbar-title { font-family:var(--serif); font-size:20px; color:var(--text); }
+.topbar-sub { font-size:11px; color:var(--text3); }
+.topbar-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
+.topbar-btn {
+  background:var(--surface2); border:1px solid var(--border); color:var(--text2);
+  border-radius:6px; padding:6px 12px; font-size:11.5px; cursor:pointer;
+  display:flex; align-items:center; gap:5px; font-family:var(--font); font-weight:500;
+  transition:all 0.15s;
+}
+.topbar-btn:hover { border-color:var(--saffron); color:var(--saffron); }
+.topbar-btn.primary { background:var(--saffron); border-color:var(--saffron); color:#0C0E14; font-weight:700; }
+.topbar-btn.primary:hover { background:var(--saffron2); }
+.live-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 0 3px rgba(61,191,130,0.2); animation:pulse 2s infinite; flex-shrink:0; }
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 3px rgba(61,191,130,0.2);} 50%{box-shadow:0 0 0 6px rgba(61,191,130,0.05);} }
+
+.content { flex:1; overflow-y:auto; padding:22px 24px; scrollbar-width:thin; scrollbar-color:var(--surface3) transparent; }
+
+/* ── PAGE SYSTEM ── */
+.page { display:none; }
+.page.active { display:block; animation:fade-in 0.2s ease; }
+@keyframes fade-in { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── STAT CARDS ── */
+.stats-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin-bottom:18px; }
+.stat {
+  background:var(--surface); border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; position:relative; overflow:hidden;
+}
+.stat-val { font-family:var(--serif); font-size:28px; line-height:1; margin-bottom:3px; }
+.stat-lbl { font-size:11px; color:var(--text2); font-weight:500; }
+.stat-sub { font-size:10px; color:var(--text3); margin-top:2px; }
+.stat-bar { position:absolute; top:0; left:0; right:0; height:2px; }
+.s-o .stat-bar { background:linear-gradient(90deg,var(--saffron),transparent); }
+.s-o .stat-val { color:var(--saffron); }
+.s-g .stat-bar { background:linear-gradient(90deg,var(--green),transparent); }
+.s-g .stat-val { color:var(--green); }
+.s-b .stat-bar { background:linear-gradient(90deg,var(--blue),transparent); }
+.s-b .stat-val { color:var(--blue); }
+.s-r .stat-bar { background:linear-gradient(90deg,var(--red),transparent); }
+.s-r .stat-val { color:var(--red); }
+.s-a .stat-bar { background:linear-gradient(90deg,var(--amber),transparent); }
+.s-a .stat-val { color:var(--amber); }
+.s-p .stat-bar { background:linear-gradient(90deg,var(--purple),transparent); }
+.s-p .stat-val { color:var(--purple); }
+.s-t .stat-bar { background:linear-gradient(90deg,var(--teal),transparent); }
+.s-t .stat-val { color:var(--teal); }
+
+/* ── CARDS ── */
+.card {
+  background:var(--surface); border:1px solid var(--border); border-radius:10px;
+  overflow:hidden; margin-bottom:14px;
+}
+.card-head {
+  padding:13px 16px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:9px;
+}
+.card-title { font-size:12.5px; font-weight:700; color:var(--text); }
+.card-sub { font-size:11px; color:var(--text3); }
+.card-actions { margin-left:auto; display:flex; gap:6px; }
+.card-body { padding:16px; }
+
+/* ── GRID LAYOUTS ── */
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.g3 { display:grid; grid-template-columns:2fr 1fr; gap:14px; }
+
+/* ── CHART BARS (pure CSS) ── */
+.bar-chart { display:flex; align-items:flex-end; gap:6px; height:100px; }
+.bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.bar { width:100%; border-radius:4px 4px 0 0; transition:height 0.5s ease; }
+.bar-lbl { font-size:9px; color:var(--text3); text-align:center; }
+.bar-val { font-size:10px; font-family:var(--mono); color:var(--text2); }
+
+/* ── DONUT CHART (SVG) ── */
+.donut-wrap { display:flex; align-items:center; gap:16px; }
+.donut-legend { flex:1; }
+.legend-item { display:flex; align-items:center; gap:7px; padding:4px 0; font-size:11px; }
+.leg-dot { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+.leg-lbl { color:var(--text2); flex:1; }
+.leg-val { font-family:var(--mono); font-size:11px; color:var(--text); font-weight:500; }
+
+/* ── ACTIVITY FEED ── */
+.feed-item { display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--border2); align-items:flex-start; }
+.feed-item:last-child { border-bottom:none; }
+.feed-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+.feed-text { flex:1; font-size:12px; color:var(--text2); line-height:1.4; }
+.feed-text strong { color:var(--text); }
+.feed-time { font-size:10px; color:var(--text3); font-family:var(--mono); flex-shrink:0; }
+
+/* ── DATA TABLE ── */
+.data-table { width:100%; border-collapse:collapse; font-size:11.5px; }
+.data-table thead tr { background:var(--surface2); }
+.data-table th { padding:9px 12px; text-align:left; font-size:10px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; color:var(--text3); }
+.data-table tbody tr { border-bottom:1px solid var(--border2); transition:background 0.1s; }
+.data-table tbody tr:hover { background:var(--surface2); }
+.data-table tbody tr:last-child { border-bottom:none; }
+.data-table td { padding:9px 12px; vertical-align:middle; }
+
+/* ── TAGS ── */
+.tag { display:inline-flex; align-items:center; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; }
+.tag-g { background:var(--green-dim); color:var(--green); }
+.tag-r { background:var(--red-dim); color:var(--red); }
+.tag-o { background:var(--saffron-dim); color:var(--saffron); }
+.tag-b { background:var(--blue-dim); color:var(--blue); }
+.tag-a { background:var(--amber-dim); color:var(--amber); }
+.tag-p { background:var(--purple-dim); color:var(--purple); }
+.tag-t { background:var(--teal-dim); color:var(--teal); }
+.tag-grey { background:var(--surface3); color:var(--text2); }
+
+/* ── PROGRESS BARS ── */
+.prog { margin-bottom:10px; }
+.prog-meta { display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px; }
+.prog-lbl { color:var(--text2); }
+.prog-val { font-family:var(--mono); color:var(--text3); }
+.prog-track { background:var(--surface3); border-radius:3px; height:4px; overflow:hidden; }
+.prog-fill { height:100%; border-radius:3px; transition:width 0.6s ease; }
+
+/* ── REPORT CARDS ── */
+.report-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.report-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; cursor:pointer; transition:all 0.15s;
+}
+.report-card:hover { border-color:var(--saffron); background:var(--surface2); }
+.report-card.featured { border-color:rgba(245,148,58,0.3); }
+.rc-icon { font-size:20px; margin-bottom:8px; display:block; }
+.rc-title { font-size:12.5px; font-weight:700; color:var(--text); margin-bottom:3px; }
+.rc-sub { font-size:11px; color:var(--text3); line-height:1.4; }
+.rc-freq { font-size:10px; font-family:var(--mono); margin-top:8px; }
+
+/* ── METRIC ROW ── */
+.metric-row { display:flex; gap:0; background:var(--surface2); border-radius:8px; overflow:hidden; margin-bottom:12px; }
+.metric { flex:1; padding:12px 14px; border-right:1px solid var(--border2); }
+.metric:last-child { border-right:none; }
+.metric-n { font-family:var(--serif); font-size:22px; line-height:1; margin-bottom:2px; }
+.metric-l { font-size:10px; color:var(--text3); }
+
+/* ── CALLOUT ── */
+.callout { border-radius:8px; padding:11px 14px; margin-bottom:12px; display:flex; gap:9px; align-items:flex-start; font-size:12px; }
+.callout.warn { background:var(--amber-dim); border:1px solid rgba(245,200,66,0.2); }
+.callout.info { background:var(--blue-dim); border:1px solid rgba(91,156,246,0.2); }
+.callout.ok { background:var(--green-dim); border:1px solid rgba(61,191,130,0.2); }
+.callout-icon { flex-shrink:0; font-size:14px; }
+.callout-body { flex:1; line-height:1.5; color:var(--text2); }
+.callout-body strong { color:var(--text); display:block; margin-bottom:1px; }
+
+/* ── MINI CHART ── */
+.sparkline { display:flex; align-items:flex-end; gap:2px; height:32px; }
+.spark-bar { flex:1; border-radius:1px 1px 0 0; min-height:2px; }
+
+/* ── MODAL (Report Preview) ── */
+.modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+.modal-bg.open { display:flex; }
+.modal { background:var(--surface); border:1px solid var(--border); border-radius:14px; width:560px; max-width:94vw; max-height:88vh; overflow-y:auto; box-shadow:0 24px 64px rgba(0,0,0,0.6); animation:modal-in 0.2s ease; }
+@keyframes modal-in { from{opacity:0;transform:scale(0.96)translateY(8px)} to{opacity:1;transform:scale(1)translateY(0)} }
+.modal-head { padding:18px 20px 14px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+.modal-title { font-family:var(--serif); font-size:18px; }
+.modal-close { margin-left:auto; background:none; border:none; color:var(--text3); font-size:16px; cursor:pointer; padding:4px; }
+.modal-close:hover { color:var(--text); }
+.modal-body { padding:18px 20px; }
+.modal-foot { padding:12px 20px; border-top:1px solid var(--border); display:flex; gap:8px; justify-content:flex-end; }
+
+/* ── POLICE REPORT PREVIEW ── */
+.police-preview {
+  background:white; color:#111; border-radius:8px; padding:20px 24px;
+  font-family:serif; font-size:11.5px; line-height:1.6;
+}
+.pr-header { text-align:center; margin-bottom:14px; border-bottom:2px solid #111; padding-bottom:10px; }
+.pr-header h2 { font-size:14px; font-weight:700; margin-bottom:3px; }
+.pr-header p { font-size:11px; }
+.pr-table { width:100%; border-collapse:collapse; font-size:10.5px; margin-top:10px; }
+.pr-table th { background:#111; color:white; padding:5px 7px; text-align:left; font-size:9.5px; }
+.pr-table td { padding:5px 7px; border-bottom:0.5px solid #CCC; }
+.pr-table tr:nth-child(even) td { background:#F9F9F9; }
+.pr-footer { margin-top:14px; display:flex; justify-content:space-between; font-size:10px; }
+
+.btn { border:none; border-radius:6px; padding:7px 14px; font-family:var(--font); font-size:12px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.15s; }
+.btn-primary { background:var(--saffron); color:#0C0E14; }
+.btn-primary:hover { background:var(--saffron2); }
+.btn-outline { background:transparent; border:1px solid var(--border); color:var(--text2); }
+.btn-outline:hover { border-color:var(--saffron); color:var(--saffron); }
+.btn-ghost { background:transparent; color:var(--text3); border:none; }
+.btn-ghost:hover { color:var(--saffron); }
+.btn-sm { padding:4px 10px; font-size:11px; }
+.btn-danger { background:var(--red-dim); color:var(--red); border:1px solid rgba(239,89,89,0.2); }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="brand">
+    <span class="brand-om">🕉️</span>
+    <div class="brand-name">Govardhan<br/>EcoVillage</div>
+    <div class="brand-sub">ICMS · Dashboard</div>
+  </div>
+
+  <div class="nav-section">Live Dashboards</div>
+  <button class="nav-item active" onclick="nav(this,'pg-overview')">
+    <span class="nav-icon">📊</span>Campus Overview
+  </button>
+  <button class="nav-item" onclick="nav(this,'pg-gates')">
+    <span class="nav-icon">🚪</span>Gate Activity
+    <span class="nav-badge">3</span>
+  </button>
+  <button class="nav-item" onclick="nav(this,'pg-meals')">
+    <span class="nav-icon">🍲</span>Annakshetra
+  </button>
+  <button class="nav-item" onclick="nav(this,'pg-festival')">
+    <span class="nav-icon">🎉</span>Festival Mode
+  </button>
+
+  <div class="nav-section">Reports</div>
+  <button class="nav-item" onclick="nav(this,'pg-reports')">
+    <span class="nav-icon">📋</span>Reports Library
+  </button>
+  <button class="nav-item" onclick="nav(this,'pg-police')">
+    <span class="nav-icon">🚔</span>Police Report
+  </button>
+  <button class="nav-item" onclick="nav(this,'pg-billing')">
+    <span class="nav-icon">💳</span>Billing Recovery
+  </button>
+
+  <div class="nav-section">Analytics</div>
+  <button class="nav-item" onclick="nav(this,'pg-trends')">
+    <span class="nav-icon">📈</span>Visitor Trends
+  </button>
+  <button class="nav-item" onclick="nav(this,'pg-audit')">
+    <span class="nav-icon">🔐</span>Audit Trail
+  </button>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">Ram Prabhu</div>
+    Super Admin · Live view
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="live-dot"></div>
+    <span class="topbar-title" id="tb-title">Campus Overview</span>
+    <span class="topbar-sub" id="tb-sub">Friday, 24 April 2026 · <span id="tb-clock">—</span></span>
+    <div class="topbar-right">
+      <button class="topbar-btn">⬇ Export</button>
+      <button class="topbar-btn primary" onclick="openModal('modal-report')">📄 Generate Report</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ CAMPUS OVERVIEW ══ -->
+    <div class="page active" id="pg-overview">
+
+      <div class="stats-grid">
+        <div class="stat s-o"><div class="stat-bar"></div><div class="stat-val">714</div><div class="stat-lbl">Total On Campus</div><div class="stat-sub">↑ 18% vs yesterday</div></div>
+        <div class="stat s-g"><div class="stat-bar"></div><div class="stat-val">47</div><div class="stat-lbl">Room Guests</div><div class="stat-sub">12 departing today</div></div>
+        <div class="stat s-b"><div class="stat-bar"></div><div class="stat-val">312</div><div class="stat-lbl">Day Visitors</div><div class="stat-sub">Free: 214 · Paid ₹850: 98</div></div>
+        <div class="stat s-p"><div class="stat-bar"></div><div class="stat-val">159</div><div class="stat-lbl">Staff & Family</div><div class="stat-sub">118 staff · 41 dependants</div></div>
+        <div class="stat s-a"><div class="stat-bar"></div><div class="stat-val">142</div><div class="stat-lbl">Labourers</div><div class="stat-sub">Camp A: 98 · Camp B: 44</div></div>
+        <div class="stat s-t"><div class="stat-bar"></div><div class="stat-val">54</div><div class="stat-lbl">Volunteers / Students</div><div class="stat-sub">34 Seva · 20 Courses</div></div>
+      </div>
+
+      <div class="g3">
+        <div>
+          <div class="card">
+            <div class="card-head">
+              <span>📊</span>
+              <span class="card-title">Today's Footfall by Hour</span>
+              <span class="card-sub">Entry events · 24 Apr</span>
+            </div>
+            <div class="card-body">
+              <div class="bar-chart" id="hourly-chart" style="height:110px;"></div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:9px;color:var(--text3);font-family:var(--mono)">
+                <span>06:00</span><span>08:00</span><span>10:00</span><span>12:00</span><span>14:00</span><span>16:00</span><span>18:00</span><span>Now</span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span>🚪</span><span class="card-title">Gate Activity — Last 30 min</span></div>
+            <div class="card-body" style="padding:8px 16px">
+              <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div class="feed-text"><strong>Prasad Panda P</strong> entered — Main Gate</div><div class="feed-time">07:42</div></div>
+              <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div class="feed-text"><strong>Mr. Arun Mehta</strong> entered — Room Guest · Zone 1–3</div><div class="feed-time">07:38</div></div>
+              <div class="feed-item"><div class="feed-dot" style="background:var(--red)"></div><div class="feed-text"><strong>Vijay Patil</strong> denied at SBT Gate — day visitor Zone 3</div><div class="feed-time">07:35</div></div>
+              <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div class="feed-text"><strong>42 labourers</strong> entered via Main Gate — morning batch</div><div class="feed-time">07:15</div></div>
+              <div class="feed-item"><div class="feed-dot" style="background:var(--amber)"></div><div class="feed-text"><strong>Sharma Construction</strong> submitted 4 workers for approval</div><div class="feed-time">07:02</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-head"><span>🍽️</span><span class="card-title">Campus Population</span></div>
+            <div class="card-body">
+              <div class="donut-wrap">
+                <svg width="90" height="90" viewBox="0 0 90 90">
+                  <circle cx="45" cy="45" r="36" fill="none" stroke="var(--surface3)" stroke-width="10"/>
+                  <!-- Room Guests: 47/714 = 6.6% = 14.9deg -->
+                  <circle cx="45" cy="45" r="36" fill="none" stroke="var(--saffron)" stroke-width="10" stroke-dasharray="23.7 202.8" stroke-dashoffset="0" transform="rotate(-90 45 45)"/>
+                  <!-- Day Visitors: 312/714 = 43.7% = 99.0deg -->
+                  <circle cx="45" cy="45" r="36" fill="none" stroke="var(--blue)" stroke-width="10" stroke-dasharray="157.5 69" stroke-dashoffset="-23.7" transform="rotate(-90 45 45)"/>
+                  <!-- Staff: 159/714 = 22.3% = 50.4deg -->
+                  <circle cx="45" cy="45" r="36" fill="none" stroke="var(--purple)" stroke-width="10" stroke-dasharray="80.2 146.3" stroke-dashoffset="-181.2" transform="rotate(-90 45 45)"/>
+                  <!-- Labourers: 142/714 = 19.9% -->
+                  <circle cx="45" cy="45" r="36" fill="none" stroke="var(--amber)" stroke-width="10" stroke-dasharray="71.5 155" stroke-dashoffset="-261.4" transform="rotate(-90 45 45)"/>
+                  <!-- Others: 54/714 = 7.6% -->
+                  <circle cx="45" cy="45" r="36" fill="none" stroke="var(--teal)" stroke-width="10" stroke-dasharray="27.2 199.3" stroke-dashoffset="-332.9" transform="rotate(-90 45 45)"/>
+                  <text x="45" y="42" text-anchor="middle" fill="var(--text)" font-size="11" font-family="DM Serif Display,serif">714</text>
+                  <text x="45" y="54" text-anchor="middle" fill="var(--text3)" font-size="7.5" font-family="Syne,sans-serif">on campus</text>
+                </svg>
+                <div class="donut-legend">
+                  <div class="legend-item"><div class="leg-dot" style="background:var(--blue)"></div><span class="leg-lbl">Day Visitors</span><span class="leg-val">312</span></div>
+                  <div class="legend-item"><div class="leg-dot" style="background:var(--purple)"></div><span class="leg-lbl">Staff & Family</span><span class="leg-val">159</span></div>
+                  <div class="legend-item"><div class="leg-dot" style="background:var(--amber)"></div><span class="leg-lbl">Labourers</span><span class="leg-val">142</span></div>
+                  <div class="legend-item"><div class="leg-dot" style="background:var(--teal)"></div><span class="leg-lbl">Volunteers/Students</span><span class="leg-val">54</span></div>
+                  <div class="legend-item"><div class="leg-dot" style="background:var(--saffron)"></div><span class="leg-lbl">Room Guests</span><span class="leg-val">47</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span>⏳</span><span class="card-title">Pending Actions</span></div>
+            <div class="card-body" style="padding:8px 16px">
+              <div class="feed-item"><div class="feed-dot" style="background:var(--amber)"></div><div class="feed-text"><strong>4 contractor workers</strong> pending HOD approval</div><div class="feed-time btn-ghost" style="cursor:pointer;font-size:10px;color:var(--saffron)" onclick="nav(document.querySelectorAll('.nav-item')[3],'pg-gates')">Review →</div></div>
+              <div class="feed-item"><div class="feed-dot" style="background:var(--amber)"></div><div class="feed-text"><strong>2 Seva applications</strong> awaiting Balaji Govind P</div><div class="feed-time" style="font-size:10px;color:var(--saffron);cursor:pointer">Review →</div></div>
+              <div class="feed-item"><div class="feed-dot" style="background:var(--blue)"></div><div class="feed-text"><strong>Police report</strong> due 1 May — 409 records ready</div><div class="feed-time" style="font-size:10px;color:var(--saffron);cursor:pointer" onclick="nav(document.querySelectorAll('.nav-item')[6],'pg-police')">View →</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ GATE ACTIVITY ══ -->
+    <div class="page" id="pg-gates">
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="stat s-g"><div class="stat-bar"></div><div class="stat-val">487</div><div class="stat-lbl">Entries Today</div><div class="stat-sub">All 4 gates combined</div></div>
+        <div class="stat s-r"><div class="stat-bar"></div><div class="stat-val">23</div><div class="stat-lbl">Denied Today</div><div class="stat-sub">4.5% denial rate</div></div>
+        <div class="stat s-b"><div class="stat-bar"></div><div class="stat-val">3</div><div class="stat-lbl">Manual Overrides</div><div class="stat-sub">All logged in audit</div></div>
+        <div class="stat s-a"><div class="stat-bar"></div><div class="stat-val">2</div><div class="stat-lbl">Zone 3 Upgrades</div><div class="stat-sub">₹2,800 collected</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span>📍</span><span class="card-title">Gate-wise Activity Summary — Today</span></div>
+        <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>Gate</th><th>Zone</th><th>Entries</th><th>Denials</th><th>Last Scan</th><th>Gate Staff</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:700">🚧 Main Gate</td><td><span class="tag tag-g">Zone 1 Entry</span></td><td style="font-family:var(--mono)">312</td><td style="font-family:var(--mono);color:var(--red)">8</td><td style="font-family:var(--mono);font-size:10px">07:42:18</td><td>Suresh Kumar</td><td><span class="tag tag-g">● Active</span></td></tr>
+            <tr><td style="font-weight:700">🌳 Gate No. 7</td><td><span class="tag tag-o">Zone 2 Entry</span></td><td style="font-family:var(--mono)">104</td><td style="font-family:var(--mono);color:var(--red)">9</td><td style="font-family:var(--mono);font-size:10px">07:29:05</td><td>Mohan Prabhu</td><td><span class="tag tag-g">● Active</span></td></tr>
+            <tr><td style="font-weight:700">🏠 SBT Gate</td><td><span class="tag tag-b">Zone 3 Entry</span></td><td style="font-family:var(--mono)">71</td><td style="font-family:var(--mono);color:var(--red)">6</td><td style="font-family:var(--mono);font-size:10px">07:35:12</td><td>Suresh Kumar</td><td><span class="tag tag-g">● Active</span></td></tr>
+            <tr><td style="font-weight:700">🚪 Exit Gate</td><td><span class="tag tag-grey">Campus Exit</span></td><td style="font-family:var(--mono)">—</td><td style="font-family:var(--mono)">—</td><td style="font-family:var(--mono);font-size:10px">07:10:44</td><td>—</td><td><span class="tag tag-g">● Active</span></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span>📋</span><span class="card-title">Recent Gate Events</span><div class="card-actions"><button class="btn btn-outline btn-sm">⬇ Export Log</button></div></div>
+        <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>Time</th><th>Person</th><th>Type</th><th>Gate</th><th>Result</th><th>Reason / Note</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:var(--mono);font-size:10px">07:42</td><td style="font-weight:600">Prasad Panda P</td><td><span class="tag tag-p">Staff</span></td><td>Main Gate</td><td><span class="tag tag-g">✓ Allowed</span></td><td style="font-size:11px;color:var(--text3)">Zone 1–3 permanent</td></tr>
+            <tr><td style="font-family:var(--mono);font-size:10px">07:38</td><td style="font-weight:600">Arun Mehta</td><td><span class="tag tag-o">Room Guest</span></td><td>Main Gate</td><td><span class="tag tag-g">✓ Allowed</span></td><td style="font-size:11px;color:var(--text3)">eZee booking confirmed</td></tr>
+            <tr><td style="font-family:var(--mono);font-size:10px">07:35</td><td style="font-weight:600">Vijay Patil</td><td><span class="tag tag-grey">Day Visitor</span></td><td>SBT Gate</td><td><span class="tag tag-r">✗ Denied</span></td><td style="font-size:11px;color:var(--text3)">Day visitor — Zone 3 not permitted</td></tr>
+            <tr><td style="font-family:var(--mono);font-size:10px">07:15</td><td style="font-weight:600">Batch Entry × 42</td><td><span class="tag tag-a">Labourers</span></td><td>Main Gate</td><td><span class="tag tag-g">✓ Allowed</span></td><td style="font-size:11px;color:var(--text3)">Morning muster batch</td></tr>
+            <tr><td style="font-family:var(--mono);font-size:10px">07:08</td><td style="font-weight:600">Anita Desai</td><td><span class="tag tag-t">Volunteer</span></td><td>Gate No. 7</td><td><span class="tag tag-g">✓ Allowed</span></td><td style="font-size:11px;color:var(--text3)">Yoga dept seva</td></tr>
+            <tr><td style="font-family:var(--mono);font-size:10px">06:58</td><td style="font-weight:600">Rajesh Kumar</td><td><span class="tag tag-a">Labourer</span></td><td>Main Gate</td><td><span class="tag tag-g">✓ Allowed</span></td><td style="font-size:11px;color:var(--text3)">Sharma Construction Co.</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ANNAKSHETRA ══ -->
+    <div class="page" id="pg-meals">
+      <div class="callout ok"><span class="callout-icon">✅</span><div class="callout-body"><strong>Annakshetra scanning active</strong>Breakfast counter opened at 7:00 AM · Managed by Anandprem Prabhu · Free lunch begins 12:45 PM</div></div>
+
+      <div class="stats-grid" style="grid-template-columns:repeat(5,1fr)">
+        <div class="stat s-o"><div class="stat-bar"></div><div class="stat-val">38</div><div class="stat-lbl">Breakfast Served</div><div class="stat-sub">41 registered · 3 absent</div></div>
+        <div class="stat s-g"><div class="stat-bar"></div><div class="stat-val">247</div><div class="stat-lbl">Free Lunch So Far</div><div class="stat-sub">Forecast: ~380 today</div></div>
+        <div class="stat s-b"><div class="stat-bar"></div><div class="stat-val">43</div><div class="stat-lbl">Dinner Registered</div><div class="stat-sub">Starts 6:30 PM</div></div>
+        <div class="stat s-t"><div class="stat-bar"></div><div class="stat-val">312</div><div class="stat-lbl">Khichadi (AM+PM)</div><div class="stat-sub">AM: 189 · PM: 123</div></div>
+        <div class="stat s-a"><div class="stat-bar"></div><div class="stat-val">84%</div><div class="stat-lbl">Forecast Accuracy</div><div class="stat-sub">7-day rolling avg</div></div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-head"><span>🍽️</span><span class="card-title">Registered B/D by Category</span></div>
+          <div class="card-body">
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">Payroll Staff (salary deduction)</span><span class="prog-val">118</span></div><div class="prog-track"><div class="prog-fill" style="width:80%;background:var(--purple)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">Construction Labourers (free welfare)</span><span class="prog-val">142</span></div><div class="prog-track"><div class="prog-fill" style="width:96%;background:var(--amber)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">Volunteers / Seva (dept sponsored)</span><span class="prog-val">34</span></div><div class="prog-track"><div class="prog-fill" style="width:23%;background:var(--teal)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">Outstation Labourers</span><span class="prog-val">12</span></div><div class="prog-track"><div class="prog-fill" style="width:8%;background:var(--blue)"></div></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span>📅</span><span class="card-title">7-Day Forecast vs Actual</span></div>
+          <div class="card-body">
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">18 Apr — Breakfast</span><span class="prog-val" style="color:var(--green)">98%</span></div><div class="prog-track"><div class="prog-fill" style="width:98%;background:var(--green)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">19 Apr — Free Lunch</span><span class="prog-val" style="color:var(--green)">87%</span></div><div class="prog-track"><div class="prog-fill" style="width:87%;background:var(--green)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">20 Apr — Free Lunch</span><span class="prog-val" style="color:var(--saffron)">73%</span></div><div class="prog-track"><div class="prog-fill" style="width:73%;background:var(--saffron)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">21 Apr — Dinner</span><span class="prog-val" style="color:var(--green)">100%</span></div><div class="prog-track"><div class="prog-fill" style="width:100%;background:var(--green)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">22 Apr — Free Lunch</span><span class="prog-val" style="color:var(--red)">62%</span></div><div class="prog-track"><div class="prog-fill" style="width:62%;background:var(--red)"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span>📊</span><span class="card-title">Monthly Contractor Billing Recovery</span><span class="card-sub">Based on registered count × ₹1,860/person/month (B+D only)</span><div class="card-actions"><button class="btn btn-outline btn-sm">⬇ Export</button></div></div>
+        <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>Contractor Company</th><th>Dept HOD</th><th>Workers Registered</th><th>B+D Only Count</th><th>Rate/Person</th><th>Monthly Bill</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">Sharma Construction Co.</td><td>Anandnimai P</td><td style="font-family:var(--mono)">48</td><td style="font-family:var(--mono)">48</td><td style="font-family:var(--mono)">₹1,860</td><td style="font-family:var(--mono);font-weight:700;color:var(--saffron)">₹89,280</td><td><span class="tag tag-g">Raised</span></td></tr>
+            <tr><td style="font-weight:600">Patel Electricals</td><td>Anandnimai P</td><td style="font-family:var(--mono)">12</td><td style="font-family:var(--mono)">12</td><td style="font-family:var(--mono)">₹1,860</td><td style="font-family:var(--mono);font-weight:700;color:var(--saffron)">₹22,320</td><td><span class="tag tag-a">Pending</span></td></tr>
+            <tr><td style="font-weight:600">Green Landscapes</td><td>Anandnimai P</td><td style="font-family:var(--mono)">18</td><td style="font-family:var(--mono)">16</td><td style="font-family:var(--mono)">₹1,860</td><td style="font-family:var(--mono);font-weight:700;color:var(--saffron)">₹29,760</td><td><span class="tag tag-a">Pending</span></td></tr>
+            <tr><td style="font-weight:600">Clean Services</td><td>Laxmanpran P</td><td style="font-family:var(--mono)">14</td><td style="font-family:var(--mono)">14</td><td style="font-family:var(--mono)">₹1,860</td><td style="font-family:var(--mono);font-weight:700;color:var(--saffron)">₹26,040</td><td><span class="tag tag-g">Raised</span></td></tr>
+            <tr style="background:var(--surface2)"><td style="font-weight:700" colspan="4">Total — April 2026</td><td></td><td style="font-family:var(--mono);font-weight:700;font-size:13px;color:var(--green)">₹1,67,400</td><td></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ FESTIVAL MODE ══ -->
+    <div class="page" id="pg-festival">
+      <div class="callout info"><span class="callout-icon">📅</span><div class="callout-body"><strong>Next festival: Akshaya Tritiya — 29 Apr 2026 (5 days away)</strong>Expected footfall: ~2,000. Festival Mode should be activated 2 days before. Pre-registration opens today.</div></div>
+
+      <div class="metric-row">
+        <div class="metric"><div class="metric-n" style="color:var(--red)">15,000–20,000</div><div class="metric-l">Janmashtami peak (15 Aug)</div></div>
+        <div class="metric"><div class="metric-n" style="color:var(--amber)">10,000–12,000</div><div class="metric-l">New Year / public holidays</div></div>
+        <div class="metric"><div class="metric-n" style="color:var(--saffron)">4,000–5,000</div><div class="metric-l">Other Vaishnava festivals</div></div>
+        <div class="metric"><div class="metric-n" style="color:var(--blue)">~2,000</div><div class="metric-l">Akshaya Tritiya (upcoming)</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span>🎉</span><span class="card-title">2026 Festival Calendar</span><div class="card-actions"><button class="btn btn-primary btn-sm" onclick="alert('Festival Mode activated!\n\nBatch entry counter enabled.\n17 committee dashboards active.\nMeal forecast multiplier applied.')">⚡ Activate Festival Mode</button></div></div>
+        <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>Festival</th><th>Date</th><th>Expected</th><th>Pre-reg Opens</th><th>Committee Lead</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">Gaura Purnima</td><td style="font-family:var(--mono)">4 Mar 2026</td><td style="font-family:var(--mono)">5,000</td><td>26 Feb</td><td>Sanatkumar P</td><td><span class="tag tag-grey">Completed</span></td></tr>
+            <tr><td style="font-weight:600">Ram Navami</td><td style="font-family:var(--mono)">29 Mar 2026</td><td style="font-family:var(--mono)">3,000</td><td>22 Mar</td><td>Sanatkumar P</td><td><span class="tag tag-grey">Completed</span></td></tr>
+            <tr style="background:rgba(245,200,66,0.04)"><td style="font-weight:700;color:var(--amber)">Akshaya Tritiya</td><td style="font-family:var(--mono);font-weight:700">29 Apr 2026</td><td style="font-family:var(--mono)">2,000</td><td>22 Apr</td><td>Sanatkumar P</td><td><span class="tag tag-a">⏳ Upcoming</span></td></tr>
+            <tr><td style="font-weight:600">Janmashtami</td><td style="font-family:var(--mono)">15 Aug 2026</td><td style="font-family:var(--mono);color:var(--red);font-weight:700">15,000–20,000</td><td>8 Aug</td><td>Sanatkumar P</td><td><span class="tag tag-b">Planning</span></td></tr>
+            <tr><td style="font-weight:600">Radhashtami</td><td style="font-family:var(--mono)">29 Aug 2026</td><td style="font-family:var(--mono)">5,000</td><td>22 Aug</td><td>Sanatkumar P</td><td><span class="tag tag-b">Planning</span></td></tr>
+            <tr><td style="font-weight:600">Diwali</td><td style="font-family:var(--mono)">20 Oct 2026</td><td style="font-family:var(--mono)">4,000</td><td>13 Oct</td><td>Sanatkumar P</td><td><span class="tag tag-b">Planning</span></td></tr>
+            <tr><td style="font-weight:600">New Year Eve</td><td style="font-family:var(--mono)">31 Dec 2026</td><td style="font-family:var(--mono);color:var(--amber)">12,000</td><td>24 Dec</td><td>Sanatkumar P</td><td><span class="tag tag-b">Planning</span></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ REPORTS LIBRARY ══ -->
+    <div class="page" id="pg-reports">
+      <div class="report-grid">
+
+        <!-- Daily -->
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">🏕️</span>
+          <div class="rc-title">Daily Campus Occupancy</div>
+          <div class="rc-sub">Count by all 16 visitor types, zone-wise breakdown</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-g">Daily · Auto 9PM</span>
+            <span style="font-size:10px;color:var(--saffron)">Management · Security</span>
+          </div>
+        </div>
+
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">🚪</span>
+          <div class="rc-title">Gate Activity Log</div>
+          <div class="rc-sub">All entry/exit events, denied entries, override log</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-g">Daily</span>
+            <span style="font-size:10px;color:var(--saffron)">Premanjan P · Admin</span>
+          </div>
+        </div>
+
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">🌿</span>
+          <div class="rc-title">VF Tour Slot Utilisation</div>
+          <div class="rc-sub">Bookings vs. actual per slot, free vs. paid breakdown</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-g">Daily</span>
+            <span style="font-size:10px;color:var(--saffron)">Tour Team</span>
+          </div>
+        </div>
+
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">🏗️</span>
+          <div class="rc-title">Contractor Camp Strength</div>
+          <div class="rc-sub">Registered vs. actual per contractor company</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-g">Daily</span>
+            <span style="font-size:10px;color:var(--saffron)">Anandnimai P · Laxmanpran P</span>
+          </div>
+        </div>
+
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">🍽️</span>
+          <div class="rc-title">Annakshetra B/D Consumption</div>
+          <div class="rc-sub">Registered vs. served, payment-type breakdown</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-g">Daily</span>
+            <span style="font-size:10px;color:var(--saffron)">Anand Prem P</span>
+          </div>
+        </div>
+
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">🙏</span>
+          <div class="rc-title">Free Meals Served</div>
+          <div class="rc-sub">Free lunch + Khichadi AM + Khichadi PM counts</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-g">Daily</span>
+            <span style="font-size:10px;color:var(--saffron)">Anand Prem P · Finance</span>
+          </div>
+        </div>
+
+        <!-- Weekly -->
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">📊</span>
+          <div class="rc-title">Meal Forecast vs. Actual</div>
+          <div class="rc-sub">Accuracy %, wastage estimate, trend analysis</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-b">Weekly</span>
+            <span style="font-size:10px;color:var(--saffron)">Annakshetra · Management</span>
+          </div>
+        </div>
+
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">☕</span>
+          <div class="rc-title">Café Revenue Summary</div>
+          <div class="rc-sub">Meals served × price by café — Petpooja integration</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-b">Weekly</span>
+            <span style="font-size:10px;color:var(--saffron)">Finance · Accounts</span>
+          </div>
+        </div>
+
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">🏨</span>
+          <div class="rc-title">eZee Guest Occupancy</div>
+          <div class="rc-sub">Current + upcoming, OTA vs direct booking</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-b">Weekly</span>
+            <span style="font-size:10px;color:var(--saffron)">Front Desk · Prasad Panda P</span>
+          </div>
+        </div>
+
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">🤲</span>
+          <div class="rc-title">Volunteer / Intern Status</div>
+          <div class="rc-sub">Active, pending approval, upcoming departures</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-b">Weekly</span>
+            <span style="font-size:10px;color:var(--saffron)">Balaji Govind P</span>
+          </div>
+        </div>
+
+        <!-- Monthly -->
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">📈</span>
+          <div class="rc-title">Monthly Visitor Statistics</div>
+          <div class="rc-sub">Total by type, source, repeat vs. new visitors</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-p">Monthly</span>
+            <span style="font-size:10px;color:var(--saffron)">Management · Sri Gaurcaran P</span>
+          </div>
+        </div>
+
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">🌸</span>
+          <div class="rc-title">Monthly Prasadam Service Report</div>
+          <div class="rc-sub">Total free meals, cost per category — donor format</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-p">Monthly</span>
+            <span style="font-size:10px;color:var(--saffron)">Finance · ISKCON · Donors</span>
+          </div>
+        </div>
+
+        <div class="report-card featured" onclick="nav(document.querySelectorAll('.nav-item')[6],'pg-police')">
+          <span class="rc-icon">🚔</span>
+          <div class="rc-title" style="color:var(--saffron)">Monthly Police Resident Report</div>
+          <div class="rc-sub">All overnight campus residents — complete details for local police</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-r">Monthly · 1st</span>
+            <span style="font-size:10px;color:var(--saffron)">Premanjan P → Local Police</span>
+          </div>
+        </div>
+
+        <!-- On-demand -->
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">🔐</span>
+          <div class="rc-title">Audit Trail Log</div>
+          <div class="rc-sub">Every action by every user — who, what, when, device</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-grey">On-demand</span>
+            <span style="font-size:10px;color:var(--saffron)">Ram Prabhu only</span>
+          </div>
+        </div>
+
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">🎊</span>
+          <div class="rc-title">Festival Post-Event Report</div>
+          <div class="rc-sub">Footfall, prasad served, peak hour, cost per person</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-o">Post-Event</span>
+            <span style="font-size:10px;color:var(--saffron)">Festival Committee</span>
+          </div>
+        </div>
+
+        <div class="report-card" onclick="openModal('modal-report')">
+          <span class="rc-icon">📖</span>
+          <div class="rc-title">Annual Community Report</div>
+          <div class="rc-sub">All statistics for ISKCON, awards, donors — full year</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-p">Annual</span>
+            <span style="font-size:10px;color:var(--saffron)">Vasudev Prabhuji</span>
+          </div>
+        </div>
+
+        <!-- Overstay -->
+        <div class="report-card" onclick="alert('⚠️ 2 overstay alerts:\n\n1. Sunita Krishnan — Room 108 — checked out 23 Apr, still on campus\n2. Prakash Group — Checkout missed · Front Desk notified')">
+          <span class="rc-icon">⚠️</span>
+          <div class="rc-title">Overstay Alerts</div>
+          <div class="rc-sub">Guests past check-out without exit scan — real-time</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span class="tag tag-r">Real-time · 2 now</span>
+            <span style="font-size:10px;color:var(--saffron)">Front Desk</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ POLICE REPORT ══ -->
+    <div class="page" id="pg-police">
+      <div class="g2" style="align-items:start">
+        <div>
+          <div class="card">
+            <div class="card-head"><span>⚙️</span><span class="card-title">Report Configuration</span></div>
+            <div class="card-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+                <div>
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Report Month</div>
+                  <select style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-family:var(--font);font-size:12px;outline:none">
+                    <option>April 2026</option><option>March 2026</option><option>February 2026</option>
+                  </select>
+                </div>
+                <div>
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Report Scope</div>
+                  <select style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-family:var(--font);font-size:12px;outline:none">
+                    <option>All overnight residents</option><option>Currently on campus only</option>
+                  </select>
+                </div>
+              </div>
+              <div style="background:var(--surface2);border-radius:8px;padding:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;text-align:center">
+                <div><div style="font-family:var(--serif);font-size:22px;color:var(--blue)">118</div><div style="font-size:9px;color:var(--text3)">Payroll Staff</div></div>
+                <div><div style="font-family:var(--serif);font-size:22px;color:var(--teal)">74</div><div style="font-size:9px;color:var(--text3)">Ashram Residents</div></div>
+                <div><div style="font-family:var(--serif);font-size:22px;color:var(--amber)">142</div><div style="font-size:9px;color:var(--text3)">Labourers</div></div>
+                <div><div style="font-family:var(--serif);font-size:22px;color:var(--green)">34</div><div style="font-size:9px;color:var(--text3)">Volunteers</div></div>
+                <div><div style="font-family:var(--serif);font-size:22px;color:var(--purple)">41</div><div style="font-size:9px;color:var(--text3)">Dependants</div></div>
+                <div style="background:var(--saffron-dim);border-radius:6px;padding:4px"><div style="font-family:var(--serif);font-size:22px;color:var(--saffron)">409</div><div style="font-size:9px;color:var(--saffron)">Total Records</div></div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-primary" style="flex:1" onclick="openModal('modal-police')">📄 Preview Report</button>
+                <button class="btn btn-outline" style="flex:1">📊 Export Excel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span>📋</span><span class="card-title">Police Report — Required Fields</span></div>
+          <div class="card-body" style="padding:8px 16px">
+            <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div class="feed-text">Full name</div><div class="feed-time" style="color:var(--text3);font-size:10px">VMS profile</div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div class="feed-text">Date of birth · Gender</div><div class="feed-time" style="color:var(--text3);font-size:10px">VMS profile</div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div class="feed-text">Department / relation to GEV</div><div class="feed-time" style="color:var(--text3);font-size:10px">VMS classification</div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div class="feed-text">Permanent address + city, state, pincode</div><div class="feed-time" style="color:var(--text3);font-size:10px">VMS profile</div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div class="feed-text">Date of arrival · Expected duration</div><div class="feed-time" style="color:var(--text3);font-size:10px">Check-in log</div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div class="feed-text">Accommodation block / room</div><div class="feed-time" style="color:var(--text3);font-size:10px">VMS assignment</div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div class="feed-text">ID proof type & number</div><div class="feed-time" style="color:var(--text3);font-size:10px">VMS profile</div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--saffron)"></div><div class="feed-text">Contractor company (labourers only)</div><div class="feed-time" style="color:var(--text3);font-size:10px">Contractor record</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ BILLING RECOVERY ══ -->
+    <div class="page" id="pg-billing">
+      <div class="callout info"><span class="callout-icon">ℹ️</span><div class="callout-body"><strong>Annakshetra Contractor Billing</strong>₹1,860/person/month covers Breakfast + Dinner only. Free lunch is unrecovered. Billing is based on registered worker count — Anandnimai P recovers from each contractor company.</div></div>
+      <div class="card">
+        <div class="card-head"><span>💳</span><span class="card-title">April 2026 — Monthly Billing Recovery</span><div class="card-actions"><button class="btn btn-outline btn-sm">⬇ Export for Finance</button></div></div>
+        <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>Contractor</th><th>HOD</th><th>Registered</th><th>B+D Rate</th><th>Total Bill</th><th>Recovery Status</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">Sharma Construction Co.</td><td>Anandnimai P</td><td style="font-family:var(--mono)">48</td><td style="font-family:var(--mono)">₹1,860</td><td style="font-family:var(--mono);font-weight:700">₹89,280</td><td><span class="tag tag-g">✓ Paid</span></td></tr>
+            <tr><td style="font-weight:600">Patel Electricals</td><td>Anandnimai P</td><td style="font-family:var(--mono)">12</td><td style="font-family:var(--mono)">₹1,860</td><td style="font-family:var(--mono);font-weight:700">₹22,320</td><td><span class="tag tag-a">Pending</span></td></tr>
+            <tr><td style="font-weight:600">Green Landscapes</td><td>Anandnimai P</td><td style="font-family:var(--mono)">16</td><td style="font-family:var(--mono)">₹1,860</td><td style="font-family:var(--mono);font-weight:700">₹29,760</td><td><span class="tag tag-a">Pending</span></td></tr>
+            <tr><td style="font-weight:600">Clean Services</td><td>Laxmanpran P</td><td style="font-family:var(--mono)">14</td><td style="font-family:var(--mono)">₹1,860</td><td style="font-family:var(--mono);font-weight:700">₹26,040</td><td><span class="tag tag-g">✓ Paid</span></td></tr>
+            <tr style="background:var(--surface2)"><td colspan="4" style="font-weight:700">April 2026 Total</td><td style="font-family:var(--mono);font-weight:700;font-size:14px;color:var(--green)">₹1,67,400</td><td></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ VISITOR TRENDS ══ -->
+    <div class="page" id="pg-trends">
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="stat s-o"><div class="stat-bar"></div><div class="stat-val">8,240</div><div class="stat-lbl">April Total (so far)</div><div class="stat-sub">↑ 12% vs March</div></div>
+        <div class="stat s-g"><div class="stat-bar"></div><div class="stat-val">342</div><div class="stat-lbl">Daily Average</div><div class="stat-sub">Day visitors dominant</div></div>
+        <div class="stat s-b"><div class="stat-bar"></div><div class="stat-val">23%</div><div class="stat-lbl">Repeat Visitors</div><div class="stat-sub">Up from 18% in March</div></div>
+        <div class="stat s-t"><div class="stat-bar"></div><div class="stat-val">₹8.3L</div><div class="stat-lbl">Paid Visit Revenue</div><div class="stat-sub">₹850 × 980 visitors</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span>📈</span><span class="card-title">Monthly Footfall — Last 6 Months</span></div>
+        <div class="card-body">
+          <div class="bar-chart" id="monthly-chart" style="height:130px;"></div>
+          <div style="display:flex;justify-content:space-around;margin-top:8px;font-size:10px;color:var(--text3);font-family:var(--mono)">
+            <span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span>
+          </div>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-head"><span>📋</span><span class="card-title">Visitor Type Breakdown — April</span></div>
+          <div class="card-body">
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">Day Visitors (Free + Paid)</span><span class="prog-val">4,890</span></div><div class="prog-track"><div class="prog-fill" style="width:59%;background:var(--blue)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">Room Booking Guests</span><span class="prog-val">1,240</span></div><div class="prog-track"><div class="prog-fill" style="width:15%;background:var(--saffron)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">Corporate / Tour Groups</span><span class="prog-val">680</span></div><div class="prog-track"><div class="prog-fill" style="width:8%;background:var(--purple)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">Course Students</span><span class="prog-val">480</span></div><div class="prog-track"><div class="prog-fill" style="width:6%;background:var(--teal)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">Vendors / Suppliers</span><span class="prog-val">310</span></div><div class="prog-track"><div class="prog-fill" style="width:4%;background:var(--amber)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">Other types</span><span class="prog-val">640</span></div><div class="prog-track"><div class="prog-fill" style="width:8%;background:var(--green)"></div></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span>🌐</span><span class="card-title">Booking Source — Room Guests</span></div>
+          <div class="card-body">
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">eZee Direct</span><span class="prog-val">42%</span></div><div class="prog-track"><div class="prog-fill" style="width:42%;background:var(--green)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">MakeMyTrip</span><span class="prog-val">28%</span></div><div class="prog-track"><div class="prog-fill" style="width:28%;background:var(--blue)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">Goibibo</span><span class="prog-val">18%</span></div><div class="prog-track"><div class="prog-fill" style="width:18%;background:var(--teal)"></div></div></div>
+            <div class="prog"><div class="prog-meta"><span class="prog-lbl">Walk-in / Phone</span><span class="prog-val">12%</span></div><div class="prog-track"><div class="prog-fill" style="width:12%;background:var(--saffron)"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ AUDIT TRAIL ══ -->
+    <div class="page" id="pg-audit">
+      <div class="callout warn"><span class="callout-icon">🔒</span><div class="callout-body"><strong>Immutable audit trail — Super Admin access only</strong>Every action by every user is permanently logged. Records cannot be edited or deleted.</div></div>
+      <div class="card">
+        <div class="card-head">
+          <span>🔐</span><span class="card-title">Audit Log — 24 Apr 2026</span>
+          <span class="card-sub">247 entries today</span>
+          <div class="card-actions">
+            <select style="background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:4px 8px;color:var(--text2);font-size:11px;font-family:var(--font)"><option>All Users</option><option>Ram Prabhu</option><option>Premanjan P</option><option>Anandprem P</option></select>
+            <button class="btn btn-outline btn-sm">⬇ Export</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Detail</th><th>Module</th><th>Device</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:var(--mono);font-size:10px;white-space:nowrap">07:42:18</td><td style="font-weight:600;font-size:11.5px">Anandprem P</td><td><span class="tag tag-t">Meal Served</span></td><td style="font-size:11px">Breakfast — Ramesh Kumar (Labourer)</td><td><span class="tag tag-grey" style="font-size:9px">AMS</span></td><td style="font-size:10px;color:var(--text3)">Canteen Tab</td></tr>
+            <tr><td style="font-family:var(--mono);font-size:10px">07:38:55</td><td style="font-weight:600;font-size:11.5px">Gate Staff — Suresh</td><td><span class="tag tag-g">Entry Allowed</span></td><td style="font-size:11px">Mr. Arun Mehta — Main Gate</td><td><span class="tag tag-grey" style="font-size:9px">Gate</span></td><td style="font-size:10px;color:var(--text3)">Main Gate Tab</td></tr>
+            <tr><td style="font-family:var(--mono);font-size:10px">07:35:12</td><td style="font-weight:600;font-size:11.5px">Gate Staff — Suresh</td><td><span class="tag tag-r">Entry Denied</span></td><td style="font-size:11px">Vijay Patil — SBT Gate (day visitor)</td><td><span class="tag tag-grey" style="font-size:9px">Gate</span></td><td style="font-size:10px;color:var(--text3)">SBT Gate Tab</td></tr>
+            <tr><td style="font-family:var(--mono);font-size:10px">07:28:03</td><td style="font-weight:600;font-size:11.5px">Anandnimai P</td><td><span class="tag tag-g">Approved</span></td><td style="font-size:11px">3 workers — Patel Electricals · QR passes sent</td><td><span class="tag tag-grey" style="font-size:9px">VMS</span></td><td style="font-size:10px;color:var(--text3)">Admin Portal</td></tr>
+            <tr><td style="font-family:var(--mono);font-size:10px">07:12:44</td><td style="font-weight:600;font-size:11.5px">Premanjan P</td><td><span class="tag tag-b">Report Viewed</span></td><td style="font-size:11px">Police Report — March 2026 (409 records)</td><td><span class="tag tag-grey" style="font-size:9px">Security</span></td><td style="font-size:10px;color:var(--text3)">Security PC</td></tr>
+            <tr><td style="font-family:var(--mono);font-size:10px">07:02:11</td><td style="font-weight:600;font-size:11.5px">Ram Prabhu</td><td><span class="tag tag-o">Role Assigned</span></td><td style="font-size:11px">Assigned "Gate Operator" to Suresh Kumar</td><td><span class="tag tag-grey" style="font-size:9px">Admin</span></td><td style="font-size:10px;color:var(--text3)">Admin Portal</td></tr>
+            <tr><td style="font-family:var(--mono);font-size:10px">06:58:30</td><td style="font-weight:600;font-size:11.5px">Gate Staff — Suresh</td><td><span class="tag tag-grey">Login</span></td><td style="font-size:11px">Logged in — Main Gate tablet</td><td><span class="tag tag-grey" style="font-size:9px">System</span></td><td style="font-size:10px;color:var(--text3)">Main Gate Tab</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- MODAL: Generate Report -->
+<div class="modal-bg" id="modal-report">
+  <div class="modal">
+    <div class="modal-head">
+      <span style="font-size:18px">📄</span>
+      <span class="modal-title">Generate Report</span>
+      <button class="modal-close" onclick="closeModal('modal-report')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div>
+          <div style="font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Report Type</div>
+          <select style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-family:var(--font);font-size:12px;outline:none">
+            <option>Daily Campus Occupancy</option>
+            <option>Gate Activity Log</option>
+            <option>Annakshetra B/D Consumption</option>
+            <option>Contractor Camp Strength</option>
+            <option>Monthly Visitor Statistics</option>
+            <option>Monthly Prasadam Report</option>
+            <option>Monthly Police Report</option>
+            <option>Festival Post-Event Report</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Date Range</div>
+          <select style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-family:var(--font);font-size:12px;outline:none">
+            <option>Today — 24 Apr 2026</option>
+            <option>This Week</option>
+            <option>April 2026</option>
+            <option>March 2026</option>
+            <option>Custom Range</option>
+          </select>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:14px;font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">
+        <strong style="color:var(--text);display:block;margin-bottom:4px">Preview: Daily Campus Occupancy — 24 Apr 2026</strong>
+        Total on campus: 714 persons · Day visitors: 312 · Room guests: 47 · Staff+Family: 159 · Labourers: 142 · Volunteers/Students: 54 · Gate events: 487 entries · 23 denials
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modal-report')">Cancel</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-report');alert('Excel export downloaded.')">📊 Excel</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-report');alert('PDF generated and ready to download.')">📄 PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Police Report Preview -->
+<div class="modal-bg" id="modal-police">
+  <div class="modal">
+    <div class="modal-head">
+      <span style="font-size:18px">🚔</span>
+      <span class="modal-title">Police Report Preview — April 2026</span>
+      <button class="modal-close" onclick="closeModal('modal-police')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="police-preview">
+        <div class="pr-header">
+          <h2>Govardhan EcoVillage — ISKCON GEV</h2>
+          <p>Monthly Campus Resident Register — April 2026<br/>Galtare, Hamrapur, Wada, Palghar — 421303, Maharashtra</p>
+          <p style="margin-top:4px;font-size:10px">Report Date: 1 May 2026 · Total Records: 409 · Prepared by: Premanjan P (Security HOD)</p>
+        </div>
+        <table class="pr-table">
+          <thead>
+            <tr><th>#</th><th>Full Name</th><th>Type</th><th>Dept / Role</th><th>ID Proof</th><th>Arrived</th><th>Building</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Prasad Panda Prabhuji</td><td>Payroll Staff</td><td>Front Desk</td><td>Aadhaar XXXX1234</td><td>Permanent</td><td>Zone 3 — Guest Area</td></tr>
+            <tr><td>2</td><td>Balaji Govind Prabhuji</td><td>Payroll Staff</td><td>Volunteering</td><td>Aadhaar XXXX5678</td><td>Permanent</td><td>Payal Bhavan</td></tr>
+            <tr><td>3</td><td>Arun Mehta</td><td>Room Guest</td><td>eZee Booking</td><td>Passport Z1234567</td><td>24 Apr 2026</td><td>Room 204</td></tr>
+            <tr><td>4</td><td>Ramesh Kumar</td><td>Construction Labourer</td><td>Sharma Const. Co.</td><td>Aadhaar XXXX9012</td><td>1 Mar 2026</td><td>Camp A</td></tr>
+            <tr><td>5</td><td>Priya Sharma</td><td>Volunteer / Seva</td><td>Govardhan Yoga</td><td>Aadhaar XXXX3456</td><td>1 May 2026</td><td>Female Dorm</td></tr>
+            <tr><td colspan="7" style="text-align:center;color:#888;font-style:italic;font-size:10px">... 404 more records in full report ...</td></tr>
+          </tbody>
+        </table>
+        <div class="pr-footer">
+          <span>Premanjan P — Security HOD<br/>Signature: ______________</span>
+          <span style="text-align:right">Vasudev Prabhuji — Final Authority<br/>Signature: ______________</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modal-police')">Close</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-police');alert('Excel export — 409 records downloaded.')">📊 Excel (409 records)</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-police');alert('Police report PDF generated.\nReady for Premanjan P to submit.')">📄 Generate PDF</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PAGE_META = {
+  'pg-overview': ['Campus Overview', 'Live · All modules'],
+  'pg-gates':    ['Gate Activity', 'All 4 campus gates · Live'],
+  'pg-meals':    ['Annakshetra', 'Meal scanning · Forecasting · Billing'],
+  'pg-festival': ['Festival Mode', 'Calendar · Committee · Batch entry'],
+  'pg-reports':  ['Reports Library', '17 report types · All modules'],
+  'pg-police':   ['Police Report', 'Monthly resident register — Premanjan P'],
+  'pg-billing':  ['Billing Recovery', 'Contractor B+D — ₹1,860/person/month'],
+  'pg-trends':   ['Visitor Trends', 'Analytics · 6-month view'],
+  'pg-audit':    ['Audit Trail', 'Immutable log · Super Admin only'],
+};
+
+function nav(btn, pageId) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(pageId).classList.add('active');
+  const m = PAGE_META[pageId];
+  if (m) {
+    document.getElementById('tb-title').textContent = m[0];
+    document.getElementById('tb-sub').innerHTML = 'Friday, 24 April 2026 · <span id="tb-clock">' + document.getElementById('tb-clock').textContent + '</span> · ' + m[1];
+  }
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-bg').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.modal-bg.open').forEach(m => m.classList.remove('open'));
+});
+
+// Clock
+function tick() {
+  const now = new Date();
+  const t = now.getHours().toString().padStart(2,'0') + ':' +
+            now.getMinutes().toString().padStart(2,'0') + ':' +
+            now.getSeconds().toString().padStart(2,'0');
+  const el = document.getElementById('tb-clock');
+  if (el) el.textContent = t;
+}
+tick();
+setInterval(tick, 1000);
+
+// Bar charts
+function buildChart(containerId, data, color) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const max = Math.max(...data);
+  el.innerHTML = data.map((v, i) => {
+    const h = Math.round((v / max) * 100);
+    return '<div class="bar-wrap">' +
+      '<div class="bar-val">' + v + '</div>' +
+      '<div class="bar" style="height:' + h + '%;background:' + color + ';opacity:' + (0.5 + 0.5 * (v/max)) + '"></div>' +
+      '</div>';
+  }).join('');
+}
+
+buildChart('hourly-chart',
+  [12, 48, 87, 124, 96, 74, 45, 28],
+  'var(--saffron)');
+
+buildChart('monthly-chart',
+  [4200, 7800, 6100, 5400, 7340, 8240],
+  'var(--blue)');
+</script>
+</body>
+</html>
