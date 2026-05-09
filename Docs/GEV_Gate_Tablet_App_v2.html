@@ -874,19 +874,23 @@ body::before {
 
 
 <script>
+// === Backend wiring ===
+// API_BASE: where the gev-icms-backend is running.
+// TEST_QR_ID: the qr_id UUID returned by the SQL INSERT in Phase 3 of the plan.
+//             Refresh this string after re-seeding the DB or using a different
+//             test pilgrim.
+var API_BASE   = 'http://localhost:3000';
+var TEST_QR_ID = '85371cf9-abaa-4828-91a8-d324c1f9bc11';
+
 var state = {
   gate:        { id: 'main_gate', name: 'Main Gate' },
   loggedIn:    false,
   stats:       { allowed: 0, denied: 0 },
   events:      [],
   demoIdx:     0,
-  upgradeData: null
-};
-
-var USERS = {
-  'gate.staff': { pass: 'gev123',   role: 'gate_operator', name: 'Suresh Kumar'     },
-  'premanjan':  { pass: 'gev123',   role: 'security',      name: 'Premanjan Prabhu' },
-  'ram.prabhu': { pass: 'admin123', role: 'super_admin',   name: 'Ram Prabhu'       }
+  upgradeData: null,
+  token:       null,
+  user:        null
 };
 
 var DEMOS = [
@@ -978,7 +982,7 @@ function selectGate(id, name, elId) {
   state.gate = { id: id, name: name };
 }
 
-function doLogin() {
+async function doLogin() {
   var userEl = document.getElementById('inp-user');
   var passEl = document.getElementById('inp-pass');
   var errEl  = document.getElementById('login-err');
@@ -988,20 +992,33 @@ function doLogin() {
   errEl.style.display = 'none';
 
   if (!user || !pass) {
-    errEl.textContent    = 'Please enter both username and password.';
-    errEl.style.display  = 'block';
+    errEl.textContent   = 'Please enter both username and password.';
+    errEl.style.display = 'block';
     return;
   }
 
-  var u = USERS[user];
-  if (!u || u.pass !== pass) {
-    errEl.textContent    = 'Invalid credentials. Try: gate.staff / gev123';
-    errEl.style.display  = 'block';
+  try {
+    var resp = await fetch(API_BASE + '/api/auth/login', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ username: user, password: pass })
+    });
+    var data = await resp.json();
+
+    if (!resp.ok) {
+      errEl.textContent   = data.error || 'Invalid credentials. Try: gate.staff / gev123';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    state.loggedIn = true;
+    state.token    = data.token;
+    state.user     = data.user;
+  } catch (err) {
+    errEl.textContent   = 'Cannot reach API at ' + API_BASE + '. Is npm run dev running?';
+    errEl.style.display = 'block';
     return;
   }
-
-  state.loggedIn = true;
-  state.user     = { username: user, role: u.role, name: u.name };
 
   var lbl = document.getElementById('gate-label-txt');
   if (lbl) { lbl.textContent = state.gate.name; }
@@ -1052,10 +1069,34 @@ function startClock() {
   setInterval(tick, 1000);
 }
 
-function demoScan() {
-  var scan = DEMOS[state.demoIdx % DEMOS.length];
-  state.demoIdx++;
-  processScan(scan);
+async function demoScan() {
+  // Real scan against the backend. In production this is replaced with a
+  // camera-driven QR read (jsQR); for now we hardcode TEST_QR_ID.
+  if (!state.token) { alert('Not logged in'); return; }
+
+  try {
+    var resp = await fetch(API_BASE + '/api/gate/scan', {
+      method:  'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + state.token
+      },
+      body: JSON.stringify({ qr_id: TEST_QR_ID, gate: state.gate.id })
+    });
+    var raw = await resp.json();
+
+    // Map backend shape {result, person, deny_reason, action} to the shape
+    // processScan() already knows: { result, person, deny, action }.
+    var scan = {
+      result: raw.result,
+      person: raw.person || {},
+      deny:   raw.deny_reason || raw.deny || null,
+      action: raw.action || null
+    };
+    processScan(scan);
+  } catch (err) {
+    alert('Scan failed: cannot reach API at ' + API_BASE);
+  }
 }
 
 function doManualSearch() {
