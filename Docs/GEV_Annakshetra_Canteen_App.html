@@ -605,41 +605,99 @@ body { font-family:var(--font); color:var(--text); display:flex; flex-direction:
 // GEV ANNAKSHETRA CANTEEN COUNTER — Logic
 // ═══════════════════════════════════════════
 
-const USERS = {
-  'anandprem': { pass:'gev123', name:'Anandprem Prabhu', role:'Canteen Manager' },
-  'canteen1':  { pass:'gev123', name:'Sevak Counter 1',  role:'Canteen Operator' },
-  'canteen2':  { pass:'gev123', name:'Sevak Counter 2',  role:'Canteen Operator' },
-};
+const API_BASE = 'http://localhost:3000';
 
 const state = {
-  user: null,
+  user:        null,
+  token:       null,
   currentMeal: { id:'free_lunch', name:'Free Lunch Prasad', time:'12:45–2:30 PM', mode:'scan_tap', type:'free' },
-  counts: { breakfast:38, khichadi_am:189, free_lunch:259, khichadi_pm:123, dinner:0 },
-  tapCount: 12,
-  scanCount: 247,
-  activeTab: 'scan',
+  counts:      { breakfast:0, khichadi_am:0, free_lunch:0, khichadi_pm:0, dinner:0 },
+  tapCount:    0,
+  scanCount:   0,
+  activeTab:   'scan',
 };
 
 // ─── LOGIN ───
-function doLogin() {
+async function doLogin() {
   const u = document.getElementById('l-user').value.trim().toLowerCase();
   const p = document.getElementById('l-pass').value;
-  const user = USERS[u];
-  if (!user || user.pass !== p) { alert('Invalid credentials. Try:\nanandprem / gev123\ncanteen1 / gev123'); return; }
-  state.user = { ...user, username: u };
-  // Update greeting
-  const hr = new Date().getHours();
-  const greet = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
-  document.getElementById('ms-greeting').textContent = greet + ' 🙏';
-  document.getElementById('ms-user-sub').textContent = user.name + ' · ' + user.role;
-  // Auto-suggest meal
-  suggestMeal();
-  showScreen('s-meals');
+  try {
+    const resp = await fetch(API_BASE + '/api/auth/login', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ username: u, password: p })
+    });
+    const data = await resp.json();
+    if (!resp.ok || !data.token) {
+      alert(data.error || 'Login failed. Check credentials.');
+      return;
+    }
+    state.user  = { name: data.user.full_name, role: data.user.role, username: u };
+    state.token = data.token;
+    const hr    = new Date().getHours();
+    const greet = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('ms-greeting').textContent  = greet + ' 🙏';
+    document.getElementById('ms-user-sub').textContent  = data.user.full_name + ' · Canteen';
+    suggestMeal();
+    showScreen('s-meals');
+  } catch (err) {
+    alert('Connection error. Is the server running at ' + API_BASE + '?');
+  }
 }
 
 function doLogout() {
-  state.user = null;
+  state.user  = null;
+  state.token = null;
   showScreen('s-login');
+}
+
+// ─── REAL MEAL SCAN ───
+async function performMealScan(qr_id) {
+  if (!qr_id || !state.token) return;
+  try {
+    const resp = await fetch(API_BASE + '/api/meals/scan', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.token },
+      body:    JSON.stringify({ qr_id: qr_id.trim(), meal_type: state.currentMeal.id })
+    });
+    const result = await resp.json();
+    showScanResult(result);
+    if (result.result === 'served') {
+      state.scanCount++;
+      loadTodayStats();
+    }
+    updateStatsBar();
+  } catch (err) {
+    console.error('Scan error:', err);
+  }
+}
+
+function showScanResult(result) {
+  const isFree = state.currentMeal.mode !== 'scan_only';
+  if (result.result === 'served') {
+    if (isFree) {
+      document.getElementById('ro-f-status').textContent = state.currentMeal.name.toUpperCase() + ' ✓';
+      document.getElementById('ro-f-name').textContent   = result.person?.name || '—';
+      document.getElementById('ro-f-type').textContent   = result.person?.type || '';
+      document.getElementById('ro-f-detail').textContent = (result.meal || '') + ' · Recorded';
+      showResult('ro-free');
+    } else {
+      document.getElementById('ro-s-name').textContent   = result.person?.name || '—';
+      document.getElementById('ro-s-type').textContent   = (result.person?.type || '') + ' · ' + (result.person?.dept || '');
+      document.getElementById('ro-s-detail').textContent = (result.meal || '') + ' · Token recorded';
+      showResult('ro-served');
+    }
+  } else if (result.result === 'already_served') {
+    document.getElementById('ro-a-name').textContent   = result.person?.name || '—';
+    document.getElementById('ro-a-type').textContent   = result.person?.type || '';
+    document.getElementById('ro-a-detail').textContent = result.message || 'Already served today';
+    showResult('ro-already');
+  } else {
+    document.getElementById('ro-d-name').textContent   = result.person?.name || 'Unknown';
+    document.getElementById('ro-d-type').textContent   = result.person?.type || '';
+    document.getElementById('ro-d-detail').textContent = result.reason || 'Not registered for this meal';
+    showResult('ro-denied');
+  }
 }
 
 // ─── AUTO SUGGEST MEAL ───
@@ -686,8 +744,7 @@ function startMealService() {
     document.getElementById('tap-section').style.display = 'block';
     document.getElementById('scan-label-text').textContent = 'Scan QR or use tap counter below';
   }
-  // Update stats bar
-  updateStatsBar();
+  loadTodayStats();
   document.getElementById('list-meal-title').textContent = m.name;
   switchTab('scan');
   showScreen('s-scan');
@@ -702,15 +759,55 @@ function updateStatsBar() {
 }
 
 // ─── TAP COUNTER ───
-function changeTap(delta) {
-  state.tapCount = Math.max(0, state.tapCount + delta);
-  document.getElementById('tap-count').textContent = state.tapCount;
-  updateStatsBar();
-  // Flash animation
+async function changeTap(delta) {
+  if (delta > 0 && state.token) {
+    try {
+      const resp = await fetch(API_BASE + '/api/meals/tap', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.token },
+        body:    JSON.stringify({ meal_type: state.currentMeal.id, count: 1 })
+      });
+      const result = await resp.json();
+      if (result.success) {
+        state.tapCount = result.total_today;
+        document.getElementById('tap-count').textContent = state.tapCount;
+        updateStatsBar();
+      }
+    } catch (err) {
+      state.tapCount++;
+      document.getElementById('tap-count').textContent = state.tapCount;
+      updateStatsBar();
+    }
+  } else {
+    state.tapCount = Math.max(0, state.tapCount + delta);
+    document.getElementById('tap-count').textContent = state.tapCount;
+    updateStatsBar();
+  }
   const el = document.getElementById('tap-count');
   el.style.transform = 'scale(1.2)';
   el.style.color = delta > 0 ? '#60A5FA' : '#EF4444';
   setTimeout(() => { el.style.transform = ''; el.style.color = ''; }, 200);
+}
+
+// ─── LIVE STATS FROM API ───
+async function loadTodayStats() {
+  if (!state.token) return;
+  try {
+    const resp = await fetch(API_BASE + '/api/meals/today', {
+      headers: { 'Authorization': 'Bearer ' + state.token }
+    });
+    const data = await resp.json();
+    if (!data.data) return;
+    const slots = data.data.slot_counts || [];
+    const taps  = data.data.tap_counts  || [];
+    const m     = state.currentMeal.id;
+    const cur   = slots.find(s => s.meal_type === m) || {};
+    const curTap= taps.find(t => t.meal_type === m)  || {};
+    state.scanCount = parseInt(cur.scanned  || 0);
+    state.tapCount  = parseInt(curTap.tapped || 0);
+    document.getElementById('tap-count').textContent = state.tapCount;
+    updateStatsBar();
+  } catch (err) { /* silent — stale counts shown */ }
 }
 
 // ─── DEMO SCANS ───
@@ -817,7 +914,28 @@ function showScreen(id) {
 }
 
 // Init
-document.addEventListener('keydown', e => { if(e.key==='Escape') document.querySelectorAll('.result-overlay').forEach(r=>r.classList.remove('show')); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.result-overlay').forEach(r => r.classList.remove('show'));
+  }
+});
+
+// Physical QR scanner input — scanners type the UUID then send Enter
+(function setupQRScanner() {
+  let buf = '', timer = null;
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('s-scan').classList.contains('active')) return;
+    if (e.key === 'Enter') {
+      if (buf.length > 10) performMealScan(buf.trim());
+      buf = '';
+      if (timer) clearTimeout(timer);
+    } else if (e.key.length === 1) {
+      buf += e.key;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => { buf = ''; }, 500);
+    }
+  });
+})();
 </script>
 </body>
 </html>
