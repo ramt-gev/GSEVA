@@ -356,6 +356,21 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 </head>
 <body>
 
+<!-- ═══════ LOGIN OVERLAY ═══════ -->
+<div id="login-overlay" style="display:flex;position:fixed;inset:0;z-index:9999;background:#0D1117;align-items:center;justify-content:center;flex-direction:column;gap:16px">
+  <div style="font-size:40px">🕉️</div>
+  <div style="font-size:20px;font-weight:700;color:#F5F5F5">GEV ICMS Admin Portal</div>
+  <div style="background:#161B22;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:28px 24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:14px">
+    <input id="adm-user" type="text" placeholder="Username" autocomplete="username"
+      style="background:#0D1117;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px 14px;font-size:14px;color:#F5F5F5;outline:none;width:100%"/>
+    <input id="adm-pass" type="password" placeholder="Password" autocomplete="current-password"
+      style="background:#0D1117;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px 14px;font-size:14px;color:#F5F5F5;outline:none;width:100%"/>
+    <div id="adm-err" style="color:#F87171;font-size:12px;display:none"></div>
+    <button onclick="adminLogin()" style="background:#1A4731;border:none;border-radius:9px;padding:12px;font-size:14px;font-weight:700;color:white;cursor:pointer;width:100%">Sign In</button>
+  </div>
+  <div style="font-size:11px;color:rgba(255,255,255,0.3)">Govardhan EcoVillage — ISKCON Wada</div>
+</div>
+
 <!-- ═══════════════════════════════════════════════════
      SIDEBAR
 ═══════════════════════════════════════════════════ -->
@@ -437,7 +452,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   </button>
 
   <div class="sidebar-foot">
-    <button class="btn-logout">🔓 &nbsp;Logout — Ram Prabhu</button>
+    <button class="btn-logout" id="logout-btn" onclick="adminLogout()">🔓 &nbsp;Logout</button>
   </div>
 </div>
 
@@ -472,12 +487,12 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
       </div>
 
       <div class="stats-row">
-        <div class="stat-card sc-o"><span class="stat-icon">🏨</span><div class="stat-n">47</div><div class="stat-l">Room Guests</div><div class="stat-s">12 departing today</div></div>
-        <div class="stat-card sc-b"><span class="stat-icon">☀️</span><div class="stat-n">312</div><div class="stat-l">Day Visitors</div><div class="stat-s">↑ 18% vs yesterday</div></div>
-        <div class="stat-card sc-p"><span class="stat-icon">👨‍👩‍👧</span><div class="stat-n">159</div><div class="stat-l">Staff & Family</div><div class="stat-s">118 staff · 41 dependants</div></div>
-        <div class="stat-card sc-t"><span class="stat-icon">🤲</span><div class="stat-n">34</div><div class="stat-l">Seva Volunteers</div><div class="stat-s">2 applications pending</div></div>
-        <div class="stat-card sc-a"><span class="stat-icon">👷</span><div class="stat-n">142</div><div class="stat-l">Labourers</div><div class="stat-s">Camp A: 98 · Camp B: 44</div></div>
-        <div class="stat-card sc-g"><span class="stat-icon">🕉️</span><div class="stat-n">74</div><div class="stat-l">Ashram Residents</div><div class="stat-s">55 Brahmacharis · 19 VVs</div></div>
+        <div class="stat-card sc-o"><span class="stat-icon">🏨</span><div class="stat-n" id="stat-room-guests">—</div><div class="stat-l">Room Guests</div><div class="stat-s">on campus now</div></div>
+        <div class="stat-card sc-b"><span class="stat-icon">☀️</span><div class="stat-n" id="stat-day-visitors">—</div><div class="stat-l">Day Visitors</div><div class="stat-s">on campus now</div></div>
+        <div class="stat-card sc-p"><span class="stat-icon">👨‍👩‍👧</span><div class="stat-n" id="stat-staff">—</div><div class="stat-l">Staff & Family</div><div class="stat-s">resident staff + dependants</div></div>
+        <div class="stat-card sc-t"><span class="stat-icon">🤲</span><div class="stat-n" id="stat-volunteers">—</div><div class="stat-l">Seva & Volunteers</div><div class="stat-s">on campus now</div></div>
+        <div class="stat-card sc-a"><span class="stat-icon">👷</span><div class="stat-n" id="stat-labourers">—</div><div class="stat-l">Labourers</div><div class="stat-s">on campus now</div></div>
+        <div class="stat-card sc-g"><span class="stat-icon">🕉️</span><div class="stat-n" id="stat-ashram">—</div><div class="stat-l">Ashram Residents</div><div class="stat-s">Brahmacharis + VVs</div></div>
       </div>
 
       <div class="three-two">
@@ -506,7 +521,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
           </div>
           <div class="sec-card">
             <div class="sec-head"><span style="font-size:15px">⏳</span><span class="sec-title">Pending Approvals</span></div>
-            <div style="padding:10px 14px">
+            <div id="pending-approvals-list" style="padding:10px 14px">
               <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border2)"><div><div style="font-size:12.5px;font-weight:500">4 contractor workers</div><div style="font-size:11px;color:var(--text3)">Sharma Construction Co.</div></div><button class="btn btn-primary btn-sm" onclick="nav(document.querySelectorAll('.nav-item')[7],'pg-contractors')">Review</button></div>
               <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border2)"><div><div style="font-size:12.5px;font-weight:500">2 Seva applications</div><div style="font-size:11px;color:var(--text3)">Yoga Dept + Sustainability</div></div><button class="btn btn-primary btn-sm" onclick="nav(document.querySelectorAll('.nav-item')[5],'pg-seva')">Review</button></div>
               <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0"><div><div style="font-size:12.5px;font-weight:500">1 vendor day pass</div><div style="font-size:11px;color:var(--text3)">ABC Plumbing Supplies</div></div><button class="btn btn-success btn-sm">Approve</button></div>
@@ -1091,7 +1106,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
         <div class="sec-head"><span class="sec-title">Audit Log — 24 Apr 2026</span><div class="sec-actions"><span style="font-size:11px;color:var(--red)">🔒 Immutable — cannot be edited or deleted</span></div></div>
         <table class="data-table">
           <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Detail</th><th>Module</th><th>Device</th></tr></thead>
-          <tbody>
+          <tbody id="audit-tbody">
             <tr><td style="font-size:11.5px;color:var(--text3);white-space:nowrap">07:42:18</td><td style="font-size:12px;font-weight:500">Anandprem Prabhu</td><td><span class="audit-action-badge" style="background:var(--teal-bg);color:var(--teal)">✓ Meal Served</span></td><td style="font-size:12px">Breakfast served — Ramesh Kumar (Constr. Labourer)</td><td><span class="tag tag-grey" style="font-size:10px">AMS</span></td><td style="font-size:11px;color:var(--text3)">Canteen Tab 1</td></tr>
             <tr><td style="font-size:11.5px;color:var(--text3)">07:38:55</td><td style="font-size:12px;font-weight:500">Gate Staff — Suresh</td><td><span class="audit-action-badge" style="background:var(--green-bg);color:var(--green)">✓ Entry</span></td><td style="font-size:12px">Entry allowed — Mr. Arun Mehta (Room Guest)</td><td><span class="tag tag-grey" style="font-size:10px">Gate</span></td><td style="font-size:11px;color:var(--text3)">Main Gate Tab</td></tr>
             <tr><td style="font-size:11.5px;color:var(--text3)">07:35:12</td><td style="font-size:12px;font-weight:500">Gate Staff — Suresh</td><td><span class="audit-action-badge" style="background:var(--red-bg);color:var(--red)">✗ Denied</span></td><td style="font-size:12px">Entry denied — Vijay Patil at SBT Gate (day visitor)</td><td><span class="tag tag-grey" style="font-size:10px">Gate</span></td><td style="font-size:11px;color:var(--text3)">SBT Gate Tab</td></tr>
@@ -1112,16 +1127,16 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
         <div class="sec-card">
           <div class="sec-head"><span style="font-size:15px">⚙️</span><span class="sec-title">System Configuration</span><span class="sec-sub">Stored in system_config table</span></div>
           <div style="padding:14px 18px;display:flex;flex-direction:column;gap:12px">
-            <div class="form-group"><label class="form-label">Max Group Size (day visitor registration)</label><input type="number" class="form-input" value="10" min="1" max="50"/><span class="form-note">Current: 10 · Visitor cannot register more than this many persons in one group</span></div>
-            <div class="form-group"><label class="form-label">Zone 3 Café Price per Person (₹)</label><input type="number" class="form-input" value="350"/><span class="form-note">Current: ₹350 · Govinda's Guest Area lunch — used in SBT Gate upgrade calculation</span></div>
-            <div class="form-group"><label class="form-label">VF Tour Slot Capacity (persons per slot)</label><input type="number" class="form-input" value="30"/><span class="form-note">Current: 30 · When slot reaches this count, it shows as unavailable on registration page</span></div>
-            <div class="form-group"><label class="form-label">Day Pass Valid Until (IST 24hr)</label><input type="text" class="form-input" value="20:00"/><span class="form-note">Current: 8:00 PM · All day visitor QR passes expire at this time</span></div>
-            <div class="form-group"><label class="form-label">Zone 3 Upgrade Valid (hours)</label><input type="number" class="form-input" value="3"/><span class="form-note">Current: 3 hours from payment time</span></div>
-            <div class="form-group"><label class="form-label">New Visitor Registration</label><select class="form-select"><option>Open — accepting registrations</option><option>Closed — not accepting today</option></select></div>
-            <div class="form-group"><label class="form-label">Festival Mode</label><select class="form-select"><option>Off — normal QR scanning</option><option>On — batch entry mode active</option></select></div>
+            <div class="form-group"><label class="form-label">Max Group Size (day visitor registration)</label><input type="number" class="form-input" data-key="max_group_size" value="10" min="1" max="50"/><span class="form-note">Visitor cannot register more than this many persons in one group</span></div>
+            <div class="form-group"><label class="form-label">Zone 3 Café Price per Person (₹)</label><input type="number" class="form-input" data-key="zone3_cafe_price" value="350"/><span class="form-note">Govinda's Guest Area lunch — used in SBT Gate upgrade calculation</span></div>
+            <div class="form-group"><label class="form-label">VF Tour Slot Capacity (persons per slot)</label><input type="number" class="form-input" data-key="vf_slot_capacity" value="30"/><span class="form-note">When slot reaches this count, it shows as unavailable on registration page</span></div>
+            <div class="form-group"><label class="form-label">Day Pass Valid Until (IST 24hr)</label><input type="text" class="form-input" data-key="day_pass_valid_until" value="20:00"/><span class="form-note">All day visitor QR passes expire at this time</span></div>
+            <div class="form-group"><label class="form-label">Zone 3 Upgrade Valid (hours)</label><input type="number" class="form-input" data-key="zone3_upgrade_hours" value="3"/><span class="form-note">Hours from payment time</span></div>
+            <div class="form-group"><label class="form-label">New Visitor Registration</label><select class="form-select" data-key="registration_open"><option value="true">Open — accepting registrations</option><option value="false">Closed — not accepting today</option></select></div>
+            <div class="form-group"><label class="form-label">Festival Mode</label><select class="form-select" data-key="festival_mode_active"><option value="false">Off — normal QR scanning</option><option value="true">On — batch entry mode active</option></select></div>
             <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
-              <button class="btn btn-outline">Reset to defaults</button>
-              <button class="btn btn-primary" onclick="alert('✅ System settings saved!\n\nAll changes take effect immediately.\nAudit log updated — Ram Prabhu, ' + new Date().toLocaleTimeString())">💾 Save All Settings</button>
+              <button class="btn btn-outline" onclick="loadConfig()">↺ Reload from DB</button>
+              <button class="btn btn-primary" onclick="saveConfig()">💾 Save All Settings</button>
             </div>
           </div>
         </div>
@@ -1242,24 +1257,194 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 // GEV ADMIN PORTAL — Logic
 // ═══════════════════════════════
 
+const API_BASE = 'http://localhost:3000';
+let token = localStorage.getItem('gev_admin_token') || null;
+let currentUser = null;
+
 const PAGE_META = {
-  'pg-dashboard':    ['Dashboard', 'Good morning, Ram Prabhu 🙏'],
+  'pg-dashboard':    ['Dashboard', ''],
   'pg-register':     ['Register New Person', 'Add any visitor type to campus'],
-  'pg-guests':       ['Guests & Day Visitors', '359 records — Room guests, day visitors, VIPs, corporate groups'],
-  'pg-staff':        ['Resident Staff & Family', '118 payroll staff · 41 dependants — Greythr synced'],
-  'pg-seva':         ['Seva & Volunteers', '34 active · 2 pending applications'],
-  'pg-students':     ['Students & Courses', '28 enrolled — Yoga, Ayurveda, Vidyapeetha, TTC'],
-  'pg-contractors':  ['Contractors & Labourers', '4 active contractors · 142 labourers · 4 pending approvals'],
-  'pg-vendors':      ['Vendors & Suppliers', '3 vendor passes today — day-visit management'],
-  'pg-ashram':       ['Ashram Residents', '55 Brahmacharis · 19 Varishtha Vaishnavas — fixed count system'],
+  'pg-guests':       ['Guests & Day Visitors', 'Room guests, day visitors, VIPs, corporate groups'],
+  'pg-staff':        ['Resident Staff & Family', 'Payroll staff · Dependants — Greythr synced'],
+  'pg-seva':         ['Seva & Volunteers', 'Volunteer seva · Sustainability interns'],
+  'pg-students':     ['Students & Courses', 'Yoga, Ayurveda, Vidyapeetha, TTC'],
+  'pg-contractors':  ['Contractors & Labourers', 'Active contractors · Labourers · Pending approvals'],
+  'pg-vendors':      ['Vendors & Suppliers', 'Vendor day-visit management'],
+  'pg-ashram':       ['Ashram Residents', 'Brahmacharis · Varishtha Vaishnavas — fixed count system'],
   'pg-annakshetra':  ['Annakshetra', 'Meal token management · Free meal counter · Forecasting'],
-  'pg-festival':     ['Festival Mode', 'Festival calendar · Batch entry · 17 committee dashboards'],
-  'pg-security':     ['Security & Reports', 'Monthly police report · Gate logs · 8 report types'],
-  'pg-users':        ['User Management', 'RBAC — 5-layer role system · 8 active users'],
-  'pg-audit':        ['Audit Trail', '247 entries today — immutable log · Super Admin only'],
+  'pg-festival':     ['Festival Mode', 'Festival calendar · Batch entry · Committee dashboards'],
+  'pg-security':     ['Security & Reports', 'Monthly police report · Gate logs · Report types'],
+  'pg-users':        ['User Management', 'RBAC — 5-layer role system'],
+  'pg-audit':        ['Audit Trail', 'Immutable log — Super Admin only'],
   'pg-settings':     ['System Settings', 'System config · Café capacity · Zone 3 upgrades — Super Admin only'],
 };
 
+// ─── AUTH ───
+async function adminLogin() {
+  const username = document.getElementById('adm-user').value.trim();
+  const password = document.getElementById('adm-pass').value;
+  const errEl    = document.getElementById('adm-err');
+  errEl.style.display = 'none';
+  try {
+    const resp = await fetch(API_BASE + '/api/auth/login', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ username, password })
+    });
+    const data = await resp.json();
+    if (!resp.ok || !data.token) {
+      errEl.textContent   = data.error || 'Login failed';
+      errEl.style.display = 'block';
+      return;
+    }
+    token       = data.token;
+    currentUser = data.user;
+    localStorage.setItem('gev_admin_token', token);
+    document.getElementById('login-overlay').style.display = 'none';
+    document.querySelector('.user-nm').textContent   = currentUser.full_name || username;
+    document.querySelector('.user-role').textContent = currentUser.role || 'Admin';
+    document.getElementById('logout-btn').textContent = '🔓  Logout — ' + (currentUser.full_name || username);
+    initPortal();
+  } catch (err) {
+    errEl.textContent   = 'Connection error. Is the server running?';
+    errEl.style.display = 'block';
+  }
+}
+
+function adminLogout() {
+  token = null;
+  currentUser = null;
+  localStorage.removeItem('gev_admin_token');
+  document.getElementById('login-overlay').style.display = 'flex';
+}
+
+async function authFetch(url, options = {}) {
+  return fetch(API_BASE + url, {
+    ...options,
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token, ...(options.headers || {}) }
+  });
+}
+
+// ─── INIT ───
+function initPortal() {
+  loadDashboard();
+  loadConfig();
+}
+
+// ─── DASHBOARD ───
+async function loadDashboard() {
+  try {
+    const resp = await authFetch('/api/admin/dashboard');
+    const data = await resp.json();
+    if (!data.data) return;
+    const p = data.data.population;
+    const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val ?? '—'; };
+    set('stat-room-guests',  p.room_guests);
+    set('stat-day-visitors', p.day_visitors);
+    set('stat-staff',        p.staff);
+    set('stat-volunteers',   p.volunteers_students);
+    set('stat-labourers',    p.labourers);
+    set('stat-ashram',       p.ashram);
+
+    const pending = data.data.pending_approvals;
+    const hr = new Date().getHours();
+    const greet = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('topbar-sub').textContent =
+      greet + (currentUser ? ', ' + currentUser.full_name : '') + ' 🙏';
+
+    if (pending > 0) loadPendingApprovals();
+  } catch (err) { console.error('Dashboard load error:', err); }
+}
+
+// ─── PENDING APPROVALS ───
+async function loadPendingApprovals() {
+  try {
+    const resp = await authFetch('/api/admin/pending-approvals');
+    const data = await resp.json();
+    const container = document.getElementById('pending-approvals-list');
+    if (!container || !data.data) return;
+    if (data.data.length === 0) {
+      container.innerHTML = '<div style="padding:10px;font-size:12px;color:var(--text3)">No pending approvals</div>';
+      return;
+    }
+    container.innerHTML = data.data.map(p => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border2)">
+        <div>
+          <div style="font-size:12.5px;font-weight:500">${p.full_name}</div>
+          <div style="font-size:11px;color:var(--text3)">${p.contractor_name || p.person_type}</div>
+        </div>
+        <button class="btn btn-success btn-sm" onclick="approvePerson('${p.person_id}')">Approve</button>
+      </div>`).join('');
+  } catch (err) { console.error('Pending approvals error:', err); }
+}
+
+async function approvePerson(person_id) {
+  if (!confirm('Approve this person and send QR pass via WhatsApp?')) return;
+  try {
+    const resp = await authFetch('/api/admin/approve/' + person_id, { method: 'POST', body: '{}' });
+    const data = await resp.json();
+    if (data.success) {
+      alert('✅ Approved — QR pass sent via WhatsApp');
+      loadPendingApprovals();
+      loadDashboard();
+    } else {
+      alert('Error: ' + (data.error || 'Approval failed'));
+    }
+  } catch (err) { alert('Connection error'); }
+}
+
+// ─── AUDIT TRAIL ───
+async function loadAudit() {
+  try {
+    const resp = await authFetch('/api/admin/audit?limit=50');
+    const data = await resp.json();
+    const tbody = document.getElementById('audit-tbody');
+    if (!tbody || !data.data) return;
+    tbody.innerHTML = data.data.map(row => {
+      const time   = new Date(row.created_at).toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      const user   = row.full_name || row.username || 'System';
+      const action = row.action || '—';
+      const detail = [row.table_name, row.record_id].filter(Boolean).join(' · ') || row.notes || '';
+      const mod    = (row.module || '').toUpperCase();
+      return `<tr>
+        <td style="font-size:11.5px;color:var(--text3);white-space:nowrap">${time}</td>
+        <td style="font-size:12px;font-weight:500">${user}</td>
+        <td><span class="audit-action-badge" style="background:var(--surface2);color:var(--text2)">${action}</span></td>
+        <td style="font-size:12px">${detail}</td>
+        <td><span class="tag tag-grey" style="font-size:10px">${mod}</span></td>
+        <td style="font-size:11px;color:var(--text3)">${row.ip_address || '—'}</td>
+      </tr>`;
+    }).join('');
+  } catch (err) { console.error('Audit load error:', err); }
+}
+
+// ─── SYSTEM CONFIG ───
+async function loadConfig() {
+  try {
+    const resp = await authFetch('/api/admin/config');
+    const data = await resp.json();
+    if (!data.data) return;
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const val = data.data[el.dataset.key];
+      if (val !== undefined) el.value = val;
+    });
+  } catch (err) { console.error('Config load error:', err); }
+}
+
+async function saveConfig() {
+  const updates = {};
+  document.querySelectorAll('[data-key]').forEach(el => {
+    updates[el.dataset.key] = el.value;
+  });
+  try {
+    const resp = await authFetch('/api/admin/config', { method: 'PUT', body: JSON.stringify(updates) });
+    const data = await resp.json();
+    if (data.success) alert('✅ Settings saved — changes take effect immediately');
+    else alert('Error: ' + (data.error || 'Save failed'));
+  } catch (err) { alert('Connection error'); }
+}
+
+// ─── NAV ───
 function nav(btn, pageId) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1268,22 +1453,40 @@ function nav(btn, pageId) {
   const meta = PAGE_META[pageId];
   if (meta) {
     document.getElementById('topbar-title').textContent = meta[0];
-    document.getElementById('topbar-sub').textContent = meta[1];
+    if (pageId !== 'pg-dashboard') document.getElementById('topbar-sub').textContent = meta[1];
   }
+  if (pageId === 'pg-audit')    loadAudit();
+  if (pageId === 'pg-dashboard') loadDashboard();
 }
 
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-// Close modal on backdrop click
 document.querySelectorAll('.modal-overlay').forEach(m => {
   m.addEventListener('click', e => { if(e.target === m) m.classList.remove('open'); });
 });
 
-// Close modal on Escape
 document.addEventListener('keydown', e => {
-  if(e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+  if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+  if (e.key === 'Enter' && document.getElementById('login-overlay').style.display !== 'none') adminLogin();
 });
+
+// Auto-login if token exists in localStorage
+if (token) {
+  authFetch('/api/auth/me').then(r => r.json()).then(data => {
+    if (data.user) {
+      currentUser = data.user;
+      document.getElementById('login-overlay').style.display = 'none';
+      document.querySelector('.user-nm').textContent   = data.user.full_name || '';
+      document.querySelector('.user-role').textContent = data.user.role || 'Admin';
+      document.getElementById('logout-btn').textContent = '🔓  Logout — ' + data.user.full_name;
+      initPortal();
+    } else {
+      localStorage.removeItem('gev_admin_token');
+      token = null;
+    }
+  }).catch(() => { localStorage.removeItem('gev_admin_token'); token = null; });
+}
 </script>
 </body>
 </html>
