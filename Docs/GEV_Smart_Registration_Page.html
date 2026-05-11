@@ -322,27 +322,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
         </div>
         <div id="vf-slots" style="display:none;margin-top:12px">
           <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">Select your preferred time slot:</div>
-          <div class="slot-grid">
-            <div class="slot-btn" onclick="event.stopPropagation();selectSlot(this,'10:30')">
-              <div class="slot-time">10:30 AM</div>
-              <div class="slot-avail">6 left</div>
-            </div>
-            <div class="slot-btn" onclick="event.stopPropagation();selectSlot(this,'12:00')">
-              <div class="slot-time">12:00 PM</div>
-              <div class="slot-avail">18 left</div>
-            </div>
-            <div class="slot-btn" onclick="event.stopPropagation();selectSlot(this,'14:00')">
-              <div class="slot-time">2:00 PM</div>
-              <div class="slot-avail">30 left</div>
-            </div>
-            <div class="slot-btn" onclick="event.stopPropagation();selectSlot(this,'15:30')">
-              <div class="slot-time">3:30 PM</div>
-              <div class="slot-avail">30 left</div>
-            </div>
-            <div class="slot-btn full" onclick="event.stopPropagation()">
-              <div class="slot-time">5:00 PM</div>
-              <div class="slot-avail">Full</div>
-            </div>
+          <div class="slot-grid" id="vf-slot-grid">
+            <div style="font-size:11px;color:var(--text3);padding:8px">Loading slots…</div>
           </div>
         </div>
       </div>
@@ -477,10 +458,13 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   <div class="loading-text" id="loading-text">Processing...</div>
 </div>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 // ═══════════════════════════════════════════
 // GEV Smart Registration Page — Logic
 // ═══════════════════════════════════════════
+
+const API_BASE = 'http://localhost:3000';
 
 const CONFIG = {
   maxGroupSize: 10,
@@ -503,7 +487,9 @@ const state = {
     zone3: false,
   },
   vfSlot: null,
+  vfSlotId: null,
   totalAmount: 0,
+  registrationResult: null,
 };
 
 // ─── STEP NAVIGATION ───
@@ -648,11 +634,12 @@ function toggleService(card, service) {
   updateServicePrices();
 }
 
-function selectSlot(btn, time) {
+function selectSlot(btn, time, slotId) {
   document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
   if (!btn.classList.contains('full')) {
     btn.classList.add('selected');
-    state.vfSlot = time;
+    state.vfSlot   = time;
+    state.vfSlotId = slotId || null;
   }
 }
 
@@ -712,25 +699,93 @@ function buildReview() {
 }
 
 // ─── SUBMIT ───
-function submitRegistration() {
+async function submitRegistration() {
   showLoading('Registering your visit...');
-  setTimeout(() => {
+  try {
+    const r = await fetch(API_BASE + '/api/register/visitor', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(buildRegistrationBody('free_day_visitor', null)),
+    });
+    const d = await r.json();
     hideLoading();
+    if (!r.ok) { alert(d.error || 'Registration failed. Please try again.'); return; }
+    state.registrationResult = d.data;
     showSuccess();
-  }, 2000);
+  } catch (e) {
+    hideLoading();
+    alert('Could not reach server. Please try again or contact the gate.');
+  }
 }
 
-function initiatePayment() {
-  showLoading('Opening payment...');
-  setTimeout(() => {
+async function initiatePayment() {
+  showLoading('Creating payment...');
+  try {
+    const purpose   = state.visitType === 'paid' ? 'paid_programme_850' : 'zone3_upgrade';
+    const r = await fetch(API_BASE + '/api/register/payment/create', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        amount:      state.totalAmount,
+        purpose,
+        person_name: state.leaderName,
+        mobile:      state.leaderMobile,
+      }),
+    });
+    const d = await r.json();
     hideLoading();
-    // Simulate Razorpay
-    showLoading('Processing payment...');
-    setTimeout(() => {
+    if (!r.ok) { alert(d.error || 'Payment initiation failed'); return; }
+
+    // Test mode (RAZORPAY_KEY_ID not configured) — skip checkout, go straight to registration
+    if (d.data.test_mode) {
+      showLoading('Test mode — registering...');
+      const personType = state.visitType === 'paid' ? 'paid_day_visitor' : 'free_day_visitor';
+      const body = buildRegistrationBody(personType, {
+        razorpay_payment_id: 'test_' + Date.now(),
+        razorpay_order_id:   d.data.order_id,
+      });
+      const rr = await fetch(API_BASE + '/api/register/visitor', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(body),
+      });
+      const dd = await rr.json();
       hideLoading();
-      showSuccess();
-    }, 2000);
-  }, 1000);
+      if (rr.ok) { state.registrationResult = dd.data; showSuccess(); }
+      else alert(dd.error || 'Registration failed after payment');
+      return;
+    }
+
+    // Live Razorpay checkout
+    const personType = state.visitType === 'paid' ? 'paid_day_visitor' : 'free_day_visitor';
+    const rzp = new window.Razorpay({
+      key:         d.data.key_id,
+      amount:      state.totalAmount * 100,
+      currency:    'INR',
+      name:        'Govardhan EcoVillage',
+      description: state.visitType === 'paid' ? `Paid Programme ₹${CONFIG.programme850Price}` : `Zone 3 Upgrade ₹${CONFIG.zone3Price}/person`,
+      order_id:    d.data.order_id,
+      prefill:     { name: state.leaderName, contact: '91' + state.leaderMobile },
+      theme:       { color: '#D4631A' },
+      handler: async function(response) {
+        showLoading('Completing registration...');
+        const body = buildRegistrationBody(personType, response);
+        const rr = await fetch(API_BASE + '/api/register/visitor', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(body),
+        });
+        const dd = await rr.json();
+        hideLoading();
+        if (rr.ok) { state.registrationResult = dd.data; showSuccess(); }
+        else alert(dd.error || 'Registration failed. Please contact the gate with your payment confirmation.');
+      },
+    });
+    rzp.open();
+  } catch (e) {
+    hideLoading();
+    alert('Payment system unavailable. Please try again.');
+  }
 }
 
 function showSuccess() {
@@ -781,31 +836,126 @@ function updateGovindaUpgradeDisplay() {
   if (totalEl) totalEl.textContent = '₹' + total.toLocaleString('en-IN');
 }
 
-function initiateGovindaUpgrade() {
-  const g = state.groupSize;
+async function initiateGovindaUpgrade() {
+  const g     = state.groupSize;
   const total = CONFIG.zone3Price * g;
-  const btn = document.getElementById('govindas-upgrade-btn');
+  const btn   = document.getElementById('govindas-upgrade-btn');
   btn.textContent = '⏳  Opening payment...';
   btn.disabled = true;
 
-  setTimeout(() => {
-    // Simulate Razorpay payment
-    btn.textContent = '⏳  Processing payment...';
-    setTimeout(() => {
-      // Payment success
+  try {
+    const r = await fetch(API_BASE + '/api/register/payment/create', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        amount:      total,
+        purpose:     'zone3_upgrade',
+        person_name: state.leaderName,
+        mobile:      state.leaderMobile,
+      }),
+    });
+    const d = await r.json();
+    if (!r.ok) { btn.textContent = 'Pay & Upgrade'; btn.disabled = false; alert(d.error); return; }
+
+    const finishUpgrade = () => {
       const upgradeSection = document.getElementById('govindas-upgrade-section');
       const successSection = document.getElementById('govindas-upgrade-success');
       if (upgradeSection) upgradeSection.style.display = 'none';
       if (successSection) {
         successSection.style.display = 'block';
-        document.getElementById('upgrade-success-amount').textContent =
-          '₹' + total.toLocaleString('en-IN');
+        const el = document.getElementById('upgrade-success-amount');
+        if (el) el.textContent = '₹' + total.toLocaleString('en-IN');
       }
-      // In production: POST to /api/payments/zone3-upgrade
-      // Razorpay confirms → ICMS activates Zone 3 on QR → Interakt sends WhatsApp receipt
-    }, 2000);
-  }, 800);
+    };
+
+    if (d.data.test_mode) {
+      btn.textContent = '⏳  Processing...';
+      setTimeout(finishUpgrade, 1500);
+      return;
+    }
+
+    btn.textContent = '💳  Pay & Upgrade';
+    btn.disabled = false;
+    const rzp = new window.Razorpay({
+      key:         d.data.key_id,
+      amount:      total * 100,
+      currency:    'INR',
+      name:        'Govardhan EcoVillage',
+      description: `Zone 3 Upgrade — ${g} person${g > 1 ? 's' : ''}`,
+      order_id:    d.data.order_id,
+      prefill:     { name: state.leaderName, contact: '91' + state.leaderMobile },
+      theme:       { color: '#D4631A' },
+      handler:     finishUpgrade,
+    });
+    rzp.open();
+  } catch (e) {
+    btn.textContent = 'Pay & Upgrade';
+    btn.disabled = false;
+    alert('Payment system unavailable.');
+  }
 }
+
+// ─── API HELPERS ───
+function buildRegistrationBody(person_type, paymentResponse) {
+  return {
+    full_name:            state.leaderName,
+    mobile:               state.leaderMobile,
+    person_type,
+    group_size:           state.groupSize,
+    members:              state.members,
+    visit_date:           new Date().toISOString().slice(0, 10),
+    vf_slot_id:           state.vfSlotId || null,
+    lunch_indicated:      state.services.lunch,
+    zone3_upgrade:        state.services.zone3,
+    razorpay_payment_id:  paymentResponse?.razorpay_payment_id || null,
+    razorpay_order_id:    paymentResponse?.razorpay_order_id   || null,
+  };
+}
+
+async function loadConfig() {
+  try {
+    const r = await fetch(API_BASE + '/api/register/public-config');
+    if (!r.ok) return;
+    const { data } = await r.json();
+    if (data.max_group_size)       CONFIG.maxGroupSize       = parseInt(data.max_group_size);
+    if (data.zone3_upgrade_price)  CONFIG.zone3Price         = parseInt(data.zone3_upgrade_price);
+    if (data.paid_programme_price) CONFIG.programme850Price  = parseInt(data.paid_programme_price);
+    updateServicePrices();
+  } catch(e) { /* use CONFIG defaults */ }
+}
+
+async function loadVFSlots() {
+  try {
+    const r = await fetch(API_BASE + '/api/register/vf-slots');
+    if (!r.ok) return;
+    const { data } = await r.json();
+    const today = new Date().toISOString().slice(0, 10);
+    const todaySlots = data.filter(s => s.tour_date?.slice(0, 10) === today);
+    const grid = document.getElementById('vf-slot-grid');
+    if (!grid) return;
+    if (!todaySlots.length) {
+      grid.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:8px">No VF tour slots available today.</div>';
+      return;
+    }
+    grid.innerHTML = todaySlots.map(slot => {
+      const avail = parseInt(slot.available);
+      const isFull = avail <= 0;
+      const timeLabel = new Date('1970-01-01T' + slot.slot_time).toLocaleTimeString('en-IN', {
+        hour: 'numeric', minute: '2-digit', hour12: true
+      });
+      return `<div class="slot-btn${isFull ? ' full' : ''}" onclick="event.stopPropagation();${isFull ? '' : `selectSlot(this,'${timeLabel}','${slot.slot_id}')`}">
+        <div class="slot-time">${timeLabel}</div>
+        <div class="slot-avail">${isFull ? 'Full' : avail + ' left'}</div>
+      </div>`;
+    }).join('');
+  } catch(e) { /* keep loading text */ }
+}
+
+// Boot on page load
+document.addEventListener('DOMContentLoaded', () => {
+  loadConfig();
+  loadVFSlots();
+});
 
 // Init
 updateServicePrices();

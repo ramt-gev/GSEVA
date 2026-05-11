@@ -9,6 +9,25 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
+// GET /api/register/public-config — visitor-facing config (no auth)
+async function publicConfig(req, res) {
+  try {
+    const result = await pool.query(
+      `SELECT config_key, config_value
+         FROM system_config
+        WHERE config_key IN (
+          'max_group_size','zone3_upgrade_price','paid_programme_price',
+          'day_pass_valid_until','vf_slot_capacity','registration_open'
+        )`
+    );
+    const cfg = {};
+    result.rows.forEach(r => { cfg[r.config_key] = r.config_value; });
+    res.json({ data: cfg });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+}
+
 // GET /api/register/vf-slots — next 7 days of VF tour slots
 async function getVFSlots(req, res) {
   try {
@@ -286,6 +305,7 @@ async function registerVisitor(req, res) {
 }
 
 module.exports = {
+  publicConfig,
   getVFSlots, getCafeCapacity,
   createPayment, paymentWebhook,
   registerVisitor

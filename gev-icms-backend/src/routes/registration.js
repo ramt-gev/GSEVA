@@ -5,6 +5,7 @@ const { auditLog } = require('../middleware/audit');
 
 // Public endpoints — no auth required.
 // auditLog middleware still writes rows with user_id = NULL for the audit trail.
+router.get('/public-config', ctrl.publicConfig);
 router.get('/vf-slots',      ctrl.getVFSlots);
 router.get('/cafe-capacity', ctrl.getCafeCapacity);
 

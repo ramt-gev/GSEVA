@@ -16,7 +16,8 @@ app.use('/api/register', require('./routes/registration'));
 app.use('/api/meals',    require('./routes/meals'));
 app.use('/api/admin',    require('./routes/admin'));
 app.use('/api/ezee',     require('./routes/ezee'));
-app.use('/api/reports',  require('./routes/reports'));
+app.use('/api/reports',   require('./routes/reports'));
+app.use('/api/whatsapp', require('./routes/whatsapp'));
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', system: 'GEV ICMS', version: '1.0' });
@@ -28,10 +29,12 @@ app.use((req, res) => {
 
 const { startForecastCron }  = require('./services/forecastService');
 const { startGreythrSync }   = require('./services/greythrService');
+const { startHealthCheck }   = require('./services/healthService');
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`GEV ICMS API running on port ${PORT}`);
   startForecastCron();
   startGreythrSync();
+  startHealthCheck();
 });

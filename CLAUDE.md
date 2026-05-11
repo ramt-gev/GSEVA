@@ -54,8 +54,15 @@ database/schema.sql        ← copy of Docs/GEV_Database_Schema_v3_Final.sql
 | `POST /api/register/visitor` | public | full visitor reg flow |
 | `POST /api/register/payment/create` | public | Razorpay order |
 | `POST /api/register/payment/webhook` | public | Razorpay webhook |
+| `GET /api/register/public-config` | public | visitor-facing config (prices, group size) |
 | `GET /api/register/vf-slots` | public | visitor farm tour slots |
 | `GET /api/register/cafe-capacity` | public | Govindas availability |
+| `GET /api/reports/hourly` | JWT | hourly gate counts (bar chart) |
+| `GET /api/reports/occupancy` | JWT | daily campus occupancy |
+| `GET /api/reports/gate` | JWT | gate event log |
+| `GET /api/reports/meals` | JWT | meal consumption report |
+| `GET /api/reports/police` | JWT + role | monthly police report (JSON or PDF) |
+| `POST /api/whatsapp/webhook` | public | Interakt inbound message handler |
 
 **JWT payload** includes `user_id`, `role`, `module_access[]` — available as `req.user` after `requireAuth`.
 
@@ -109,9 +116,12 @@ Phases 1 → 9 are sequential. Don't jump ahead — each phase doc has an explic
 | 1 | ✅ Done | PostgreSQL + schema deploy + seed `system_config` + 3 test users |
 | 2 | ✅ Done | Auth (JWT) + Persons CRUD + audit middleware |
 | 3 | ✅ Done | QR scan API + gate events + Gate Tablet App wiring |
-| 4 | 🔄 ~80% | Smart Registration + Razorpay + Interakt WhatsApp + eZee webhook + Zone 3 upgrade |
-| 5 | ⬜ Next | Annakshetra meal scan + nightly forecast cron + contractor billing |
-| 6–9 | ⬜ | Reports, Greythr sync, festival mode, dashboard, all 13 WhatsApp flows, go-live |
+| 4 | ✅ Done | Smart Registration + Razorpay + Interakt WhatsApp + eZee webhook + Zone 3 upgrade |
+| 5 | ✅ Done | Annakshetra meal scan + nightly forecast cron + contractor billing |
+| 6 | ✅ Done | Admin Portal backend + RBAC enforcement |
+| 7 | ✅ Done | eZee Centrix + Greythr HRMS integrations |
+| 8 | ✅ Done | Reports API (17 types) + police report PDF + Dashboard live data |
+| 9 | ✅ Done | Smart Registration wired + health monitoring + WhatsApp webhook + PM2/Nginx deploy configs |
 
 ## Common commands
 
