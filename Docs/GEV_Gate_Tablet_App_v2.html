@@ -879,7 +879,7 @@ body::before {
 // TEST_QR_ID: the qr_id UUID returned by the SQL INSERT in Phase 3 of the plan.
 //             Refresh this string after re-seeding the DB or using a different
 //             test pilgrim.
-var API_BASE   = 'http://localhost:3000';
+var API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
 var TEST_QR_ID = '85371cf9-abaa-4828-91a8-d324c1f9bc11';
 
 var state = {
