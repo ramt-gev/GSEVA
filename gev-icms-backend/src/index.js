@@ -15,6 +15,7 @@ app.use('/api/gate',     require('./routes/gate'));
 app.use('/api/register', require('./routes/registration'));
 app.use('/api/meals',    require('./routes/meals'));
 app.use('/api/admin',    require('./routes/admin'));
+app.use('/api/ezee',     require('./routes/ezee'));
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', system: 'GEV ICMS', version: '1.0' });
@@ -24,10 +25,12 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-const { startForecastCron } = require('./services/forecastService');
+const { startForecastCron }  = require('./services/forecastService');
+const { startGreythrSync }   = require('./services/greythrService');
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`GEV ICMS API running on port ${PORT}`);
   startForecastCron();
+  startGreythrSync();
 });
