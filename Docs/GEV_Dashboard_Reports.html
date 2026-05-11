@@ -275,6 +275,27 @@ body { font-family:var(--font); background:var(--bg); color:var(--text); display
 <body>
 
 <!-- SIDEBAR -->
+<!-- ── LOGIN OVERLAY ── -->
+<div id="login-overlay" style="display:none;position:fixed;inset:0;background:rgba(12,14,20,0.97);z-index:9999;display:flex;align-items:center;justify-content:center">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:36px 40px;width:340px">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:28px">🕉️</div>
+      <div style="font-size:16px;font-weight:700;margin-top:8px">GEV ICMS Dashboard</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:4px">Sign in to continue</div>
+    </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Username</div>
+      <input id="login-user" type="text" placeholder="username" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--font);font-size:13px;outline:none"/>
+    </div>
+    <div style="margin-bottom:20px">
+      <div style="font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Password</div>
+      <input id="login-pass" type="password" placeholder="password" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--font);font-size:13px;outline:none"/>
+    </div>
+    <div id="login-err" style="display:none;color:var(--red);font-size:11px;margin-bottom:12px"></div>
+    <button onclick="dashLogin()" style="width:100%;background:var(--saffron);color:#000;font-weight:700;border:none;border-radius:8px;padding:11px;font-size:13px;font-family:var(--font);cursor:pointer">Sign In</button>
+  </div>
+</div>
+
 <div class="sidebar">
   <div class="brand">
     <span class="brand-om">🕉️</span>
@@ -329,7 +350,8 @@ body { font-family:var(--font); background:var(--bg); color:var(--text); display
     <span class="topbar-title" id="tb-title">Campus Overview</span>
     <span class="topbar-sub" id="tb-sub">Friday, 24 April 2026 · <span id="tb-clock">—</span></span>
     <div class="topbar-right">
-      <button class="topbar-btn">⬇ Export</button>
+      <span id="topbar-user" style="font-size:11px;color:var(--text2);margin-right:8px"></span>
+      <button class="topbar-btn" onclick="dashLogout()">Sign Out</button>
       <button class="topbar-btn primary" onclick="openModal('modal-report')">📄 Generate Report</button>
     </div>
   </div>
@@ -340,12 +362,12 @@ body { font-family:var(--font); background:var(--bg); color:var(--text); display
     <div class="page active" id="pg-overview">
 
       <div class="stats-grid">
-        <div class="stat s-o"><div class="stat-bar"></div><div class="stat-val">714</div><div class="stat-lbl">Total On Campus</div><div class="stat-sub">↑ 18% vs yesterday</div></div>
-        <div class="stat s-g"><div class="stat-bar"></div><div class="stat-val">47</div><div class="stat-lbl">Room Guests</div><div class="stat-sub">12 departing today</div></div>
-        <div class="stat s-b"><div class="stat-bar"></div><div class="stat-val">312</div><div class="stat-lbl">Day Visitors</div><div class="stat-sub">Free: 214 · Paid ₹850: 98</div></div>
-        <div class="stat s-p"><div class="stat-bar"></div><div class="stat-val">159</div><div class="stat-lbl">Staff & Family</div><div class="stat-sub">118 staff · 41 dependants</div></div>
-        <div class="stat s-a"><div class="stat-bar"></div><div class="stat-val">142</div><div class="stat-lbl">Labourers</div><div class="stat-sub">Camp A: 98 · Camp B: 44</div></div>
-        <div class="stat s-t"><div class="stat-bar"></div><div class="stat-val">54</div><div class="stat-lbl">Volunteers / Students</div><div class="stat-sub">34 Seva · 20 Courses</div></div>
+        <div class="stat s-o"><div class="stat-bar"></div><div class="stat-val" id="stat-total">—</div><div class="stat-lbl">Total On Campus</div><div class="stat-sub" id="stat-total-sub">Loading…</div></div>
+        <div class="stat s-g"><div class="stat-bar"></div><div class="stat-val" id="stat-room-guests">—</div><div class="stat-lbl">Room Guests</div><div class="stat-sub">Overnight bookings</div></div>
+        <div class="stat s-b"><div class="stat-bar"></div><div class="stat-val" id="stat-day-visitors">—</div><div class="stat-lbl">Day Visitors</div><div class="stat-sub">Free + Paid ₹850</div></div>
+        <div class="stat s-p"><div class="stat-bar"></div><div class="stat-val" id="stat-staff">—</div><div class="stat-lbl">Staff & Family</div><div class="stat-sub">Payroll + dependants</div></div>
+        <div class="stat s-a"><div class="stat-bar"></div><div class="stat-val" id="stat-labourers">—</div><div class="stat-lbl">Labourers</div><div class="stat-sub">All contractor camps</div></div>
+        <div class="stat s-t"><div class="stat-bar"></div><div class="stat-val" id="stat-volunteers">—</div><div class="stat-lbl">Volunteers / Students</div><div class="stat-sub">Seva + Courses</div></div>
       </div>
 
       <div class="g3">
@@ -753,7 +775,7 @@ body { font-family:var(--font); background:var(--bg); color:var(--text); display
               </div>
               <div style="display:flex;gap:8px">
                 <button class="btn btn-primary" style="flex:1" onclick="openModal('modal-police')">📄 Preview Report</button>
-                <button class="btn btn-outline" style="flex:1">📊 Export Excel</button>
+                <button class="btn btn-outline" style="flex:1" onclick="downloadPoliceReport()">⬇ Download PDF</button>
               </div>
             </div>
           </div>
@@ -782,7 +804,7 @@ body { font-family:var(--font); background:var(--bg); color:var(--text); display
         <div style="overflow-x:auto">
         <table class="data-table">
           <thead><tr><th>Contractor</th><th>HOD</th><th>Registered</th><th>B+D Rate</th><th>Total Bill</th><th>Recovery Status</th></tr></thead>
-          <tbody>
+          <tbody id="dash-billing-tbody">
             <tr><td style="font-weight:600">Sharma Construction Co.</td><td>Anandnimai P</td><td style="font-family:var(--mono)">48</td><td style="font-family:var(--mono)">₹1,860</td><td style="font-family:var(--mono);font-weight:700">₹89,280</td><td><span class="tag tag-g">✓ Paid</span></td></tr>
             <tr><td style="font-weight:600">Patel Electricals</td><td>Anandnimai P</td><td style="font-family:var(--mono)">12</td><td style="font-family:var(--mono)">₹1,860</td><td style="font-family:var(--mono);font-weight:700">₹22,320</td><td><span class="tag tag-a">Pending</span></td></tr>
             <tr><td style="font-weight:600">Green Landscapes</td><td>Anandnimai P</td><td style="font-family:var(--mono)">16</td><td style="font-family:var(--mono)">₹1,860</td><td style="font-family:var(--mono);font-weight:700">₹29,760</td><td><span class="tag tag-a">Pending</span></td></tr>
@@ -850,7 +872,7 @@ body { font-family:var(--font); background:var(--bg); color:var(--text); display
         <div style="overflow-x:auto">
         <table class="data-table">
           <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Detail</th><th>Module</th><th>Device</th></tr></thead>
-          <tbody>
+          <tbody id="dash-audit-tbody">
             <tr><td style="font-family:var(--mono);font-size:10px;white-space:nowrap">07:42:18</td><td style="font-weight:600;font-size:11.5px">Anandprem P</td><td><span class="tag tag-t">Meal Served</span></td><td style="font-size:11px">Breakfast — Ramesh Kumar (Labourer)</td><td><span class="tag tag-grey" style="font-size:9px">AMS</span></td><td style="font-size:10px;color:var(--text3)">Canteen Tab</td></tr>
             <tr><td style="font-family:var(--mono);font-size:10px">07:38:55</td><td style="font-weight:600;font-size:11.5px">Gate Staff — Suresh</td><td><span class="tag tag-g">Entry Allowed</span></td><td style="font-size:11px">Mr. Arun Mehta — Main Gate</td><td><span class="tag tag-grey" style="font-size:9px">Gate</span></td><td style="font-size:10px;color:var(--text3)">Main Gate Tab</td></tr>
             <tr><td style="font-family:var(--mono);font-size:10px">07:35:12</td><td style="font-weight:600;font-size:11.5px">Gate Staff — Suresh</td><td><span class="tag tag-r">Entry Denied</span></td><td style="font-size:11px">Vijay Patil — SBT Gate (day visitor)</td><td><span class="tag tag-grey" style="font-size:9px">Gate</span></td><td style="font-size:10px;color:var(--text3)">SBT Gate Tab</td></tr>
@@ -950,13 +972,15 @@ body { font-family:var(--font); background:var(--bg); color:var(--text); display
     </div>
     <div class="modal-foot">
       <button class="btn btn-outline" onclick="closeModal('modal-police')">Close</button>
-      <button class="btn btn-outline" onclick="closeModal('modal-police');alert('Excel export — 409 records downloaded.')">📊 Excel (409 records)</button>
-      <button class="btn btn-primary" onclick="closeModal('modal-police');alert('Police report PDF generated.\nReady for Premanjan P to submit.')">📄 Generate PDF</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-police');downloadPoliceReport()">📄 Download PDF</button>
     </div>
   </div>
 </div>
 
 <script>
+const API_BASE = 'http://localhost:3000';
+let dashToken = null;
+
 const PAGE_META = {
   'pg-overview': ['Campus Overview', 'Live · All modules'],
   'pg-gates':    ['Gate Activity', 'All 4 campus gates · Live'],
@@ -977,8 +1001,12 @@ function nav(btn, pageId) {
   const m = PAGE_META[pageId];
   if (m) {
     document.getElementById('tb-title').textContent = m[0];
-    document.getElementById('tb-sub').innerHTML = 'Friday, 24 April 2026 · <span id="tb-clock">' + document.getElementById('tb-clock').textContent + '</span> · ' + m[1];
+    document.getElementById('tb-sub').innerHTML =
+      new Date().toLocaleDateString('en-IN', {weekday:'long',day:'numeric',month:'long',year:'numeric'}) +
+      ' · <span id="tb-clock">' + (document.getElementById('tb-clock') ? document.getElementById('tb-clock').textContent : '—') + '</span> · ' + m[1];
   }
+  if (pageId === 'pg-audit')   loadAudit();
+  if (pageId === 'pg-billing') loadBilling();
 }
 
 function openModal(id) { document.getElementById(id).classList.add('open'); }
@@ -1007,8 +1035,8 @@ setInterval(tick, 1000);
 function buildChart(containerId, data, color) {
   const el = document.getElementById(containerId);
   if (!el) return;
-  const max = Math.max(...data);
-  el.innerHTML = data.map((v, i) => {
+  const max = Math.max(...data, 1);
+  el.innerHTML = data.map(v => {
     const h = Math.round((v / max) * 100);
     return '<div class="bar-wrap">' +
       '<div class="bar-val">' + v + '</div>' +
@@ -1017,13 +1045,152 @@ function buildChart(containerId, data, color) {
   }).join('');
 }
 
-buildChart('hourly-chart',
-  [12, 48, 87, 124, 96, 74, 45, 28],
-  'var(--saffron)');
+// Auth
+async function dashLogin() {
+  const username = document.getElementById('login-user').value.trim();
+  const password = document.getElementById('login-pass').value;
+  const errEl    = document.getElementById('login-err');
+  errEl.style.display = 'none';
+  try {
+    const r = await fetch(API_BASE + '/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+    const d = await r.json();
+    if (!r.ok) { errEl.textContent = d.error || 'Login failed'; errEl.style.display = 'block'; return; }
+    dashToken = d.token;
+    localStorage.setItem('dash_token', dashToken);
+    localStorage.setItem('dash_user', d.user?.display_name || username);
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('topbar-user').textContent = d.user?.display_name || username;
+    initDashboard();
+  } catch (e) {
+    errEl.textContent = 'Cannot reach server'; errEl.style.display = 'block';
+  }
+}
 
-buildChart('monthly-chart',
-  [4200, 7800, 6100, 5400, 7340, 8240],
-  'var(--blue)');
+function dashLogout() {
+  localStorage.removeItem('dash_token');
+  localStorage.removeItem('dash_user');
+  dashToken = null;
+  document.getElementById('login-overlay').style.display = 'flex';
+}
+
+async function authFetch(url, opts = {}) {
+  return fetch(API_BASE + url, {
+    ...opts,
+    headers: { ...(opts.headers || {}), Authorization: 'Bearer ' + dashToken },
+  });
+}
+
+// Dashboard data
+async function loadOverview() {
+  try {
+    const r = await authFetch('/api/admin/dashboard');
+    if (!r.ok) return;
+    const { data } = await r.json();
+    const p = data.population;
+    document.getElementById('stat-total').textContent       = p.total || '0';
+    document.getElementById('stat-room-guests').textContent = p.room_guests || '0';
+    document.getElementById('stat-day-visitors').textContent= p.day_visitors || '0';
+    document.getElementById('stat-staff').textContent       = p.staff || '0';
+    document.getElementById('stat-labourers').textContent   = p.labourers || '0';
+    document.getElementById('stat-volunteers').textContent  = (parseInt(p.volunteers_students || 0) + parseInt(p.ashram || 0));
+    document.getElementById('stat-total-sub').textContent   =
+      'Entries today: ' + (data.gate?.entries || 0) + ' · Denials: ' + (data.gate?.denials || 0);
+  } catch (e) { console.error('loadOverview:', e); }
+}
+
+async function loadHourlyChart() {
+  try {
+    const r = await authFetch('/api/reports/hourly');
+    if (!r.ok) return;
+    const { data } = await r.json();
+    const now  = new Date().getHours();
+    const from = Math.max(6, now - 7);
+    const slice = data.slice(from, from + 8).map(s => s.entries);
+    buildChart('hourly-chart', slice, 'var(--saffron)');
+  } catch (e) {
+    buildChart('hourly-chart', [12, 48, 87, 124, 96, 74, 45, 28], 'var(--saffron)');
+  }
+}
+
+async function loadAudit() {
+  try {
+    const r = await authFetch('/api/admin/audit?limit=20');
+    if (!r.ok) return;
+    const { data } = await r.json();
+    const tbody = document.getElementById('dash-audit-tbody');
+    if (!tbody || !data?.length) return;
+    tbody.innerHTML = data.map(row => {
+      const t = new Date(row.created_at).toLocaleTimeString('en-IN', { hour12: false });
+      return `<tr>
+        <td style="font-family:var(--mono);font-size:10px;white-space:nowrap">${t}</td>
+        <td style="font-weight:600;font-size:11.5px">${row.user_name || '—'}</td>
+        <td><span class="tag tag-grey">${row.action}</span></td>
+        <td style="font-size:11px">${row.table_name || ''} ${row.record_id ? '#' + row.record_id : ''}</td>
+        <td><span class="tag tag-grey" style="font-size:9px">${row.module || '—'}</span></td>
+        <td style="font-size:10px;color:var(--text3)">${row.ip_address || '—'}</td>
+      </tr>`;
+    }).join('');
+  } catch (e) { console.error('loadAudit:', e); }
+}
+
+async function loadBilling() {
+  try {
+    const r = await authFetch('/api/meals/billing');
+    if (!r.ok) return;
+    const { data } = await r.json();
+    const tbody = document.getElementById('dash-billing-tbody');
+    if (!tbody || !data?.length) return;
+    tbody.innerHTML = data.map(row => {
+      const total = parseInt(row.worker_count || 0) * parseFloat(row.bd_monthly_rate || 1860);
+      return `<tr>
+        <td style="font-weight:600">${row.company_name}</td>
+        <td>${row.hod_name || '—'}</td>
+        <td style="font-family:var(--mono)">${row.worker_count || 0}</td>
+        <td style="font-family:var(--mono)">₹${Number(row.bd_monthly_rate || 1860).toLocaleString('en-IN')}</td>
+        <td style="font-family:var(--mono);font-weight:700">₹${total.toLocaleString('en-IN')}</td>
+        <td><span class="tag tag-a">Pending</span></td>
+      </tr>`;
+    }).join('');
+  } catch (e) { console.error('loadBilling:', e); }
+}
+
+function downloadPoliceReport() {
+  const now = new Date();
+  const url = API_BASE + '/api/reports/police?format=pdf'
+    + '&year=' + now.getFullYear()
+    + '&month=' + (now.getMonth() + 1)
+    + '&token=' + encodeURIComponent(dashToken);
+  window.open(url, '_blank');
+}
+
+function initDashboard() {
+  loadOverview();
+  loadHourlyChart();
+  buildChart('monthly-chart', [4200, 7800, 6100, 5400, 7340, 8240], 'var(--blue)');
+  setInterval(loadOverview, 60000);
+  setInterval(loadHourlyChart, 300000);
+}
+
+// Boot
+(function() {
+  const saved = localStorage.getItem('dash_token');
+  if (saved) {
+    dashToken = saved;
+    const name = localStorage.getItem('dash_user');
+    if (name) document.getElementById('topbar-user').textContent = name;
+    document.getElementById('login-overlay').style.display = 'none';
+    initDashboard();
+  } else {
+    document.getElementById('login-overlay').style.display = 'flex';
+  }
+  document.getElementById('login-pass')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') dashLogin();
+  });
+})();
 </script>
 </body>
 </html>

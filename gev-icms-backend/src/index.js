@@ -16,6 +16,7 @@ app.use('/api/register', require('./routes/registration'));
 app.use('/api/meals',    require('./routes/meals'));
 app.use('/api/admin',    require('./routes/admin'));
 app.use('/api/ezee',     require('./routes/ezee'));
+app.use('/api/reports',  require('./routes/reports'));
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', system: 'GEV ICMS', version: '1.0' });
