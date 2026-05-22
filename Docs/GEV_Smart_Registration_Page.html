@@ -5,30 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>GEV — Day Visit Registration</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --saffron:#D4631A; --saffron2:#E8853E; --saffron-bg:#FEF3EB; --saffron-border:#F5A855;
-  --green:#2A6044; --green-bg:#EAF4EE; --green-border:#A0D4B4;
+  --saffron:#703d1a; --saffron2:#8a4e25; --saffron-bg:#f8eee4; --saffron-border:#e8ddd4;
+  --green:#556B2F; --green-bg:#eef3e6; --green-border:#b4c98a;
   --blue:#1A4F8A; --blue-bg:#EBF2FB;
   --amber:#B06010; --amber-bg:#FDF4E7;
   --red:#B33030; --red-bg:#FBECEC;
-  --dark:#1A1827; --surface:#FFFFFF;
-  --bg:#F5F0E8; --border:#E0D5C5; --border2:#EDE6DA;
-  --text:#1C1917; --text2:#57534E; --text3:#A8A29E;
+  --dark:#703d1a; --surface:#ffffff;
+  --bg:#f8eee4; --border:#e8ddd4; --border2:#f0e6db;
+  --text:#2B2B2B; --text2:#57534E; --text3:#8a7a6a;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html { scroll-behavior:smooth; }
-body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:14px; }
+body { font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:14px; }
 
 /* ── HEADER ── */
-.header { background:var(--dark); padding:20px 20px 16px; text-align:center; position:relative; overflow:hidden; }
+.header { background:#ffffff; padding:20px 20px 16px; text-align:center; position:relative; overflow:hidden; border-bottom:1px solid var(--border); }
 .header::before { content:'🕉️'; position:absolute; right:16px; top:10px; font-size:48px; opacity:0.07; }
 .header-om { font-size:20px; margin-bottom:6px; }
-.header h1 { font-family:'Spectral',serif; font-size:22px; font-weight:700; color:#F5EFE6; line-height:1.2; margin-bottom:3px; }
-.header p { font-size:12px; color:rgba(255,255,255,0.45); letter-spacing:0.4px; }
-.header-bar { height:3px; background:linear-gradient(90deg,#D4631A,#F5A855,#f9d57a); margin-top:14px; margin-left:-20px; margin-right:-20px; }
+.header h1 { font-family:'Segoe UI',Arial,sans-serif; font-size:22px; font-weight:700; color:#703d1a; line-height:1.2; margin-bottom:3px; }
+.header p { font-size:12px; color:#8a7a6a; letter-spacing:0.4px; }
+.header-bar { height:3px; background:linear-gradient(90deg,#703d1a,#a05a2c,#c49a6c); margin-top:14px; margin-left:-20px; margin-right:-20px; }
 
 /* ── PROGRESS ── */
 .progress-bar { background:var(--surface); padding:12px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; position:sticky; top:0; z-index:50; }
@@ -46,7 +45,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .section.active { display:block; }
 @keyframes fade { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
-.section-title { font-family:'Spectral',serif; font-size:20px; font-weight:700; color:var(--dark); margin-bottom:4px; }
+.section-title { font-family:'Segoe UI',Arial,sans-serif; font-size:20px; font-weight:700; color:#703d1a; margin-bottom:4px; }
 .section-sub { font-size:12.5px; color:var(--text3); margin-bottom:20px; line-height:1.5; }
 
 /* ── FORM ELEMENTS ── */
@@ -54,9 +53,9 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .field-label { font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:6px; display:flex; align-items:center; gap:5px; }
 .field-label .req { color:var(--saffron); }
 .field input, .field select {
-  width:100%; background:var(--surface); border:1.5px solid var(--border);
-  border-radius:10px; padding:12px 14px; font-family:'DM Sans',sans-serif;
-  font-size:14px; color:var(--text); outline:none; transition:border-color 0.2s;
+  width:100%; background:#ffffff; border:1.5px solid #e8ddd4;
+  border-radius:10px; padding:12px 14px; font-family:'Segoe UI',Arial,sans-serif;
+  font-size:14px; color:#2B2B2B; outline:none; transition:border-color 0.2s;
   -webkit-appearance:none;
 }
 .field input:focus, .field select:focus { border-color:var(--saffron); }
@@ -80,7 +79,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .group-counter { background:var(--surface); border:1.5px solid var(--border); border-radius:12px; padding:16px; display:flex; align-items:center; gap:0; margin-bottom:8px; }
 .gc-minus, .gc-plus { width:40px; height:40px; border-radius:10px; border:none; background:var(--bg); font-size:20px; font-weight:700; color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; flex-shrink:0; }
 .gc-minus:active, .gc-plus:active { background:var(--saffron-bg); color:var(--saffron); }
-.gc-num { flex:1; text-align:center; font-family:'Spectral',serif; font-size:36px; font-weight:700; color:var(--dark); line-height:1; }
+.gc-num { flex:1; text-align:center; font-family:'Segoe UI',Arial,sans-serif; font-size:36px; font-weight:700; color:#703d1a; line-height:1; }
 .gc-label { text-align:center; font-size:11px; color:var(--text3); margin-top:4px; }
 .group-max-note { font-size:11px; color:var(--amber); background:var(--amber-bg); border-radius:8px; padding:7px 11px; display:flex; gap:6px; }
 
@@ -88,7 +87,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .member-card { background:var(--surface); border:1.5px solid var(--border); border-radius:12px; padding:14px; margin-bottom:12px; }
 .member-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
 .member-av { width:32px; height:32px; border-radius:8px; background:var(--saffron-bg); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:var(--saffron); flex-shrink:0; }
-.member-title { font-size:13px; font-weight:700; color:var(--dark); }
+.member-title { font-size:13px; font-weight:700; color:#703d1a; }
 .member-fields { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .member-fields .field { margin-bottom:0; }
 
@@ -129,31 +128,31 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .slot-btn.full { opacity:0.45; cursor:not-allowed; background:var(--bg); }
 
 /* ── PAYMENT SUMMARY ── */
-.pay-summary { background:var(--dark); border-radius:14px; padding:18px; margin-bottom:16px; }
-.ps-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:rgba(255,255,255,0.4); margin-bottom:12px; }
-.ps-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.07); font-size:13px; }
+.pay-summary { background:#f8eee4; border:1.5px solid #e8ddd4; border-radius:14px; padding:18px; margin-bottom:16px; }
+.ps-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:#8a7a6a; margin-bottom:12px; }
+.ps-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #e8ddd4; font-size:13px; }
 .ps-row:last-of-type { border-bottom:none; }
-.ps-row .label { color:rgba(255,255,255,0.6); }
-.ps-row .amount { color:white; font-weight:600; }
-.ps-total { display:flex; justify-content:space-between; padding:12px 0 0; margin-top:6px; border-top:1px solid rgba(255,255,255,0.15); }
-.ps-total .label { font-size:14px; font-weight:700; color:rgba(255,255,255,0.7); }
-.ps-total .amount { font-family:'Spectral',serif; font-size:22px; font-weight:700; color:#F5A623; }
+.ps-row .label { color:#57534E; }
+.ps-row .amount { color:#2B2B2B; font-weight:600; }
+.ps-total { display:flex; justify-content:space-between; padding:12px 0 0; margin-top:6px; border-top:1.5px solid #e8ddd4; }
+.ps-total .label { font-size:14px; font-weight:700; color:#57534E; }
+.ps-total .amount { font-family:'Segoe UI',Arial,sans-serif; font-size:22px; font-weight:700; color:#703d1a; }
 .ps-free { background:var(--green-bg); border:1px solid var(--green-border); border-radius:10px; padding:12px 14px; text-align:center; margin-bottom:16px; }
 .ps-free-icon { font-size:20px; margin-bottom:4px; }
 .ps-free-text { font-size:13px; font-weight:600; color:var(--green); }
 
 /* ── BUTTONS ── */
 .btn-primary {
-  width:100%; background:var(--saffron); border:none; border-radius:12px;
-  padding:16px; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:700;
+  width:100%; background:#703d1a; border:none; border-radius:12px;
+  padding:16px; font-family:'Segoe UI',Arial,sans-serif; font-size:16px; font-weight:700;
   color:white; cursor:pointer; transition:all 0.18s; letter-spacing:0.2px;
-  box-shadow:0 4px 16px rgba(212,99,26,0.3);
+  box-shadow:0 4px 16px rgba(112,61,26,0.25);
 }
-.btn-primary:active { transform:scale(0.98); background:#B85516; }
+.btn-primary:active { transform:scale(0.98); background:#556B2F; }
 .btn-primary:disabled { opacity:0.5; cursor:not-allowed; }
 .btn-secondary {
   width:100%; background:transparent; border:1.5px solid var(--border); border-radius:12px;
-  padding:13px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500;
+  padding:13px; font-family:'Segoe UI',Arial,sans-serif; font-size:14px; font-weight:500;
   color:var(--text2); cursor:pointer; margin-top:10px; transition:all 0.15s;
 }
 .btn-secondary:active { background:var(--border2); }
@@ -169,7 +168,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .success-screen { display:none; padding:28px 20px; text-align:center; }
 .success-screen.active { display:block; animation:fade 0.4s ease; }
 .success-icon { font-size:64px; margin-bottom:16px; }
-.success-title { font-family:'Spectral',serif; font-size:26px; font-weight:700; color:var(--green); margin-bottom:8px; }
+.success-title { font-family:'Segoe UI',Arial,sans-serif; font-size:26px; font-weight:700; color:#556B2F; margin-bottom:8px; }
 .success-sub { font-size:14px; color:var(--text2); line-height:1.6; margin-bottom:24px; }
 .qr-placeholder { background:var(--surface); border:2px dashed var(--border); border-radius:14px; padding:28px; margin-bottom:18px; }
 .qr-inner { width:140px; height:140px; background:var(--bg); border:1px solid var(--border); margin:0 auto 12px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--text3); }
@@ -197,7 +196,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 <body>
 
 <div class="header">
-  <div class="header-om">🕉️</div>
+  <img src="/static/logo.svg" alt="Govardhan EcoVillage" style="height:80px;margin-bottom:8px;display:block;margin-left:auto;margin-right:auto"/>
   <h1>Govardhan EcoVillage</h1>
   <p>Day Visit Registration · Wada, Palghar, Maharashtra</p>
   <div class="header-bar"></div>
@@ -409,40 +408,40 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
     </div>
 
     <!-- GOVINDA'S BUFFET UPGRADE -->
-    <div style="margin-top:16px;background:linear-gradient(135deg,#1A1827,#2A1F10);border-radius:14px;overflow:hidden;" id="govindas-upgrade-section">
+    <div style="margin-top:16px;background:#f8eee4;border:1.5px solid #e8ddd4;border-radius:14px;overflow:hidden;" id="govindas-upgrade-section">
       <div style="padding:16px 16px 0;display:flex;align-items:flex-start;gap:12px">
         <div style="font-size:28px;flex-shrink:0">🍽️</div>
         <div>
-          <div style="font-family:'Spectral',serif;font-size:16px;font-weight:700;color:#F5EFE6;margin-bottom:4px">Want Special Govinda's Buffet Lunch?</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:10px">Authentic satvik cuisine at Govinda's Guest Area · Serene garden setting · ₹350 per person</div>
+          <div style="font-family:'Segoe UI',Arial,sans-serif;font-size:16px;font-weight:700;color:#703d1a;margin-bottom:4px">Want Special Govinda's Buffet Lunch?</div>
+          <div style="font-size:12px;color:#8a7a6a;line-height:1.6;margin-bottom:10px">Authentic satvik cuisine at Govinda's Guest Area · Serene garden setting · ₹350 per person</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-            <span style="background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.25);border-radius:8px;padding:4px 10px;font-size:11px;color:#F5A623;font-weight:600">🕐 1:00 – 2:30 PM</span>
-            <span style="background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.25);border-radius:8px;padding:4px 10px;font-size:11px;color:#F5A623;font-weight:600">📍 Zone 3 · Govinda's Guest Area</span>
-            <span style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:4px 10px;font-size:11px;color:#22C55E;font-weight:600" id="govindas-spots-text">✓ Spots available</span>
+            <span style="background:rgba(112,61,26,0.08);border:1px solid rgba(112,61,26,0.2);border-radius:8px;padding:4px 10px;font-size:11px;color:#703d1a;font-weight:600">🕐 1:00 – 2:30 PM</span>
+            <span style="background:rgba(112,61,26,0.08);border:1px solid rgba(112,61,26,0.2);border-radius:8px;padding:4px 10px;font-size:11px;color:#703d1a;font-weight:600">📍 Zone 3 · Govinda's Guest Area</span>
+            <span style="background:rgba(85,107,47,0.1);border:1px solid rgba(85,107,47,0.25);border-radius:8px;padding:4px 10px;font-size:11px;color:#556B2F;font-weight:600" id="govindas-spots-text">✓ Spots available</span>
           </div>
         </div>
       </div>
-      <div style="margin:0 16px;padding:12px;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.15);border-radius:10px;margin-bottom:12px">
+      <div style="margin:0 16px;padding:12px;background:rgba(112,61,26,0.06);border:1px solid #e8ddd4;border-radius:10px;margin-bottom:12px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <span style="font-size:12px;color:rgba(255,255,255,0.5)">₹350 × <span id="upgrade-persons-count">1</span> person(s)</span>
-          <span style="font-family:'Spectral',serif;font-size:20px;font-weight:700;color:#F5A623" id="upgrade-total-display">₹350</span>
+          <span style="font-size:12px;color:#8a7a6a">₹350 × <span id="upgrade-persons-count">1</span> person(s)</span>
+          <span style="font-family:'Segoe UI',Arial,sans-serif;font-size:20px;font-weight:700;color:#703d1a" id="upgrade-total-display">₹350</span>
         </div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.35)">Zone 3 access included · Valid until 8:00 PM today · WhatsApp confirmation sent</div>
+        <div style="font-size:11px;color:#8a7a6a">Zone 3 access included · Valid until 8:00 PM today · WhatsApp confirmation sent</div>
       </div>
       <div style="padding:0 16px 16px">
         <button onclick="initiateGovindaUpgrade()" id="govindas-upgrade-btn"
-          style="width:100%;background:linear-gradient(135deg,#F5A623,#D4631A);border:none;border-radius:11px;padding:15px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:800;color:white;cursor:pointer;letter-spacing:0.2px;box-shadow:0 4px 18px rgba(212,99,26,0.45);">
+          style="width:100%;background:#703d1a;border:none;border-radius:11px;padding:15px;font-family:'Segoe UI',Arial,sans-serif;font-size:15px;font-weight:800;color:white;cursor:pointer;letter-spacing:0.2px;box-shadow:0 4px 18px rgba(112,61,26,0.3);">
           🍽️ &nbsp;Upgrade to Special Govinda's Buffet Lunch
         </button>
-        <div style="text-align:center;margin-top:8px;font-size:11px;color:rgba(255,255,255,0.3)">Secure payment · Razorpay · UPI / Card / Net Banking</div>
+        <div style="text-align:center;margin-top:8px;font-size:11px;color:#8a7a6a">Secure payment · Razorpay · UPI / Card / Net Banking</div>
       </div>
     </div>
 
     <!-- UPGRADE SUCCESS STATE (replaces button after payment) -->
     <div id="govindas-upgrade-success" style="display:none;margin-top:16px;background:var(--green-bg);border:1.5px solid var(--green-border);border-radius:14px;padding:16px;text-align:center">
       <div style="font-size:28px;margin-bottom:8px">✅</div>
-      <div style="font-family:'Spectral',serif;font-size:16px;font-weight:700;color:var(--green);margin-bottom:4px">Govinda's Buffet Confirmed!</div>
-      <div style="font-size:12px;color:var(--green);line-height:1.6;margin-bottom:10px">Zone 3 access activated · <span id="upgrade-success-amount"></span> paid · WhatsApp receipt sent</div>
+      <div style="font-family:'Segoe UI',Arial,sans-serif;font-size:16px;font-weight:700;color:#556B2F;margin-bottom:4px">Govinda's Buffet Confirmed!</div>
+      <div style="font-size:12px;color:#556B2F;line-height:1.6;margin-bottom:10px">Zone 3 access activated · <span id="upgrade-success-amount"></span> paid · WhatsApp receipt sent</div>
       <div style="background:white;border-radius:8px;padding:10px;font-size:12px;color:var(--text2)">
         📍 Govinda's Guest Area · Zone 3 · 1:00–2:30 PM<br/>
         Show your QR at the SBT Gate to enter Zone 3

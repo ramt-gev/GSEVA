@@ -8,21 +8,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --bg:#0D1B12; --surface:#132018; --surface2:#1A2B20; --surface3:#213528;
-  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.04);
-  --green:#22C55E; --green2:#16A34A; --green-bg:rgba(34,197,94,0.12); --green-border:rgba(34,197,94,0.25);
-  --saffron:#F5A623; --saffron2:#E8721A; --saffron-bg:rgba(245,166,35,0.12); --saffron-border:rgba(245,166,35,0.25);
-  --red:#EF4444; --red-bg:rgba(239,68,68,0.12); --red-border:rgba(239,68,68,0.25);
-  --blue:#60A5FA; --blue-bg:rgba(96,165,250,0.1); --blue-border:rgba(96,165,250,0.2);
-  --purple:#C084FC; --purple-bg:rgba(192,132,252,0.1);
-  --amber:#FCD34D; --amber-bg:rgba(252,211,77,0.1);
-  --text:rgba(255,255,255,0.92); --text2:rgba(255,255,255,0.55); --text3:rgba(255,255,255,0.28);
-  --font:'Poppins',sans-serif;
+  --bg:#ffffff; --surface:#f8eee4; --surface2:#f0e4d4; --surface3:#e8ddd4;
+  --border:#e8ddd4; --border2:#ede5db;
+  --green:#22C55E; --green2:#16A34A; --green-bg:rgba(34,197,94,0.10); --green-border:rgba(34,197,94,0.25);
+  --saffron:#703d1a; --saffron2:#556B2F; --saffron-bg:rgba(112,61,26,0.10); --saffron-border:rgba(112,61,26,0.25);
+  --red:#EF4444; --red-bg:rgba(239,68,68,0.10); --red-border:rgba(239,68,68,0.25);
+  --blue:#556B2F; --blue-bg:rgba(85,107,47,0.10); --blue-border:rgba(85,107,47,0.25);
+  --purple:#703d1a; --purple-bg:rgba(112,61,26,0.08);
+  --amber:#703d1a; --amber-bg:rgba(112,61,26,0.08);
+  --text:#2B2B2B; --text2:#5a4a3a; --text3:#8a7060;
+  --brand:#703d1a; --olive:#556B2F;
+  --font:'Segoe UI',Arial,sans-serif;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html,body { height:100%; overflow:hidden; background:var(--bg); }
 body { font-family:var(--font); color:var(--text); display:flex; flex-direction:column; }
+
+h1,h2,h3,.brand-name { font-family:'Segoe UI',Arial,sans-serif; }
 
 /* ── SCREENS ── */
 .screen { display:none; flex-direction:column; height:100%; animation:sc 0.2s ease; }
@@ -32,100 +35,100 @@ body { font-family:var(--font); color:var(--text); display:flex; flex-direction:
 /* ── LOGIN ── */
 .login-bg {
   flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  padding:28px; background:radial-gradient(ellipse at top, #1A3A20 0%, #0D1B12 70%);
+  padding:28px; background:radial-gradient(ellipse at top, #f8eee4 0%, #ffffff 70%);
 }
-.login-om { font-size:48px; margin-bottom:10px; filter:drop-shadow(0 0 20px rgba(34,197,94,0.3)); }
-.login-title { font-size:22px; font-weight:700; color:var(--text); margin-bottom:4px; text-align:center; }
+.login-om { font-size:48px; margin-bottom:10px; }
+.login-title { font-size:22px; font-weight:700; color:var(--brand); margin-bottom:4px; text-align:center; font-family:'Segoe UI',Arial,sans-serif; }
 .login-sub { font-size:12px; color:var(--text2); margin-bottom:32px; text-align:center; letter-spacing:0.3px; }
 .login-card { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:24px; width:100%; max-width:340px; }
 .login-field { margin-bottom:16px; }
 .login-label { font-size:11px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:7px; display:block; }
-.login-input { width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:12px 15px; font-family:var(--font); font-size:14px; color:var(--text); outline:none; transition:border-color 0.2s; }
-.login-input:focus { border-color:var(--green); }
-.login-btn { width:100%; background:var(--green2); border:none; border-radius:12px; padding:14px; font-family:var(--font); font-size:15px; font-weight:700; color:white; cursor:pointer; margin-top:6px; transition:all 0.15s; }
-.login-btn:active { transform:scale(0.98); background:#15803D; }
+.login-input { width:100%; background:#ffffff; border:1px solid var(--border); border-radius:10px; padding:12px 15px; font-family:var(--font); font-size:14px; color:var(--text); outline:none; transition:border-color 0.2s; }
+.login-input:focus { border-color:var(--brand); }
+.login-btn { width:100%; background:var(--brand); border:none; border-radius:12px; padding:14px; font-family:var(--font); font-size:15px; font-weight:700; color:white; cursor:pointer; margin-top:6px; transition:all 0.15s; }
+.login-btn:active { transform:scale(0.98); background:#5a3015; }
 .login-hint { font-size:11px; color:var(--text3); text-align:center; margin-top:12px; }
 
 /* ── TOP BAR ── */
 .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:10px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
 .tb-icon { font-size:18px; }
-.tb-title { font-size:14px; font-weight:700; color:var(--text); flex:1; }
+.tb-title { font-size:14px; font-weight:700; color:var(--brand); flex:1; font-family:'Segoe UI',Arial,sans-serif; }
 .tb-meal { font-size:11px; font-weight:600; padding:4px 11px; border-radius:20px; }
 .tb-time { font-size:11px; color:var(--text3); margin-left:4px; }
-.tb-btn { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-family:var(--font); font-size:11.5px; color:var(--text2); cursor:pointer; }
-.tb-btn:active { background:var(--surface3); }
+.tb-btn { background:#ffffff; border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-family:var(--font); font-size:11.5px; color:var(--text2); cursor:pointer; }
+.tb-btn:active { background:var(--surface2); }
 
 /* ── MEAL SELECTOR ── */
 .meal-selector { flex:1; overflow-y:auto; padding:16px; }
-.ms-title { font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.ms-title { font-size:18px; font-weight:700; color:var(--brand); margin-bottom:4px; font-family:'Segoe UI',Arial,sans-serif; }
 .ms-sub { font-size:12px; color:var(--text2); margin-bottom:20px; }
 .ms-current { background:var(--green-bg); border:1px solid var(--green-border); border-radius:12px; padding:14px; margin-bottom:18px; display:flex; align-items:center; gap:12px; }
 .ms-current-icon { font-size:24px; }
 .ms-current-text { flex:1; }
-.ms-current-label { font-size:11px; color:var(--green); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
-.ms-current-meal { font-size:16px; font-weight:700; color:var(--text); }
+.ms-current-label { font-size:11px; color:var(--green2); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+.ms-current-meal { font-size:16px; font-weight:700; color:var(--brand); font-family:'Segoe UI',Arial,sans-serif; }
 .ms-current-time { font-size:12px; color:var(--text2); }
 .meal-slot-list { display:flex; flex-direction:column; gap:10px; }
-.meal-slot { background:var(--surface); border:1.5px solid var(--border); border-radius:14px; padding:14px 16px; cursor:pointer; display:flex; align-items:center; gap:12px; transition:all 0.18s; }
+.meal-slot { background:#ffffff; border:1.5px solid var(--border); border-radius:14px; padding:14px 16px; cursor:pointer; display:flex; align-items:center; gap:12px; transition:all 0.18s; }
 .meal-slot:active { transform:scale(0.99); }
-.meal-slot.active-slot { border-color:var(--saffron); background:var(--saffron-bg); }
-.meal-slot.scan-only { border-left:3px solid var(--green); }
-.meal-slot.scan-tap { border-left:3px solid var(--blue); }
+.meal-slot.active-slot { border-color:var(--brand); background:var(--saffron-bg); }
+.meal-slot.scan-only { border-left:3px solid var(--green2); }
+.meal-slot.scan-tap { border-left:3px solid var(--olive); }
 .ms-icon { font-size:24px; flex-shrink:0; }
 .ms-body { flex:1; }
-.ms-name { font-size:14px; font-weight:700; color:var(--text); margin-bottom:2px; }
+.ms-name { font-size:14px; font-weight:700; color:var(--brand); margin-bottom:2px; }
 .ms-time { font-size:11.5px; color:var(--text2); margin-bottom:5px; }
 .ms-badges { display:flex; gap:6px; flex-wrap:wrap; }
 .badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:8px; }
-.badge-scan { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
-.badge-tap { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-border); }
-.badge-free { background:rgba(255,255,255,0.06); color:var(--text3); }
-.badge-billing { background:var(--saffron-bg); color:var(--saffron); border:1px solid var(--saffron-border); }
-.badge-active { background:var(--saffron-bg); color:var(--saffron); }
+.badge-scan { background:var(--green-bg); color:var(--green2); border:1px solid var(--green-border); }
+.badge-tap { background:var(--blue-bg); color:var(--olive); border:1px solid var(--blue-border); }
+.badge-free { background:rgba(0,0,0,0.04); color:var(--text3); }
+.badge-billing { background:var(--saffron-bg); color:var(--brand); border:1px solid var(--saffron-border); }
+.badge-active { background:var(--saffron-bg); color:var(--brand); }
 .ms-count { text-align:right; }
-.ms-count-num { font-size:22px; font-weight:800; color:var(--green); }
+.ms-count-num { font-size:22px; font-weight:800; color:var(--green2); }
 .ms-count-label { font-size:10px; color:var(--text3); }
-.start-btn { width:100%; background:var(--green2); border:none; border-radius:13px; padding:16px; font-family:var(--font); font-size:16px; font-weight:700; color:white; cursor:pointer; margin-top:20px; }
-.start-btn:active { background:#15803D; transform:scale(0.98); }
+.start-btn { width:100%; background:var(--brand); border:none; border-radius:13px; padding:16px; font-family:var(--font); font-size:16px; font-weight:700; color:white; cursor:pointer; margin-top:20px; }
+.start-btn:active { background:#5a3015; transform:scale(0.98); }
 
 /* ── SCAN SCREEN ── */
 .scan-screen { flex:1; display:flex; flex-direction:column; overflow:hidden; }
 .scan-body { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; gap:0; }
-.scan-window { width:200px; height:200px; border-radius:20px; border:2px solid var(--green); background:rgba(34,197,94,0.04); display:flex; align-items:center; justify-content:center; position:relative; margin-bottom:16px; }
-.scan-corner { position:absolute; width:24px; height:24px; border-color:var(--green); border-style:solid; }
+.scan-window { width:200px; height:200px; border-radius:20px; border:2px solid var(--brand); background:rgba(112,61,26,0.04); display:flex; align-items:center; justify-content:center; position:relative; margin-bottom:16px; }
+.scan-corner { position:absolute; width:24px; height:24px; border-color:var(--brand); border-style:solid; }
 .sc-tl { top:-1px;left:-1px; border-width:3px 0 0 3px; border-radius:6px 0 0 0; }
 .sc-tr { top:-1px;right:-1px; border-width:3px 3px 0 0; border-radius:0 6px 0 0; }
 .sc-bl { bottom:-1px;left:-1px; border-width:0 0 3px 3px; border-radius:0 0 0 6px; }
 .sc-br { bottom:-1px;right:-1px; border-width:0 3px 3px 0; border-radius:0 0 6px 0; }
-.scan-line { position:absolute; width:80%; height:2px; background:linear-gradient(90deg,transparent,var(--green),transparent); animation:scanline 2s ease-in-out infinite; }
+.scan-line { position:absolute; width:80%; height:2px; background:linear-gradient(90deg,transparent,var(--brand),transparent); animation:scanline 2s ease-in-out infinite; }
 @keyframes scanline { 0%,100%{top:20%} 50%{top:80%} }
-.scan-icon { font-size:36px; color:var(--green); opacity:0.4; }
+.scan-icon { font-size:36px; color:var(--brand); opacity:0.4; }
 .scan-label { font-size:13px; color:var(--text2); margin-bottom:20px; }
-.demo-btn { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:10px 20px; font-family:var(--font); font-size:13px; color:var(--text2); cursor:pointer; transition:all 0.15s; }
-.demo-btn:active { background:var(--surface3); color:var(--text); }
+.demo-btn { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 20px; font-family:var(--font); font-size:13px; color:var(--text2); cursor:pointer; transition:all 0.15s; }
+.demo-btn:active { background:var(--surface2); color:var(--text); }
 
 /* ── TAP COUNTER (for lunch/khichadi) ── */
 .tap-section { background:var(--surface); border-top:1px solid var(--border); padding:14px 18px; flex-shrink:0; }
 .tap-label { font-size:11px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; text-align:center; }
 .tap-row { display:flex; align-items:center; gap:12px; justify-content:center; }
 .tap-btn { width:56px; height:56px; border-radius:14px; border:none; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; cursor:pointer; transition:all 0.12s; flex-shrink:0; }
-.tap-plus { background:var(--blue); color:white; box-shadow:0 3px 12px rgba(96,165,250,0.35); }
-.tap-plus:active { transform:scale(0.93); background:#3B82F6; }
+.tap-plus { background:var(--olive); color:white; box-shadow:0 3px 12px rgba(85,107,47,0.35); }
+.tap-plus:active { transform:scale(0.93); background:#445a26; }
 .tap-minus { background:var(--surface2); color:var(--text2); }
 .tap-minus:active { transform:scale(0.93); }
 .tap-count-wrap { flex:1; text-align:center; }
-.tap-count { font-size:42px; font-weight:800; color:var(--blue); line-height:1; }
+.tap-count { font-size:42px; font-weight:800; color:var(--olive); line-height:1; }
 .tap-count-sub { font-size:11px; color:var(--text3); margin-top:3px; }
 
 /* ── LIVE STATS BAR ── */
-.stats-bar { background:var(--surface2); border-top:1px solid var(--border); padding:10px 16px; display:flex; gap:0; flex-shrink:0; }
+.stats-bar { background:var(--surface); border-top:1px solid var(--border); padding:10px 16px; display:flex; gap:0; flex-shrink:0; }
 .stat-item { flex:1; text-align:center; border-right:1px solid var(--border); }
 .stat-item:last-child { border-right:none; }
 .stat-num { font-size:20px; font-weight:800; line-height:1.1; }
 .stat-lbl { font-size:9.5px; color:var(--text3); margin-top:1px; font-weight:500; }
-.sn-g { color:var(--green); }
-.sn-s { color:var(--saffron); }
-.sn-b { color:var(--blue); }
+.sn-g { color:var(--green2); }
+.sn-s { color:var(--brand); }
+.sn-b { color:var(--olive); }
 .sn-r { color:var(--red); }
 
 /* ── RESULT SCREENS ── */
@@ -133,74 +136,74 @@ body { font-family:var(--font); color:var(--text); display:flex; flex-direction:
 .result-overlay.show { display:flex; }
 .result-card { width:100%; max-width:360px; border-radius:22px; padding:28px 24px; text-align:center; }
 .r-icon { font-size:60px; margin-bottom:14px; }
-.r-status { font-size:22px; font-weight:800; margin-bottom:6px; }
+.r-status { font-size:22px; font-weight:800; margin-bottom:6px; font-family:'Segoe UI',Arial,sans-serif; }
 .r-name { font-size:17px; font-weight:600; margin-bottom:4px; }
 .r-detail { font-size:12.5px; line-height:1.6; margin-bottom:16px; }
 .r-badge { font-size:11px; font-weight:700; padding:4px 13px; border-radius:20px; display:inline-block; margin-bottom:14px; }
-.r-dismiss { background:rgba(255,255,255,0.12); border:none; border-radius:11px; padding:12px 24px; font-family:var(--font); font-size:14px; font-weight:600; color:white; cursor:pointer; width:100%; }
+.r-dismiss { background:rgba(0,0,0,0.08); border:none; border-radius:11px; padding:12px 24px; font-family:var(--font); font-size:14px; font-weight:600; color:var(--text); cursor:pointer; width:100%; }
 
 /* SERVED */
-.ro-served { background:linear-gradient(160deg,#0A2010,#0F2E16); border:1px solid var(--green-border); }
-.ro-served .r-status { color:var(--green); }
-.ro-served .r-detail { color:rgba(255,255,255,0.55); }
-.ro-served .r-badge { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
+.ro-served { background:linear-gradient(160deg,#edf7f0,#d8f0e0); border:1px solid var(--green-border); }
+.ro-served .r-status { color:var(--green2); }
+.ro-served .r-detail { color:var(--text2); }
+.ro-served .r-badge { background:var(--green-bg); color:var(--green2); border:1px solid var(--green-border); }
 
 /* ALREADY SERVED */
-.ro-already { background:linear-gradient(160deg,#1C1200,#2A1C00); border:1px solid var(--saffron-border); }
-.ro-already .r-status { color:var(--saffron); }
-.ro-already .r-detail { color:rgba(255,255,255,0.55); }
-.ro-already .r-badge { background:var(--saffron-bg); color:var(--saffron); border:1px solid var(--saffron-border); }
+.ro-already { background:linear-gradient(160deg,#fdf4ec,#f5e6d0); border:1px solid var(--saffron-border); }
+.ro-already .r-status { color:var(--brand); }
+.ro-already .r-detail { color:var(--text2); }
+.ro-already .r-badge { background:var(--saffron-bg); color:var(--brand); border:1px solid var(--saffron-border); }
 
 /* NOT REGISTERED */
-.ro-denied { background:linear-gradient(160deg,#1A0808,#240C0C); border:1px solid var(--red-border); }
+.ro-denied { background:linear-gradient(160deg,#fdf0f0,#f8dede); border:1px solid var(--red-border); }
 .ro-denied .r-status { color:var(--red); }
-.ro-denied .r-detail { color:rgba(255,255,255,0.55); }
+.ro-denied .r-detail { color:var(--text2); }
 .ro-denied .r-badge { background:var(--red-bg); color:var(--red); border:1px solid var(--red-border); }
 
 /* FREE MEAL */
-.ro-free { background:linear-gradient(160deg,#0A1020,#0D1828); border:1px solid var(--blue-border); }
-.ro-free .r-status { color:var(--blue); }
-.ro-free .r-detail { color:rgba(255,255,255,0.55); }
-.ro-free .r-badge { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-border); }
+.ro-free { background:linear-gradient(160deg,#f2f5ec,#e4edd4); border:1px solid var(--blue-border); }
+.ro-free .r-status { color:var(--olive); }
+.ro-free .r-detail { color:var(--text2); }
+.ro-free .r-badge { background:var(--blue-bg); color:var(--olive); border:1px solid var(--blue-border); }
 
 /* ── DASHBOARD ── */
 .dashboard { flex:1; overflow-y:auto; padding:14px; }
 .dash-section { margin-bottom:18px; }
-.dash-title { font-size:12px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; display:flex; align-items:center; gap:7px; }
+.dash-title { font-size:12px; font-weight:700; color:var(--brand); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; display:flex; align-items:center; gap:7px; font-family:'Segoe UI',Arial,sans-serif; }
 .dash-title::after { content:''; flex:1; height:1px; background:var(--border); }
 .meal-stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
-.meal-stat-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px; }
+.meal-stat-card { background:#ffffff; border:1px solid var(--border); border-radius:14px; padding:14px; }
 .msc-name { font-size:11px; font-weight:600; color:var(--text2); margin-bottom:8px; }
 .msc-row { display:flex; justify-content:space-between; margin-bottom:5px; font-size:12px; }
-.msc-bar-wrap { background:rgba(255,255,255,0.06); border-radius:4px; height:5px; overflow:hidden; margin-top:6px; }
+.msc-bar-wrap { background:rgba(0,0,0,0.06); border-radius:4px; height:5px; overflow:hidden; margin-top:6px; }
 .msc-bar { height:100%; border-radius:4px; transition:width 0.5s; }
 
-.person-list { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
-.pl-head { background:var(--surface2); padding:10px 14px; display:grid; grid-template-columns:1fr auto auto; gap:10px; }
+.person-list { background:#ffffff; border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+.pl-head { background:var(--surface); padding:10px 14px; display:grid; grid-template-columns:1fr auto auto; gap:10px; }
 .pl-head span { font-size:10px; font-weight:700; color:var(--text3); text-transform:uppercase; letter-spacing:0.4px; }
 .pl-row { padding:10px 14px; border-top:1px solid var(--border2); display:grid; grid-template-columns:1fr auto auto; gap:10px; align-items:center; transition:background 0.15s; }
-.pl-row:hover { background:var(--surface2); }
+.pl-row:hover { background:var(--surface); }
 .pl-name { font-size:13px; font-weight:600; color:var(--text); }
 .pl-type { font-size:10.5px; color:var(--text3); margin-top:1px; }
 .pl-dept { font-size:10.5px; }
 .pl-status { font-size:10.5px; font-weight:700; padding:3px 10px; border-radius:8px; white-space:nowrap; }
-.ps-yes { background:var(--green-bg); color:var(--green); }
-.ps-no { background:rgba(255,255,255,0.05); color:var(--text3); }
+.ps-yes { background:var(--green-bg); color:var(--green2); }
+.ps-no { background:rgba(0,0,0,0.04); color:var(--text3); }
 .pl-time { font-size:10px; color:var(--text3); text-align:right; min-width:40px; }
 
 /* ── BOTTOM NAV ── */
 .bottom-nav { background:var(--surface); border-top:1px solid var(--border); display:flex; flex-shrink:0; }
 .bn-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:10px 6px; cursor:pointer; transition:all 0.15s; border:none; background:none; }
-.bn-item:active { background:rgba(255,255,255,0.04); }
+.bn-item:active { background:rgba(0,0,0,0.04); }
 .bn-icon { font-size:20px; }
 .bn-lbl { font-size:9.5px; color:var(--text3); font-weight:500; font-family:var(--font); }
-.bn-item.active .bn-lbl { color:var(--green); }
-.bn-item.active .bn-icon { filter:drop-shadow(0 0 5px rgba(34,197,94,0.5)); }
+.bn-item.active .bn-lbl { color:var(--brand); }
+.bn-item.active .bn-icon { filter:drop-shadow(0 0 5px rgba(112,61,26,0.4)); }
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar { width:3px; }
 ::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
+::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.12); border-radius:2px; }
 </style>
 </head>
 <body>
@@ -210,7 +213,7 @@ body { font-family:var(--font); color:var(--text); display:flex; flex-direction:
 ═══════════════════════════════ -->
 <div class="screen active" id="s-login">
   <div class="login-bg">
-    <div class="login-om">🕉️</div>
+    <img src="/static/logo.svg" alt="GEV" style="height:70px;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;"/>
     <div class="login-title">Annakshetra</div>
     <div class="login-sub">Food Service Management · Lalita Bhavan</div>
     <div class="login-card">
@@ -353,7 +356,7 @@ body { font-family:var(--font); color:var(--text); display:flex; flex-direction:
       <div class="tb-title" id="scan-title">Free Lunch Prasad</div>
       <div class="tb-time" id="scan-time">12:45 – 2:30 PM</div>
     </div>
-    <span class="tb-meal sn-b" id="scan-badge" style="background:rgba(96,165,250,0.12);color:#60A5FA;border:1px solid rgba(96,165,250,0.2)">Scan + Tap</span>
+    <span class="tb-meal sn-b" id="scan-badge" style="background:rgba(85,107,47,0.12);color:#556B2F;border:1px solid rgba(85,107,47,0.2)">Scan + Tap</span>
     <button class="tb-btn" style="margin-left:8px" onclick="showScreen('s-meals')">← Back</button>
   </div>
 
@@ -480,39 +483,39 @@ body { font-family:var(--font); color:var(--text); display:flex; flex-direction:
     <div class="meal-stats-grid">
       <div class="meal-stat-card">
         <div class="msc-name">🌅 Breakfast (B/D Registered)</div>
-        <div class="msc-row"><span style="color:var(--text2)">Served</span><span style="color:var(--green);font-weight:700">38</span></div>
-        <div class="msc-row"><span style="color:var(--text2)">Registered</span><span style="color:var(--saffron)">41</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Served</span><span style="color:var(--green2);font-weight:700">38</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Registered</span><span style="color:var(--brand)">41</span></div>
         <div class="msc-row"><span style="color:var(--text2)">Absent</span><span style="color:var(--text3)">3</span></div>
-        <div class="msc-bar-wrap"><div class="msc-bar" style="width:93%;background:var(--green)"></div></div>
+        <div class="msc-bar-wrap"><div class="msc-bar" style="width:93%;background:var(--green2)"></div></div>
       </div>
       <div class="meal-stat-card">
         <div class="msc-name">☀️ Free Lunch Prasad</div>
-        <div class="msc-row"><span style="color:var(--text2)">QR Scans</span><span style="color:var(--blue);font-weight:700">247</span></div>
-        <div class="msc-row"><span style="color:var(--text2)">Tap (no QR)</span><span style="color:var(--blue)">12</span></div>
-        <div class="msc-row"><span style="color:var(--text2)">Total</span><span style="color:var(--saffron);font-weight:700">259</span></div>
-        <div class="msc-bar-wrap"><div class="msc-bar" style="width:68%;background:var(--blue)"></div></div>
+        <div class="msc-row"><span style="color:var(--text2)">QR Scans</span><span style="color:var(--olive);font-weight:700">247</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Tap (no QR)</span><span style="color:var(--olive)">12</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Total</span><span style="color:var(--brand);font-weight:700">259</span></div>
+        <div class="msc-bar-wrap"><div class="msc-bar" style="width:68%;background:var(--olive)"></div></div>
       </div>
       <div class="meal-stat-card">
         <div class="msc-name">🌿 Khichadi AM</div>
-        <div class="msc-row"><span style="color:var(--text2)">QR Scans</span><span style="color:var(--blue);font-weight:700">180</span></div>
-        <div class="msc-row"><span style="color:var(--text2)">Tap</span><span style="color:var(--blue)">9</span></div>
-        <div class="msc-row"><span style="color:var(--text2)">Total</span><span style="color:var(--saffron);font-weight:700">189</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">QR Scans</span><span style="color:var(--olive);font-weight:700">180</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Tap</span><span style="color:var(--olive)">9</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Total</span><span style="color:var(--brand);font-weight:700">189</span></div>
         <div class="msc-bar-wrap"><div class="msc-bar" style="width:60%;background:var(--green2)"></div></div>
       </div>
       <div class="meal-stat-card">
         <div class="msc-name">🌙 Dinner (B/D Registered)</div>
         <div class="msc-row"><span style="color:var(--text2)">Served</span><span style="color:var(--text3);font-weight:700">0</span></div>
-        <div class="msc-row"><span style="color:var(--text2)">Registered</span><span style="color:var(--saffron)">43</span></div>
+        <div class="msc-row"><span style="color:var(--text2)">Registered</span><span style="color:var(--brand)">43</span></div>
         <div class="msc-row"><span style="color:var(--text2)">Starts at</span><span style="color:var(--text3)">6:30 PM</span></div>
-        <div class="msc-bar-wrap"><div class="msc-bar" style="width:0%;background:var(--green)"></div></div>
+        <div class="msc-bar-wrap"><div class="msc-bar" style="width:0%;background:var(--green2)"></div></div>
       </div>
     </div>
   </div>
 
   <div class="dash-section">
     <div class="dash-title">🍽️ Free Lunch — By Visitor Type</div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden">
-      <div style="padding:10px 14px;display:grid;grid-template-columns:1fr auto auto auto;gap:10px;background:var(--surface2)">
+    <div style="background:#ffffff;border:1px solid var(--border);border-radius:14px;overflow:hidden">
+      <div style="padding:10px 14px;display:grid;grid-template-columns:1fr auto auto auto;gap:10px;background:var(--surface)">
         <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase">Type</span>
         <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase">QR</span>
         <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase">Tap</span>
@@ -533,8 +536,8 @@ body { font-family:var(--font); color:var(--text); display:flex; flex-direction:
       <div style="padding:9px 14px;border-top:1px solid var(--border2);display:grid;grid-template-columns:1fr auto auto auto;gap:10px;font-size:12.5px">
         <span>Volunteers</span><span class="sn-g" style="font-weight:600">14</span><span style="color:var(--text3)">0</span><span style="font-weight:700">14</span>
       </div>
-      <div style="padding:9px 14px;border-top:1px solid var(--border2);display:grid;grid-template-columns:1fr auto auto auto;gap:10px;font-size:12.5px;background:var(--surface2)">
-        <span style="font-weight:700">Total</span><span style="font-weight:700;color:var(--blue)">247</span><span style="font-weight:700;color:var(--blue)">12</span><span style="font-weight:800;color:var(--saffron)">259</span>
+      <div style="padding:9px 14px;border-top:1px solid var(--border2);display:grid;grid-template-columns:1fr auto auto auto;gap:10px;font-size:12.5px;background:var(--surface)">
+        <span style="font-weight:700">Total</span><span style="font-weight:700;color:var(--olive)">247</span><span style="font-weight:700;color:var(--olive)">12</span><span style="font-weight:800;color:var(--brand)">259</span>
       </div>
     </div>
   </div>
@@ -545,13 +548,13 @@ body { font-family:var(--font); color:var(--text); display:flex; flex-direction:
 ═══════════════════════════════ -->
 <div id="tab-list" style="display:none;flex:1;overflow-y:auto;padding:14px;background:var(--bg)">
   <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:7px 12px;font-size:12px;color:var(--text2)">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:7px 12px;font-size:12px;color:var(--text2)">
       Showing: <strong style="color:var(--text)" id="list-meal-title">Free Lunch</strong>
     </div>
-    <div style="background:var(--green-bg);border:1px solid var(--green-border);border-radius:9px;padding:7px 12px;font-size:12px;color:var(--green)">
+    <div style="background:var(--green-bg);border:1px solid var(--green-border);border-radius:9px;padding:7px 12px;font-size:12px;color:var(--green2)">
       ✓ Served: <strong id="list-served-count">38</strong>
     </div>
-    <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:9px;padding:7px 12px;font-size:12px;color:var(--text3)">
+    <div style="background:rgba(0,0,0,0.04);border:1px solid var(--border);border-radius:9px;padding:7px 12px;font-size:12px;color:var(--text3)">
       ⏳ Pending: <strong id="list-pending-count">3</strong>
     </div>
   </div>
@@ -735,12 +738,12 @@ function startMealService() {
   const badge = document.getElementById('scan-badge');
   if (m.mode === 'scan_only') {
     badge.textContent = 'Scan Only';
-    badge.style.cssText = 'background:rgba(34,197,94,0.12);color:#22C55E;border:1px solid rgba(34,197,94,0.2)';
+    badge.style.cssText = 'background:rgba(34,197,94,0.12);color:#16A34A;border:1px solid rgba(34,197,94,0.2)';
     document.getElementById('tap-section').style.display = 'none';
     document.getElementById('scan-label-text').textContent = 'Scan registered person\'s QR code';
   } else {
     badge.textContent = 'Scan + Tap';
-    badge.style.cssText = 'background:rgba(96,165,250,0.12);color:#60A5FA;border:1px solid rgba(96,165,250,0.2)';
+    badge.style.cssText = 'background:rgba(85,107,47,0.12);color:#556B2F;border:1px solid rgba(85,107,47,0.2)';
     document.getElementById('tap-section').style.display = 'block';
     document.getElementById('scan-label-text').textContent = 'Scan QR or use tap counter below';
   }
@@ -785,7 +788,7 @@ async function changeTap(delta) {
   }
   const el = document.getElementById('tap-count');
   el.style.transform = 'scale(1.2)';
-  el.style.color = delta > 0 ? '#60A5FA' : '#EF4444';
+  el.style.color = delta > 0 ? '#556B2F' : '#EF4444';
   setTimeout(() => { el.style.transform = ''; el.style.color = ''; }, 200);
 }
 

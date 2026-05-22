@@ -5,25 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>GEV Admin Portal — Campus Management System</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Core palette — warm parchment + deep indigo */
-  --bg:          #F6F2EC;
-  --surface:     #FFFFFF;
-  --surface2:    #FAF7F3;
-  --border:      #E4DDD3;
-  --border2:     #EDE8E1;
+  /* Core palette — GEV brand light theme */
+  --bg:          #ffffff;
+  --surface:     #ffffff;
+  --surface2:    #f8eee4;
+  --border:      #e8ddd4;
+  --border2:     #e8ddd4;
 
-  /* Sidebar */
-  --sidebar:     #1E1B2E;
-  --sidebar2:    #2A2640;
-  --sidebar3:    #352F50;
+  /* Sidebar — light brand */
+  --sidebar:     #f8eee4;
+  --sidebar2:    #f0e2d0;
+  --sidebar3:    #e8d4bc;
 
-  /* Accent — saffron */
-  --saffron:     #D4631A;
-  --saffron2:    #E8853E;
-  --saffron-bg:  #FEF3EB;
+  /* Accent — Earth Brown */
+  --saffron:     #703d1a;
+  --saffron2:    #8f5224;
+  --saffron-bg:  #f8eee4;
 
   /* Semantic */
   --green:       #2D6A4F;
@@ -39,7 +38,7 @@
   --purple:      #5A3A9E;
   --purple-bg:   #EEE9FB;
 
-  --text:        #1C1917;
+  --text:        #2B2B2B;
   --text2:       #57534E;
   --text3:       #A8A29E;
   --radius:      10px;
@@ -50,7 +49,7 @@
 
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { height:100%; }
-body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); display:flex; font-size:13.5px; overflow:hidden; }
+body { font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(--text); display:flex; font-size:13.5px; overflow:hidden; }
 
 /* ═══════════════════════════════════
    SIDEBAR
@@ -63,11 +62,12 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   overflow-y:auto;
   scrollbar-width:thin;
   scrollbar-color:var(--sidebar3) transparent;
+  border-right:1px solid var(--border);
 }
 
 .brand {
   padding:20px 18px 16px;
-  border-bottom:1px solid rgba(255,255,255,0.06);
+  border-bottom:1px solid var(--border);
   display:flex; align-items:center; gap:10px;
 }
 .brand-om {
@@ -75,65 +75,65 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   background:linear-gradient(135deg,var(--saffron),var(--saffron2));
   display:flex; align-items:center; justify-content:center;
   font-size:18px; flex-shrink:0;
-  box-shadow:0 2px 8px rgba(212,99,26,0.4);
+  box-shadow:0 2px 8px rgba(112,61,26,0.25);
 }
 .brand-text { flex:1; }
-.brand-name { font-family:'Playfair Display',serif; font-size:14px; font-weight:700; color:#F5EFE6; line-height:1.2; }
-.brand-sub { font-size:9.5px; color:rgba(255,255,255,0.35); letter-spacing:0.6px; text-transform:uppercase; margin-top:1px; }
+.brand-name { font-family:'Segoe UI',Arial,sans-serif; font-size:14px; font-weight:700; color:#703d1a; line-height:1.2; }
+.brand-sub { font-size:9.5px; color:#a07050; letter-spacing:0.6px; text-transform:uppercase; margin-top:1px; }
 
 .user-bar {
   padding:12px 16px;
-  border-bottom:1px solid rgba(255,255,255,0.05);
+  border-bottom:1px solid var(--border);
   display:flex; align-items:center; gap:9px;
 }
 .user-av {
   width:32px; height:32px; border-radius:8px; flex-shrink:0;
-  background:linear-gradient(135deg,var(--saffron),#F09040);
+  background:linear-gradient(135deg,var(--saffron),var(--saffron2));
   display:flex; align-items:center; justify-content:center;
   font-size:12px; font-weight:700; color:white;
 }
-.user-nm { font-size:12px; font-weight:600; color:#F0EBE3; }
-.user-role { font-size:10px; color:rgba(255,255,255,0.38); margin-top:1px; }
+.user-nm { font-size:12px; font-weight:600; color:#703d1a; }
+.user-role { font-size:10px; color:#a07050; margin-top:1px; }
 
 .nav-sep {
   font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px;
-  color:rgba(255,255,255,0.22); padding:14px 16px 5px;
+  color:#b08060; padding:14px 16px 5px;
 }
 
 .nav-item {
   display:flex; align-items:center; gap:9px;
   padding:9px 16px; cursor:pointer; transition:all 0.14s;
   border:none; background:none; width:100%; text-align:left;
-  color:rgba(255,255,255,0.5); font-family:'DM Sans',sans-serif;
+  color:#703d1a; font-family:'Segoe UI',Arial,sans-serif;
   font-size:12.5px; border-left:2px solid transparent;
   position:relative; border-radius:0;
 }
-.nav-item:hover { background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.8); }
+.nav-item:hover { background:rgba(112,61,26,0.07); color:#556B2F; }
 .nav-item.active {
-  background:rgba(212,99,26,0.14); color:#F5C090;
-  border-left-color:var(--saffron);
+  background:rgba(112,61,26,0.12); color:#703d1a;
+  border-left-color:#703d1a;
 }
 .nav-icon { font-size:14px; flex-shrink:0; width:18px; text-align:center; }
 .nav-lbl { flex:1; }
 .nav-badge {
-  background:var(--saffron); color:white; font-size:9px; font-weight:700;
+  background:#703d1a; color:white; font-size:9px; font-weight:700;
   padding:1px 6px; border-radius:9px; min-width:18px; text-align:center;
 }
 .nav-count {
-  font-size:10px; color:rgba(255,255,255,0.28);
+  font-size:10px; color:#a07050;
 }
 
 .sidebar-foot {
   margin-top:auto; padding:12px 16px;
-  border-top:1px solid rgba(255,255,255,0.05);
+  border-top:1px solid var(--border);
 }
 .btn-logout {
-  width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
-  border-radius:var(--radius-sm); padding:8px 12px; color:rgba(255,255,255,0.4);
-  font-family:'DM Sans',sans-serif; font-size:12px; cursor:pointer;
+  width:100%; background:rgba(112,61,26,0.06); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:8px 12px; color:#703d1a;
+  font-family:'Segoe UI',Arial,sans-serif; font-size:12px; cursor:pointer;
   display:flex; align-items:center; gap:7px; transition:all 0.15s;
 }
-.btn-logout:hover { color:#FCA5A5; border-color:rgba(184,50,50,0.3); background:rgba(184,50,50,0.08); }
+.btn-logout:hover { color:#B33030; border-color:rgba(184,50,50,0.3); background:rgba(184,50,50,0.06); }
 
 /* ═══════════════════════════════════
    MAIN CONTENT
@@ -145,12 +145,12 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   padding:0 26px; height:56px; display:flex; align-items:center; gap:14px;
   flex-shrink:0; box-shadow:0 1px 0 var(--border);
 }
-.topbar-title { font-family:'Playfair Display',serif; font-size:19px; color:var(--text); }
+.topbar-title { font-family:'Segoe UI',Arial,sans-serif; font-size:19px; color:#703d1a; }
 .topbar-sub { font-size:12px; color:var(--text3); margin-left:6px; }
 .topbar-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
 .search-box {
   background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm);
-  padding:7px 13px; width:210px; font-family:'DM Sans',sans-serif; font-size:13px;
+  padding:7px 13px; width:210px; font-family:'Segoe UI',Arial,sans-serif; font-size:13px;
   color:var(--text); outline:none; transition:border-color 0.15s;
 }
 .search-box:focus { border-color:var(--saffron); }
@@ -159,11 +159,11 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm);
   padding:7px 13px; font-size:12.5px; cursor:pointer; color:var(--text2);
   display:flex; align-items:center; gap:6px; transition:all 0.14s;
-  font-family:'DM Sans',sans-serif; font-weight:500;
+  font-family:'Segoe UI',Arial,sans-serif; font-weight:500;
 }
-.topbar-btn:hover { border-color:var(--saffron); color:var(--saffron); }
-.topbar-btn.primary { background:var(--saffron); border-color:var(--saffron); color:white; font-weight:600; }
-.topbar-btn.primary:hover { background:#B85516; }
+.topbar-btn:hover { border-color:#703d1a; color:#703d1a; }
+.topbar-btn.primary { background:#703d1a; border-color:#703d1a; color:white; font-weight:600; }
+.topbar-btn.primary:hover { background:#556B2F; }
 
 .content {
   flex:1; overflow-y:auto; padding:24px 28px;
@@ -192,7 +192,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .sc-p::after{background:var(--purple);} .sc-t::after{background:var(--teal);}
 .sc-a::after{background:var(--amber);}
 .stat-icon { position:absolute; right:14px; top:14px; font-size:20px; opacity:0.1; }
-.stat-n { font-family:'Playfair Display',serif; font-size:30px; line-height:1; margin-bottom:3px; }
+.stat-n { font-family:'Segoe UI',Arial,sans-serif; font-size:30px; line-height:1; margin-bottom:3px; }
 .sc-o .stat-n{color:var(--saffron);} .sc-g .stat-n{color:var(--green);}
 .sc-b .stat-n{color:var(--blue);} .sc-r .stat-n{color:var(--red);}
 .sc-p .stat-n{color:var(--purple);} .sc-t .stat-n{color:var(--teal);}
@@ -215,8 +215,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 
 /* TABLE */
 .data-table { width:100%; border-collapse:collapse; font-size:12.5px; }
-.data-table thead tr { background:var(--sidebar); }
-.data-table th { padding:10px 14px; text-align:left; font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; color:rgba(255,255,255,0.7); }
+.data-table thead tr { background:#f8eee4; border-bottom:1px solid var(--border); }
+.data-table th { padding:10px 14px; text-align:left; font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; color:#703d1a; }
 .data-table tbody tr { border-bottom:1px solid var(--border2); transition:background 0.1s; }
 .data-table tbody tr:hover { background:var(--surface2); }
 .data-table tbody tr:last-child { border-bottom:none; }
@@ -234,13 +234,13 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .tag-grey{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
 
 /* BUTTONS */
-.btn { border:none; border-radius:var(--radius-sm); padding:6px 13px; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; cursor:pointer; transition:all 0.14s; display:inline-flex; align-items:center; gap:5px; }
-.btn-primary{background:var(--saffron);color:white;} .btn-primary:hover{background:#B85516;}
+.btn { border:none; border-radius:var(--radius-sm); padding:6px 13px; font-family:'Segoe UI',Arial,sans-serif; font-size:12px; font-weight:500; cursor:pointer; transition:all 0.14s; display:inline-flex; align-items:center; gap:5px; }
+.btn-primary{background:#703d1a;color:white;} .btn-primary:hover{background:#556B2F;}
 .btn-success{background:var(--green);color:white;} .btn-success:hover{background:#1F5038;}
 .btn-danger{background:var(--red);color:white;} .btn-danger:hover{background:#8A2424;}
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2);} .btn-outline:hover{border-color:var(--saffron);color:var(--saffron);}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2);} .btn-outline:hover{border-color:#703d1a;color:#703d1a;}
 .btn-sm { padding:4px 10px; font-size:11px; }
-.btn-ghost{background:transparent;color:var(--text3);border:none;} .btn-ghost:hover{color:var(--saffron);}
+.btn-ghost{background:transparent;color:var(--text3);border:none;} .btn-ghost:hover{color:#703d1a;}
 
 /* AVATAR */
 .av { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
@@ -254,10 +254,10 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .filters { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; align-items:center; }
 .filter-select {
   background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm);
-  padding:7px 11px; font-family:'DM Sans',sans-serif; font-size:12.5px; color:var(--text2);
+  padding:7px 11px; font-family:'Segoe UI',Arial,sans-serif; font-size:12.5px; color:var(--text2);
   outline:none; cursor:pointer; transition:border-color 0.14s;
 }
-.filter-select:focus { border-color:var(--saffron); }
+.filter-select:focus { border-color:#703d1a; }
 .filter-count { font-size:12px; color:var(--text3); margin-left:auto; }
 
 /* CALLOUTS */
@@ -293,7 +293,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .feed-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; margin-top:5px; }
 .fd-g{background:var(--green);box-shadow:0 0 0 2px rgba(45,106,79,0.15);}
 .fd-r{background:var(--red);box-shadow:0 0 0 2px rgba(179,48,48,0.15);}
-.fd-o{background:var(--saffron);box-shadow:0 0 0 2px rgba(212,99,26,0.15);}
+.fd-o{background:var(--saffron);box-shadow:0 0 0 2px rgba(112,61,26,0.15);}
 .fd-b{background:var(--blue);box-shadow:0 0 0 2px rgba(26,79,138,0.15);}
 .feed-txt { flex:1; font-size:12.5px; color:var(--text); line-height:1.4; }
 .feed-txt span { font-weight:600; }
@@ -314,7 +314,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .modal { background:var(--surface); border-radius:var(--radius); width:540px; max-width:94vw; max-height:90vh; overflow-y:auto; box-shadow:var(--shadow-lg); animation:modal-in 0.18s ease; }
 @keyframes modal-in { from{opacity:0;transform:scale(0.97)translateY(6px)} to{opacity:1;transform:scale(1)translateY(0)} }
 .modal-head { padding:18px 22px 14px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
-.modal-title { font-family:'Playfair Display',serif; font-size:19px; }
+.modal-title { font-family:'Segoe UI',Arial,sans-serif; font-size:19px; }
 .modal-close { margin-left:auto; background:none; border:none; font-size:16px; cursor:pointer; color:var(--text3); padding:4px; }
 .modal-close:hover { color:var(--text); }
 .modal-foot { padding:14px 22px; border-top:1px solid var(--border); display:flex; gap:8px; justify-content:flex-end; }
@@ -327,10 +327,10 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .form-label { font-size:10.5px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:0.4px; }
 .form-input, .form-select {
   background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm);
-  padding:9px 12px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none;
+  padding:9px 12px; font-family:'Segoe UI',Arial,sans-serif; font-size:13px; color:var(--text); outline:none;
   transition:border-color 0.14s;
 }
-.form-input:focus, .form-select:focus { border-color:var(--saffron); background:var(--surface); }
+.form-input:focus, .form-select:focus { border-color:#703d1a; background:var(--surface); }
 .form-input::placeholder { color:var(--text3); font-size:12px; }
 .form-note { font-size:11px; color:var(--text3); margin-top:2px; }
 
@@ -357,18 +357,18 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 <body>
 
 <!-- ═══════ LOGIN OVERLAY ═══════ -->
-<div id="login-overlay" style="display:flex;position:fixed;inset:0;z-index:9999;background:#0D1117;align-items:center;justify-content:center;flex-direction:column;gap:16px">
-  <div style="font-size:40px">🕉️</div>
-  <div style="font-size:20px;font-weight:700;color:#F5F5F5">GEV ICMS Admin Portal</div>
-  <div style="background:#161B22;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:28px 24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:14px">
+<div id="login-overlay" style="display:flex;position:fixed;inset:0;z-index:9999;background:#ffffff;align-items:center;justify-content:center;flex-direction:column;gap:16px">
+  <img src="/static/logo.svg" alt="GEV" style="height:80px;margin-bottom:4px"/>
+  <div style="font-size:20px;font-weight:700;color:#703d1a;font-family:'Segoe UI',Arial,sans-serif">GEV ICMS Admin Portal</div>
+  <div style="background:#f8eee4;border:1px solid #e8ddd4;border-radius:14px;padding:28px 24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:14px">
     <input id="adm-user" type="text" placeholder="Username" autocomplete="username"
-      style="background:#0D1117;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px 14px;font-size:14px;color:#F5F5F5;outline:none;width:100%"/>
+      style="background:#ffffff;border:1px solid #e8ddd4;border-radius:8px;padding:10px 14px;font-size:14px;color:#2B2B2B;outline:none;width:100%;font-family:'Segoe UI',Arial,sans-serif"/>
     <input id="adm-pass" type="password" placeholder="Password" autocomplete="current-password"
-      style="background:#0D1117;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px 14px;font-size:14px;color:#F5F5F5;outline:none;width:100%"/>
-    <div id="adm-err" style="color:#F87171;font-size:12px;display:none"></div>
-    <button onclick="adminLogin()" style="background:#1A4731;border:none;border-radius:9px;padding:12px;font-size:14px;font-weight:700;color:white;cursor:pointer;width:100%">Sign In</button>
+      style="background:#ffffff;border:1px solid #e8ddd4;border-radius:8px;padding:10px 14px;font-size:14px;color:#2B2B2B;outline:none;width:100%;font-family:'Segoe UI',Arial,sans-serif"/>
+    <div id="adm-err" style="color:#B33030;font-size:12px;display:none"></div>
+    <button onclick="adminLogin()" style="background:#703d1a;border:none;border-radius:9px;padding:12px;font-size:14px;font-weight:700;color:white;cursor:pointer;width:100%;font-family:'Segoe UI',Arial,sans-serif">Sign In</button>
   </div>
-  <div style="font-size:11px;color:rgba(255,255,255,0.3)">Govardhan EcoVillage — ISKCON Wada</div>
+  <div style="font-size:11px;color:#a07050">Govardhan EcoVillage — ISKCON Wada</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════
@@ -376,7 +376,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 ═══════════════════════════════════════════════════ -->
 <div class="sidebar">
   <div class="brand">
-    <div class="brand-om">🕉️</div>
+    <img src="/static/logo.svg" alt="GEV" style="height:48px;margin-right:8px;flex-shrink:0"/>
     <div class="brand-text">
       <div class="brand-name">Govardhan<br/>EcoVillage</div>
       <div class="brand-sub">ICMS Portal</div>
@@ -896,8 +896,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
           <div class="sec-head"><span class="sec-title">Brahmachari Ashram — 55 Residents</span><div class="sec-actions"><button class="btn btn-outline btn-sm">Update Kitchen Count</button></div></div>
           <div style="padding:14px 18px">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center"><div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--teal)">55</div><div style="font-size:11px;color:var(--text2)">Regular residents</div></div>
-              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center"><div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--saffron)">0</div><div style="font-size:11px;color:var(--text2)">Visiting monks (today)</div></div>
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center"><div style="font-family:'Segoe UI',Arial,sans-serif;font-size:28px;color:var(--teal)">55</div><div style="font-size:11px;color:var(--text2)">Regular residents</div></div>
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center"><div style="font-family:'Segoe UI',Arial,sans-serif;font-size:28px;color:var(--saffron)">0</div><div style="font-size:11px;color:var(--text2)">Visiting monks (today)</div></div>
             </div>
             <div style="font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:600">Kitchen Schedule</div>
             <table style="width:100%;font-size:12px;border-collapse:collapse">
@@ -912,8 +912,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
           <div class="sec-head"><span class="sec-title">Varishtha Vaishnava Care — 19 Residents</span><div class="sec-actions"><button class="btn btn-outline btn-sm">Update Count</button></div></div>
           <div style="padding:14px 18px">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center"><div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--purple)">19</div><div style="font-size:11px;color:var(--text2)">VVSHCH residents</div></div>
-              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center"><div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--saffron)">0</div><div style="font-size:11px;color:var(--text2)">Visiting (today)</div></div>
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center"><div style="font-family:'Segoe UI',Arial,sans-serif;font-size:28px;color:var(--purple)">19</div><div style="font-size:11px;color:var(--text2)">VVSHCH residents</div></div>
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center"><div style="font-family:'Segoe UI',Arial,sans-serif;font-size:28px;color:var(--saffron)">0</div><div style="font-size:11px;color:var(--text2)">Visiting (today)</div></div>
             </div>
             <div style="font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:600">Notes</div>
             <div style="font-size:12px;color:var(--text2);line-height:1.6">Monthly rent includes all meals. Kitchen shared with Brahmachari Ashram. Managed by Achyut Patil (Achyuta Avtar P).<br/><br/>GAC oversight: Gauranga P (GAC 2) & Adikeshav P (GAC 5)</div>
@@ -936,29 +936,29 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
         <div style="padding:14px 18px">
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px">
             <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:11px;text-align:center">
-              <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--teal)">38</div>
+              <div style="font-family:'Segoe UI',Arial,sans-serif;font-size:22px;color:var(--teal)">38</div>
               <div style="font-size:11px;color:var(--text3)">Breakfast served</div>
               <div style="font-size:10px;color:var(--text3)">of 41 registered</div>
             </div>
             <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:11px;text-align:center">
-              <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--green)">247</div>
+              <div style="font-family:'Segoe UI',Arial,sans-serif;font-size:22px;color:var(--green)">247</div>
               <div style="font-size:11px;color:var(--text3)">Lunch QR scans</div>
               <div style="font-size:10px;color:var(--text3)">+12 tap (no QR)</div>
             </div>
             <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:11px;text-align:center">
-              <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--saffron)">0</div>
+              <div style="font-family:'Segoe UI',Arial,sans-serif;font-size:22px;color:var(--saffron)">0</div>
               <div style="font-size:11px;color:var(--text3)">Dinner served</div>
               <div style="font-size:10px;color:var(--text3)">of 43 registered</div>
             </div>
             <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:11px;text-align:center">
-              <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--blue)">312</div>
+              <div style="font-family:'Segoe UI',Arial,sans-serif;font-size:22px;color:var(--blue)">312</div>
               <div style="font-size:11px;color:var(--text3)">Khichadi scans</div>
               <div style="font-size:10px;color:var(--text3)">AM: 189 · PM: 123</div>
             </div>
           </div>
           <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">Lunch scan breakdown by visitor type (today)</div>
           <table style="width:100%;font-size:12px;border-collapse:collapse">
-            <thead><tr style="background:var(--sidebar);color:rgba(255,255,255,0.7)"><th style="padding:7px 10px;text-align:left;font-size:10px">Visitor Type</th><th style="padding:7px 10px">QR Scans</th><th style="padding:7px 10px">Tap (no QR)</th><th style="padding:7px 10px">Total</th></tr></thead>
+            <thead><tr style="background:#f8eee4;color:#703d1a;border-bottom:1px solid #e8ddd4"><th style="padding:7px 10px;text-align:left;font-size:10px">Visitor Type</th><th style="padding:7px 10px">QR Scans</th><th style="padding:7px 10px">Tap (no QR)</th><th style="padding:7px 10px">Total</th></tr></thead>
             <tbody>
               <tr style="border-bottom:1px solid var(--border2)"><td style="padding:7px 10px;font-weight:500">Payroll Staff</td><td style="padding:7px 10px;text-align:center">52</td><td style="padding:7px 10px;text-align:center">0</td><td style="padding:7px 10px;text-align:center;font-weight:600">52</td></tr>
               <tr style="border-bottom:1px solid var(--border2)"><td style="padding:7px 10px;font-weight:500">Construction Labourers</td><td style="padding:7px 10px;text-align:center">88</td><td style="padding:7px 10px;text-align:center">2</td><td style="padding:7px 10px;text-align:center;font-weight:600">90</td></tr>
@@ -1039,12 +1039,12 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
             <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px">
               <div style="font-size:12.5px;font-weight:600;margin-bottom:10px">Report Preview — April 2026</div>
               <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-                <div style="text-align:center"><div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--blue)">118</div><div style="font-size:10.5px;color:var(--text3)">Staff</div></div>
-                <div style="text-align:center"><div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--teal)">74</div><div style="font-size:10.5px;color:var(--text3)">Ashram</div></div>
-                <div style="text-align:center"><div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--amber)">142</div><div style="font-size:10.5px;color:var(--text3)">Labourers</div></div>
-                <div style="text-align:center"><div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--green)">34</div><div style="font-size:10.5px;color:var(--text3)">Volunteers</div></div>
-                <div style="text-align:center"><div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--purple)">41</div><div style="font-size:10.5px;color:var(--text3)">Dependants</div></div>
-                <div style="text-align:center;background:var(--sidebar);border-radius:8px;padding:8px"><div style="font-family:'Playfair Display',serif;font-size:22px;color:white">409</div><div style="font-size:10.5px;color:rgba(255,255,255,0.5)">Total Records</div></div>
+                <div style="text-align:center"><div style="font-family:'Segoe UI',Arial,sans-serif;font-size:22px;color:var(--blue)">118</div><div style="font-size:10.5px;color:var(--text3)">Staff</div></div>
+                <div style="text-align:center"><div style="font-family:'Segoe UI',Arial,sans-serif;font-size:22px;color:var(--teal)">74</div><div style="font-size:10.5px;color:var(--text3)">Ashram</div></div>
+                <div style="text-align:center"><div style="font-family:'Segoe UI',Arial,sans-serif;font-size:22px;color:var(--amber)">142</div><div style="font-size:10.5px;color:var(--text3)">Labourers</div></div>
+                <div style="text-align:center"><div style="font-family:'Segoe UI',Arial,sans-serif;font-size:22px;color:var(--green)">34</div><div style="font-size:10.5px;color:var(--text3)">Volunteers</div></div>
+                <div style="text-align:center"><div style="font-family:'Segoe UI',Arial,sans-serif;font-size:22px;color:var(--purple)">41</div><div style="font-size:10.5px;color:var(--text3)">Dependants</div></div>
+                <div style="text-align:center;background:#703d1a;border-radius:8px;padding:8px"><div style="font-family:'Segoe UI',Arial,sans-serif;font-size:22px;color:white">409</div><div style="font-size:10.5px;color:rgba(255,255,255,0.75)">Total Records</div></div>
               </div>
             </div>
             <div style="display:flex;gap:8px">
@@ -1146,7 +1146,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
             <div style="padding:14px 18px">
               <div class="callout callout-info" style="margin-bottom:14px"><div class="callout-icon">ℹ️</div><div class="callout-body">Govinda's Guest Area manager (Prasad Panda P) declares today's capacity each morning. Registration page blocks new Zone 3 bookings once threshold is reached.</div></div>
               <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px">
-                <thead><tr style="background:var(--sidebar);color:rgba(255,255,255,0.7)"><th style="padding:8px 10px;text-align:left;font-size:10px">Café</th><th style="padding:8px 10px">Meal</th><th style="padding:8px 10px">Threshold</th><th style="padding:8px 10px">Booked</th><th style="padding:8px 10px">Available</th><th style="padding:8px 10px">Status</th></tr></thead>
+                <thead><tr style="background:#f8eee4;color:#703d1a;border-bottom:1px solid #e8ddd4"><th style="padding:8px 10px;text-align:left;font-size:10px">Café</th><th style="padding:8px 10px">Meal</th><th style="padding:8px 10px">Threshold</th><th style="padding:8px 10px">Booked</th><th style="padding:8px 10px">Available</th><th style="padding:8px 10px">Status</th></tr></thead>
                 <tbody>
                   <tr style="border-bottom:1px solid var(--border2)"><td style="padding:8px 10px;font-weight:500">Govinda's Guest Area</td><td style="padding:8px 10px;text-align:center"><span class="tag tag-o">Breakfast</span></td><td style="padding:8px 10px;text-align:center">30</td><td style="padding:8px 10px;text-align:center">12</td><td style="padding:8px 10px;text-align:center;color:var(--green);font-weight:600">18</td><td style="padding:8px 10px"><span class="tag tag-g">✓ Open</span></td></tr>
                   <tr style="border-bottom:1px solid var(--border2)"><td style="padding:8px 10px;font-weight:500">Govinda's Guest Area</td><td style="padding:8px 10px;text-align:center"><span class="tag tag-b">Lunch</span></td><td style="padding:8px 10px;text-align:center">40</td><td style="padding:8px 10px;text-align:center">36</td><td style="padding:8px 10px;text-align:center;color:var(--amber);font-weight:600">4</td><td style="padding:8px 10px"><span class="tag tag-a">⚠️ Almost full</span></td></tr>
@@ -1161,11 +1161,11 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
             <div class="sec-head"><span style="font-size:15px">📊</span><span class="sec-title">Zone 3 Upgrades Today</span></div>
             <div style="padding:14px 18px">
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-                <div style="text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px"><div style="font-family:'Playfair Display',serif;font-size:24px;color:var(--saffron)">9</div><div style="font-size:11px;color:var(--text3)">Upgrades today</div></div>
-                <div style="text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px"><div style="font-family:'Playfair Display',serif;font-size:24px;color:var(--green)">₹11,550</div><div style="font-size:11px;color:var(--text3)">Revenue today</div></div>
+                <div style="text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px"><div style="font-family:'Segoe UI',Arial,sans-serif;font-size:24px;color:var(--saffron)">9</div><div style="font-size:11px;color:var(--text3)">Upgrades today</div></div>
+                <div style="text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px"><div style="font-family:'Segoe UI',Arial,sans-serif;font-size:24px;color:var(--green)">₹11,550</div><div style="font-size:11px;color:var(--text3)">Revenue today</div></div>
               </div>
               <table style="width:100%;font-size:12px;border-collapse:collapse">
-                <thead><tr style="background:var(--sidebar);color:rgba(255,255,255,0.7)"><th style="padding:7px 10px;text-align:left;font-size:10px">Time</th><th style="padding:7px 10px">Visitor</th><th style="padding:7px 10px">Persons</th><th style="padding:7px 10px">Amount</th></tr></thead>
+                <thead><tr style="background:#f8eee4;color:#703d1a;border-bottom:1px solid #e8ddd4"><th style="padding:7px 10px;text-align:left;font-size:10px">Time</th><th style="padding:7px 10px">Visitor</th><th style="padding:7px 10px">Persons</th><th style="padding:7px 10px">Amount</th></tr></thead>
                 <tbody>
                   <tr style="border-bottom:1px solid var(--border2)"><td style="padding:6px 10px;color:var(--text3)">11:32</td><td style="padding:6px 10px;font-weight:500">Rajan Pillai</td><td style="padding:6px 10px;text-align:center">2</td><td style="padding:6px 10px;font-weight:600;color:var(--saffron)">₹700</td></tr>
                   <tr style="border-bottom:1px solid var(--border2)"><td style="padding:6px 10px;color:var(--text3)">12:05</td><td style="padding:6px 10px;font-weight:500">Vijay Patil</td><td style="padding:6px 10px;text-align:center">4</td><td style="padding:6px 10px;font-weight:600;color:var(--saffron)">₹1,400</td></tr>

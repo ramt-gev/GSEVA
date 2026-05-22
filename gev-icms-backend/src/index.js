@@ -3,11 +3,25 @@ const express = require('express');
 const cors    = require('cors');
 const helmet  = require('helmet');
 
+const path = require('path');
+
 const app = express();
 
-app.use(helmet());
-app.use(cors());                 // permissive in dev — tighten origins in prod
+app.use(helmet({ contentSecurityPolicy: false })); // CSP off — dev HTML uses inline scripts
+app.use(cors());
 app.use(express.json());
+
+// Static assets (logo etc.)
+app.use('/static', express.static(path.join(__dirname, '../public')));
+
+// Serve frontend HTML files
+const FRONTEND = path.join(__dirname, '../../Docs');
+app.get('/',          (req, res) => res.sendFile(path.join(FRONTEND, 'index.html')));
+app.get('/gate',      (req, res) => res.sendFile(path.join(FRONTEND, 'GEV_Gate_Tablet_App_v2.html')));
+app.get('/canteen',   (req, res) => res.sendFile(path.join(FRONTEND, 'GEV_Annakshetra_Canteen_App.html')));
+app.get('/admin',     (req, res) => res.sendFile(path.join(FRONTEND, 'GEV_Admin_Portal_v2.html')));
+app.get('/dashboard', (req, res) => res.sendFile(path.join(FRONTEND, 'GEV_Dashboard_Reports.html')));
+app.get('/register',  (req, res) => res.sendFile(path.join(FRONTEND, 'GEV_Smart_Registration_Page.html')));
 
 app.use('/api/auth',     require('./routes/auth'));
 app.use('/api/persons',  require('./routes/persons'));
