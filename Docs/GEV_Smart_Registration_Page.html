@@ -4,37 +4,43 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>GEV — Day Visit Registration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Elsie&display=swap" rel="stylesheet"/>
 <style>
 
 :root {
   --saffron:#703d1a; --saffron2:#8a4e25; --saffron-bg:#f8eee4; --saffron-border:#e8ddd4;
   --green:#556B2F; --green-bg:#eef3e6; --green-border:#b4c98a;
-  --blue:#1A4F8A; --blue-bg:#EBF2FB;
-  --amber:#B06010; --amber-bg:#FDF4E7;
+  --blue:#703d1a; --blue-bg:#f8eee4;
+  --amber:#8a5a00; --amber-bg:#fff8eb;
   --red:#B33030; --red-bg:#FBECEC;
   --dark:#703d1a; --surface:#ffffff;
-  --bg:#f8eee4; --border:#e8ddd4; --border2:#f0e6db;
+  --bg:#ffffff; --border:#e8ddd4; --border2:#f0e6db;
   --text:#2B2B2B; --text2:#57534E; --text3:#8a7a6a;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html { scroll-behavior:smooth; }
-body { font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:14px; }
+body { font-family:'Segoe UI',Arial,sans-serif; background:#ffffff; color:var(--text); min-height:100vh; font-size:14px; }
 
 /* ── HEADER ── */
-.header { background:#ffffff; padding:20px 20px 16px; text-align:center; position:relative; overflow:hidden; border-bottom:1px solid var(--border); }
-.header::before { content:'🕉️'; position:absolute; right:16px; top:10px; font-size:48px; opacity:0.07; }
-.header-om { font-size:20px; margin-bottom:6px; }
-.header h1 { font-family:'Segoe UI',Arial,sans-serif; font-size:22px; font-weight:700; color:#703d1a; line-height:1.2; margin-bottom:3px; }
-.header p { font-size:12px; color:#8a7a6a; letter-spacing:0.4px; }
-.header-bar { height:3px; background:linear-gradient(90deg,#703d1a,#a05a2c,#c49a6c); margin-top:14px; margin-left:-20px; margin-right:-20px; }
+.header { background:#556B2F; padding:28px 20px 22px; text-align:center; position:relative; overflow:hidden; border-bottom:none; }
+.header::before { display:none; }
+.header-om { display:none; }
+.header h1 { display:none; }
+.header p { font-family:'Elsie',serif; font-size:22px; font-weight:400; color:#ffffff; letter-spacing:0.5px; margin-top:14px; }
+.header-bar { display:none; }
 
 /* ── PROGRESS ── */
-.progress-bar { background:var(--surface); padding:12px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; position:sticky; top:0; z-index:50; }
-.prog-step { width:28px; height:28px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--text3); flex-shrink:0; transition:all 0.3s; }
-.prog-step.active { background:var(--saffron); border-color:var(--saffron); color:white; }
+.progress-bar { background:#ffffff; padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0; position:sticky; top:0; z-index:50; }
+.prog-item { display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0; }
+.prog-step { width:32px; height:32px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--text3); transition:all 0.3s; background:#fff; }
+.prog-step.active { background:#703d1a; border-color:#703d1a; color:white; }
 .prog-step.done { background:var(--green); border-color:var(--green); color:white; }
-.prog-line { flex:1; height:2px; background:var(--border); border-radius:2px; transition:background 0.3s; }
+.prog-label { font-size:10px; font-weight:600; color:var(--text3); white-space:nowrap; transition:color 0.3s; }
+.prog-item.active .prog-label { color:#703d1a; }
+.prog-item.done .prog-label { color:var(--green); }
+.prog-line { flex:1; height:2px; background:var(--border); border-radius:2px; transition:background 0.3s; margin-bottom:16px; }
 .prog-line.done { background:var(--green); }
 
 /* ── CONTAINER ── */
@@ -45,7 +51,7 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(
 .section.active { display:block; }
 @keyframes fade { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
-.section-title { font-family:'Segoe UI',Arial,sans-serif; font-size:20px; font-weight:700; color:#703d1a; margin-bottom:4px; }
+.section-title { font-family:'Elsie',serif; font-size:22px; font-weight:400; color:#703d1a; margin-bottom:4px; }
 .section-sub { font-size:12.5px; color:var(--text3); margin-bottom:20px; line-height:1.5; }
 
 /* ── FORM ELEMENTS ── */
@@ -62,29 +68,32 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(
 .field-note { font-size:11px; color:var(--text3); margin-top:4px; }
 
 /* ── VISITOR TYPE CARDS ── */
-.type-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+.type-grid { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
 .type-card {
-  border:2px solid var(--border); border-radius:12px; padding:16px 12px;
-  text-align:center; cursor:pointer; transition:all 0.2s; background:var(--surface);
+  border:2px solid #e8ddd4; border-radius:14px; padding:16px;
+  cursor:pointer; transition:all 0.2s; background:#fff; display:flex; gap:14px; align-items:flex-start;
 }
-.type-card:active { transform:scale(0.97); }
-.type-card.selected { border-color:var(--saffron); background:var(--saffron-bg); }
-.type-icon { font-size:24px; margin-bottom:7px; }
-.type-name { font-size:13px; font-weight:700; color:var(--text); margin-bottom:3px; }
-.type-desc { font-size:11px; color:var(--text3); line-height:1.4; }
-.type-price { font-size:12px; font-weight:700; color:var(--saffron); margin-top:5px; }
+.type-card:active { transform:scale(0.99); }
+.type-card.selected { border-color:#703d1a; background:#f8eee4; box-shadow:0 4px 14px rgba(112,61,26,0.15); }
+.type-icon { display:none; }
+.type-body { flex:1; }
+.type-name { font-size:18px; font-weight:700; color:var(--text); margin-bottom:2px; text-transform:uppercase; letter-spacing:0.5px; }
+.type-desc { font-size:12px; color:var(--text3); line-height:1.4; margin-bottom:8px; }
+.type-price { font-size:13px; font-weight:700; color:var(--saffron); margin-bottom:8px; }
 .type-card.selected .type-name { color:var(--saffron); }
+.type-includes { display:flex; flex-wrap:wrap; gap:5px; }
+.type-tag { font-size:10.5px; font-weight:600; padding:3px 8px; border-radius:6px; background:rgba(112,61,26,0.08); color:#703d1a; border:1px solid rgba(112,61,26,0.15); }
+.type-tag.highlight { background:rgba(85,107,47,0.1); color:#556B2F; border-color:rgba(85,107,47,0.2); }
 
 /* ── GROUP COUNTER ── */
-.group-counter { background:var(--surface); border:1.5px solid var(--border); border-radius:12px; padding:16px; display:flex; align-items:center; gap:0; margin-bottom:8px; }
-.gc-minus, .gc-plus { width:40px; height:40px; border-radius:10px; border:none; background:var(--bg); font-size:20px; font-weight:700; color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; flex-shrink:0; }
-.gc-minus:active, .gc-plus:active { background:var(--saffron-bg); color:var(--saffron); }
-.gc-num { flex:1; text-align:center; font-family:'Segoe UI',Arial,sans-serif; font-size:36px; font-weight:700; color:#703d1a; line-height:1; }
-.gc-label { text-align:center; font-size:11px; color:var(--text3); margin-top:4px; }
+.group-counter { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:8px; }
+.gc-num-btn { height:48px; border-radius:10px; border:1.5px solid var(--border); background:#fff; font-size:18px; font-weight:700; color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+.gc-num-btn:hover { border-color:var(--saffron); color:var(--saffron); background:var(--saffron-bg); }
+.gc-num-btn.selected { background:var(--saffron); border-color:var(--saffron); color:#fff; }
 .group-max-note { font-size:11px; color:var(--amber); background:var(--amber-bg); border-radius:8px; padding:7px 11px; display:flex; gap:6px; }
 
 /* ── MEMBER CARDS ── */
-.member-card { background:var(--surface); border:1.5px solid var(--border); border-radius:12px; padding:14px; margin-bottom:12px; }
+.member-card { background:#ffffff; border:1.5px solid #e8ddd4; border-radius:12px; padding:14px; margin-bottom:12px; box-shadow:0 1px 4px rgba(112,61,26,0.06); }
 .member-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
 .member-av { width:32px; height:32px; border-radius:8px; background:var(--saffron-bg); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:var(--saffron); flex-shrink:0; }
 .member-title { font-size:13px; font-weight:700; color:#703d1a; }
@@ -143,26 +152,28 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(
 
 /* ── BUTTONS ── */
 .btn-primary {
-  width:100%; background:#703d1a; border:none; border-radius:12px;
-  padding:16px; font-family:'Segoe UI',Arial,sans-serif; font-size:16px; font-weight:700;
-  color:white; cursor:pointer; transition:all 0.18s; letter-spacing:0.2px;
-  box-shadow:0 4px 16px rgba(112,61,26,0.25);
+  width:100%; background:#703d1a; border:2px solid #703d1a; border-radius:12px;
+  padding:15px; font-family:'Segoe UI',Arial,sans-serif; font-size:15px; font-weight:700;
+  color:#ffffff; cursor:pointer; transition:all 0.18s; letter-spacing:0.3px;
+  box-shadow:0 3px 12px rgba(112,61,26,0.2);
 }
-.btn-primary:active { transform:scale(0.98); background:#556B2F; }
-.btn-primary:disabled { opacity:0.5; cursor:not-allowed; }
+.btn-primary:hover { background:#556B2F; border-color:#556B2F; }
+.btn-primary:active { transform:scale(0.98); background:#445a25; border-color:#445a25; }
+.btn-primary:disabled { opacity:0.45; cursor:not-allowed; }
 .btn-secondary {
-  width:100%; background:transparent; border:1.5px solid var(--border); border-radius:12px;
-  padding:13px; font-family:'Segoe UI',Arial,sans-serif; font-size:14px; font-weight:500;
-  color:var(--text2); cursor:pointer; margin-top:10px; transition:all 0.15s;
+  width:100%; background:#ffffff; border:1.5px solid #703d1a; border-radius:12px;
+  padding:13px; font-family:'Segoe UI',Arial,sans-serif; font-size:14px; font-weight:600;
+  color:#703d1a; cursor:pointer; margin-top:10px; transition:all 0.15s;
 }
-.btn-secondary:active { background:var(--border2); }
+.btn-secondary:hover { background:#f8eee4; }
+.btn-secondary:active { background:#f0e4d6; }
 
 /* ── CALLOUTS ── */
 .callout { border-radius:10px; padding:12px 14px; margin-bottom:14px; display:flex; gap:9px; }
-.callout-info { background:var(--blue-bg); border:1px solid #93C5FD; }
-.callout-warn { background:var(--amber-bg); border:1px solid #F5C842; }
+.callout-info { background:#f8eee4; border:1px solid #e8ddd4; }
+.callout-warn { background:#fff8eb; border:1px solid #f0d080; }
 .callout-body { font-size:12px; line-height:1.5; color:var(--text2); }
-.callout-body strong { display:block; font-weight:700; margin-bottom:1px; color:var(--text); }
+.callout-body strong { display:block; font-weight:700; margin-bottom:1px; color:#703d1a; }
 
 /* ── SUCCESS SCREEN ── */
 .success-screen { display:none; padding:28px 20px; text-align:center; }
@@ -196,57 +207,110 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(
 <body>
 
 <div class="header">
-  <img src="/static/logo.svg" alt="Govardhan EcoVillage" style="height:80px;margin-bottom:8px;display:block;margin-left:auto;margin-right:auto"/>
-  <h1>Govardhan EcoVillage</h1>
-  <p>Day Visit Registration · Wada, Palghar, Maharashtra</p>
-  <div class="header-bar"></div>
+  <img src="/static/logo.svg" alt="Govardhan EcoVillage" style="height:110px;display:block;margin:0 auto;"/>
+  <p style="display:inline-block;background:#703d1a;padding:6px 20px;border-radius:8px;">Day Visit Registration</p>
 </div>
 
 <!-- Progress Bar -->
 <div class="progress-bar">
-  <div class="prog-step active" id="step-1">1</div>
+  <div class="prog-item active" id="prog-item-1">
+    <div class="prog-step active" id="step-1">1</div>
+    <div class="prog-label">Group Size</div>
+  </div>
   <div class="prog-line" id="line-1"></div>
-  <div class="prog-step" id="step-2">2</div>
+  <div class="prog-item" id="prog-item-2">
+    <div class="prog-step" id="step-2">2</div>
+    <div class="prog-label">Your Details</div>
+  </div>
   <div class="prog-line" id="line-2"></div>
-  <div class="prog-step" id="step-3">3</div>
+  <div class="prog-item" id="prog-item-3">
+    <div class="prog-step" id="step-3">3</div>
+    <div class="prog-label">Services</div>
+  </div>
   <div class="prog-line" id="line-3"></div>
-  <div class="prog-step" id="step-4">4</div>
+  <div class="prog-item" id="prog-item-4">
+    <div class="prog-step" id="step-4">4</div>
+    <div class="prog-label">Payment</div>
+  </div>
 </div>
 
 <div class="container">
 
   <!-- ══ SECTION 1 — VISIT TYPE + GROUP SIZE ══ -->
   <div class="section active" id="sec-1">
-    <div class="section-title">Welcome to GEV 🙏</div>
+    <div class="section-title">Welcome to Govardhan EcoVillage</div>
     <div class="section-sub">Let's set up your visit. This takes about 90 seconds.</div>
 
     <div class="field">
       <div class="field-label">Visit Type <span class="req">*</span></div>
       <div class="type-grid">
         <div class="type-card selected" onclick="selectType(this,'free')" id="type-free">
-          <div class="type-icon">🚶</div>
-          <div class="type-name">Free Darshan</div>
-          <div class="type-desc">Temples, Vrindavan Forest, Free Lunch</div>
-          <div class="type-price">Free</div>
+          <div class="type-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#703d1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2 L3 8 L3 9 L21 9 L21 8 Z"/>
+              <rect x="5" y="9" width="3" height="9"/>
+              <rect x="10.5" y="9" width="3" height="9"/>
+              <rect x="16" y="9" width="3" height="9"/>
+              <line x1="2" y1="18" x2="22" y2="18"/>
+              <path d="M9 2 Q12 0 15 2"/>
+            </svg>
+          </div>
+          <div class="type-body">
+            <div class="type-name">Free Darshan</div>
+            <div class="type-desc">Simple, peaceful spiritual visit — no charges</div>
+            <div class="type-price">Free Entry</div>
+            <div class="type-includes">
+              <span class="type-tag">Temple Darshan</span>
+              <span class="type-tag">Vrindavan Forest</span>
+              <span class="type-tag">Free Lunch</span>
+              <span class="type-tag">Zone 1 &amp; 2 Access</span>
+              <span class="type-tag">Valid till 8 PM</span>
+            </div>
+          </div>
         </div>
         <div class="type-card" onclick="selectType(this,'paid')" id="type-paid">
-          <div class="type-icon">⭐</div>
-          <div class="type-name">Full Programme</div>
-          <div class="type-desc">Complete spiritual day experience</div>
-          <div class="type-price">₹850/person</div>
+          <div class="type-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#703d1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4"/>
+              <line x1="12" y1="2" x2="12" y2="5"/>
+              <line x1="12" y1="19" x2="12" y2="22"/>
+              <line x1="2" y1="12" x2="5" y2="12"/>
+              <line x1="19" y1="12" x2="22" y2="12"/>
+              <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+              <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+              <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+              <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+            </svg>
+          </div>
+          <div class="type-body">
+            <div class="type-name">Full Programme</div>
+            <div class="type-desc">Complete spiritual day — all zones &amp; experiences</div>
+            <div class="type-price">₹850 / person</div>
+            <div class="type-includes">
+              <span class="type-tag">Everything in Free</span>
+              <span class="type-tag highlight">Zone 3 Access</span>
+              <span class="type-tag highlight">Visitor Farm Tour</span>
+              <span class="type-tag highlight">Govinda's Café</span>
+              <span class="type-tag highlight">Special Activities</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="field">
       <div class="field-label">How many persons are in your group? <span class="req">*</span></div>
-      <div class="group-counter">
-        <button class="gc-minus" onclick="changeGroup(-1)">−</button>
-        <div>
-          <div class="gc-num" id="group-num">1</div>
-          <div class="gc-label">person(s)</div>
-        </div>
-        <button class="gc-plus" onclick="changeGroup(1)">+</button>
+      <div class="group-counter" id="group-counter">
+        <button class="gc-num-btn selected" onclick="selectGroup(1)">1</button>
+        <button class="gc-num-btn" onclick="selectGroup(2)">2</button>
+        <button class="gc-num-btn" onclick="selectGroup(3)">3</button>
+        <button class="gc-num-btn" onclick="selectGroup(4)">4</button>
+        <button class="gc-num-btn" onclick="selectGroup(5)">5</button>
+        <button class="gc-num-btn" onclick="selectGroup(6)">6</button>
+        <button class="gc-num-btn" onclick="selectGroup(7)">7</button>
+        <button class="gc-num-btn" onclick="selectGroup(8)">8</button>
+        <button class="gc-num-btn" onclick="selectGroup(9)">9</button>
+        <button class="gc-num-btn" onclick="selectGroup(10)">10</button>
       </div>
       <div class="group-max-note" id="group-max-note" style="display:none">
         ℹ️ Maximum group size is <strong id="max-group-display">10</strong> persons per registration.
@@ -274,7 +338,7 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(
 
   <!-- ══ SECTION 2 — MEMBER DETAILS ══ -->
   <div class="section" id="sec-2">
-    <div class="section-title">Group Members 👨‍👩‍👧‍👦</div>
+    <div class="section-title">Group Members</div>
     <div class="section-sub">Please provide details for each person in your group.</div>
     <div id="members-container"></div>
     <button class="btn-primary" onclick="goToStep3()">Continue →</button>
@@ -367,7 +431,7 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(
       <!-- Free visit -->
       <div id="pay-free" style="display:none">
         <div class="ps-free">
-          <div class="ps-free-icon">🙏</div>
+          <div class="ps-free-icon"></div>
           <div class="ps-free-text">No payment required · Free visit confirmed</div>
         </div>
         <button class="btn-primary" id="submit-btn" onclick="submitRegistration()">
@@ -498,9 +562,11 @@ function goToStep(n) {
   // Update progress
   for (let i = 1; i <= 4; i++) {
     const step = document.getElementById('step-' + i);
+    const item = document.getElementById('prog-item-' + i);
     step.classList.remove('active', 'done');
-    if (i < n) step.classList.add('done'), step.textContent = '✓';
-    else if (i === n) step.classList.add('active'), step.textContent = i;
+    item.classList.remove('active', 'done');
+    if (i < n) { step.classList.add('done'); step.textContent = '✓'; item.classList.add('done'); }
+    else if (i === n) { step.classList.add('active'); step.textContent = i; item.classList.add('active'); }
     else step.textContent = i;
     if (i < 4) {
       const line = document.getElementById('line-' + i);
@@ -572,16 +638,20 @@ function selectType(card, type) {
 }
 
 // ─── GROUP SIZE ───
-function changeGroup(delta) {
-  const newSize = state.groupSize + delta;
-  if (newSize < 1 || newSize > CONFIG.maxGroupSize) return;
-  state.groupSize = newSize;
-  document.getElementById('group-num').textContent = newSize;
+function selectGroup(n) {
+  if (n < 1 || n > CONFIG.maxGroupSize) return;
+  state.groupSize = n;
+  document.querySelectorAll('.gc-num-btn').forEach((btn, i) => {
+    btn.classList.toggle('selected', i + 1 === n);
+  });
   const note = document.getElementById('group-max-note');
-  const maxDisplay = document.getElementById('max-group-display');
-  maxDisplay.textContent = CONFIG.maxGroupSize;
-  note.style.display = newSize >= CONFIG.maxGroupSize ? 'flex' : 'none';
+  document.getElementById('max-group-display').textContent = CONFIG.maxGroupSize;
+  note.style.display = n >= CONFIG.maxGroupSize ? 'flex' : 'none';
   updateServicePrices();
+}
+
+function changeGroup(delta) {
+  selectGroup(state.groupSize + delta);
 }
 
 // ─── MEMBER FIELDS ───
@@ -671,7 +741,7 @@ function buildReview() {
       <div style="display:flex;flex-direction:column;gap:7px;font-size:13px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Group Leader</span><span style="font-weight:600">${state.leaderName}</span></div>
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Mobile</span><span style="font-weight:600">${state.leaderMobile}</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Visit Type</span><span style="font-weight:600">${state.visitType === 'paid' ? '⭐ Paid Programme' : '🚶 Free Darshan'}</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Visit Type</span><span style="font-weight:600">${state.visitType === 'paid' ? 'Full Programme' : 'Free Darshan'}</span></div>
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Group Size</span><span style="font-weight:600">${g} person${g>1?'s':''}</span></div>
         ${state.services.vf && state.vfSlot ? `<div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">VF Tour Slot</span><span style="font-weight:600">${state.vfSlot}</span></div>` : ''}
         ${state.services.lunch ? `<div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Annakshetra Lunch</span><span style="font-weight:600;color:var(--green)">Pre-indicated ✓</span></div>` : ''}
@@ -809,9 +879,12 @@ function showSuccess() {
   // Update progress — all done
   for (let i = 1; i <= 4; i++) {
     const step = document.getElementById('step-' + i);
+    const item = document.getElementById('prog-item-' + i);
     step.classList.remove('active');
     step.classList.add('done');
     step.textContent = '✓';
+    item.classList.remove('active');
+    item.classList.add('done');
     if (i < 4) document.getElementById('line-' + i).classList.add('done');
   }
   window.scrollTo(0, 0);
