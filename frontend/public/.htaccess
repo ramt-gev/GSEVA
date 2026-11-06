@@ -1,0 +1,36 @@
+# SPA fallback — this is a client-side-routed React app (react-router-dom).
+# Without this, refreshing on /admin, /dashboard, /kitchen, etc. or linking
+# directly to them 404s, because there's no physical file at that path —
+# only index.html, which then hands off to React Router in the browser.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Real files/directories (JS, CSS, images, fonts...) are served as-is.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+
+  # Everything else falls back to index.html.
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Vite fingerprints built asset filenames (e.g. index-a1b2c3d4.js), so it's
+# safe to cache them aggressively — a new deploy gets new filenames anyway.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/avif "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# index.html itself must never be cached, or a new deploy won't show up
+# until the cache expires.
+<IfModule mod_headers.c>
+  <Files "index.html">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+  </Files>
+</IfModule>

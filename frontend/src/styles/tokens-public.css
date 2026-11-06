@@ -1,0 +1,23 @@
+/* Smart Registration + Staff Registration shared brand tokens — see
+   tokens-operational.css for why this is scoped under a class instead of :root.
+   Deliberately a different, more neutral (Tailwind-gray-like) text scale
+   than the operational/backoffice families — matches both prototypes as
+   authored, not unified with the others. */
+.theme-public {
+  --bg: #ffffff;
+  --brown: #703d1a;
+  --brown2: #8a4e25;
+  --green: #556b2f;
+  --red: #dc2626;
+  --amber: #92400e;
+  --text: #111827;
+  --text2: #374151;
+  --text3: #6b7280;
+  --font-heading: 'Elsie', serif;
+  --font-body: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}

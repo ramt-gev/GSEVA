@@ -1,0 +1,27 @@
+/* Gate Tablet App + Canteen App shared brand tokens.
+   Scoped under a class (not :root) — three prototype "families" share
+   variable names like --green/--red/--text with different values, so
+   applying all three at :root would silently collide. Apply .theme-operational
+   to each app's outermost wrapper div; CSS custom properties inherit down
+   the DOM tree from there. */
+.theme-operational {
+  --bg: #ffffff;
+  --surface: #f8eee4;
+  --surface2: #f0e4d6;
+  --border: #e8ddd4;
+  --saffron: #703d1a;
+  --olive: #556b2f;
+  --green: #22c55e;
+  --green2: #16a34a;
+  --red: #ef4444;
+  --text: #2b2b2b;
+  --text-muted: #6b5b4e;
+  --text-dim: #9e8a7e;
+  --font-heading: 'Elsie', serif;
+  --font-body: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}

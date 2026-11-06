@@ -1,0 +1,27 @@
+/* Admin Portal + Dashboard Reports shared brand tokens — see
+   tokens-operational.css for why this is scoped under a class instead of :root. */
+.theme-backoffice {
+  --bg: #ffffff;
+  --surface: #f8eee4;
+  --border: #e8ddd4;
+  --saffron: #703d1a;
+  --saffron2: #8f5224;
+  --green: #2d6a4f;
+  --red: #b33030;
+  --blue: #1a4f8a;
+  --amber: #b06010;
+  --teal: #0d6b58;
+  --purple: #5a3a9e;
+  --sidebar-grad-start: #1e0d04;
+  --sidebar-grad-end: #2a1206;
+  --text: #2b2b2b;
+  --text2: #57534e;
+  --text3: #a8a29e;
+  --font-heading: 'Elsie', 'Playfair Display', serif;
+  --font-body: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
